@@ -1,18 +1,4 @@
-import { Navigation } from "react-native-navigation";
-import App from "./App";
+import { YellowBox } from "react-native"
+import "./src/navigation"
 
-Navigation.registerComponent(`ocsar.app`, () => App);
-
-Navigation.events().registerAppLaunchedListener(() => {
-  Navigation.setRoot({
-    root: {
-      stack: {
-        children: [{
-          component: {
-            name: "ocsar.app"
-          }
-        }]
-      }
-    }
-  });
-});
+YellowBox.ignoreWarnings(["Remote debugger"])

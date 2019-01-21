@@ -37,8 +37,8 @@ We recommend installing node and watchman via [Homebrew](http://brew.sh/)
 ```
 
 __[Install React Native](https://facebook.github.io/react-native/docs/getting-started.html#content)__
- ```
  Node comes with npm, which lets you install the React Native command line interface.
+ ```
  npm install -g react-native-cli
  ```
 
@@ -50,7 +50,7 @@ If you get error Cannot find module 'npmlog', try this before: curl -0 -L http:/
 ### Install dependencies
 
  ```
-  yarn install
+  npm install
  ```
 
 ### [Link dependencies](https://facebook.github.io/react-native/docs/linking-libraries-ios.html)
@@ -66,13 +66,13 @@ npm run android
 * A common issue is that the packager is not started automatically when you run react-native run-android. You can start it manually using:
 
 ```
-react-native start
+npm start
 ```
 
-* For IOS: assuming you have an emulator or device attached.
+* For IOS: assuming you have an emulator.
 
 ```
-react-native run-ios
+npm run ios
 ```
 
 * If everything is set up correctly, you should see your new app running in your emulator shortly.
