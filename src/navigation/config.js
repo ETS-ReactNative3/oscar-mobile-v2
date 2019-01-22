@@ -1,4 +1,5 @@
 import { Navigation } from 'react-native-navigation'
+import { MAIN_COLOR } from '../constants/colors'
 
 export const startScreen = (screen, props = {}) => {
   Navigation.setRoot({
@@ -11,7 +12,7 @@ export const startScreen = (screen, props = {}) => {
   })
 }
 
-export const pushScreen = (componentId, { screen, title, props = {} }) => {
+export const pushScreen = (componentId, { screen, title, props = {}, topBar = true }) => {
   Navigation.push(componentId, {
     component: {
       name: screen,
@@ -21,6 +22,7 @@ export const pushScreen = (componentId, { screen, title, props = {} }) => {
           visible: false
         },
         topBar: {
+          visible: topBar,
           title: {
             text: title
           },
@@ -29,6 +31,41 @@ export const pushScreen = (componentId, { screen, title, props = {} }) => {
           }
         }
       }
+    }
+  })
+}
+
+export const startNgoScreen = () => {
+  Navigation.setRoot({
+    root: {
+      stack: {
+        children: [{
+          component: {
+            name: 'oscar.ngo',
+            options: {
+              topBar: {
+                title: {
+                  fontFamily: '.SFUIDisplay-Bold',
+                  text: 'Choose Your NGO',
+                  fontSize: 25,
+                  color: '#fff',
+                  alignment: 'center'
+                },
+                background: {
+                  color: MAIN_COLOR,
+                  translucent: false
+                }
+              }
+            }
+          }
+        }]
+      }
+    }
+  })
+
+  Navigation.setDefaultOptions({
+    statusBar: {
+      style: 'light'
     }
   })
 }
