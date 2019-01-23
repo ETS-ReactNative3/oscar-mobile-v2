@@ -1,14 +1,19 @@
 import React, { Component } from 'react'
-import { View, Text, Image, TextInput, KeyboardAvoidingView } from 'react-native'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-// import Button from 'apsl-react-native-button'
-import { Navigation }  from 'react-native-navigation'
-import Icon from 'react-native-vector-icons/Ionicons'
-import Button from 'apsl-react-native-button';
-
 import { login } from '../../redux/actions/auth'
 import styles from './style'
+
+import Icon from 'react-native-vector-icons/Ionicons'
+import Button from 'apsl-react-native-button'
+import { Navigation }  from 'react-native-navigation'
+import DropdownAlert from 'react-native-dropdownalert'
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  KeyboardAvoidingView
+} from 'react-native'
 
 class LoginContainer extends Component {
   state = {
@@ -17,12 +22,22 @@ class LoginContainer extends Component {
     secureTextEntry: true
   }
 
-  _loginHandler() {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.error) {
+      this.displayError(nextProps.error)
+    }
+  }
+
+  loginHandler() {
     if (this.state.email == '' || this.state.pwd == '') {
-      alert('please input email/password')
+      this.displayError('Please input email/password')
     } else {
       this.props.login({ email: this.state.email, password: this.state.pwd }, this.props.navigator)
     }
+  }
+
+  displayError = (error) => {
+    this.dropdown.alertWithType('error', 'Error', error)
   }
 
   render() {
@@ -30,8 +45,7 @@ class LoginContainer extends Component {
     const { email, pwd, secureTextEntry } = this.state
 
     return (
-      <View style={styles.container}>
-        <KeyboardAvoidingView>
+        <KeyboardAvoidingView style={styles.container}>
           <View style={styles.imageWrapper}>
             <Navigation.Element
               elementId={this.props.sharedImageId}
@@ -47,7 +61,6 @@ class LoginContainer extends Component {
             value={email}
             autoCapitalize="sentences"
             style={styles.input}
-            autoFocus={true}
             keyboardType="email-address"
             placeholderTextColor="#ccc"
             placeholder="Email"
@@ -67,7 +80,7 @@ class LoginContainer extends Component {
               placeholder="Password"
               textInputRef="password"
               returnKeyType="done"
-              onSubmitEditing={() => this._loginHandler()}
+              onSubmitEditing={() => this.loginHandler()}
               onChangeText={pwd => this.setState({ pwd: pwd })}
             />
             <Icon
@@ -82,16 +95,11 @@ class LoginContainer extends Component {
             isDisabled={loading}
             style={styles.loginButton}
             textStyle={{ color: '#fff' }}
-            onPress={() => this._loginHandler()}>
+            onPress={() => this.loginHandler()}>
             LOGIN
           </Button>
-          {error != ''
-            ? <Text style={styles.error}>
-                {error}
-              </Text>
-            : null}
+          <DropdownAlert ref={ref => this.dropdown = ref} updateStatusBar={false} useNativeDriver={true} />
         </KeyboardAvoidingView>
-      </View>
     )
   }
 }
