@@ -4,6 +4,7 @@ import { Navigation }       from 'react-native-navigation'
 import { fetchNgos }        from '../../redux/actions/ngo'
 import { NGO_TYPES }        from '../../redux/types'
 import configureStore       from '../../redux/store'
+import { pushScreen }       from '../../navigation/config'
 import styles               from './styles'
 
 import {
@@ -16,17 +17,29 @@ import {
 
 const store = configureStore()
 
-class NgoScreen extends Component {
+class NgosScreen extends Component {
   componentDidMount() {
     this.props.fetchNgos()
   }
 
   handleNgoPress(name, logo, sharedImageId) {
+    const options = {
+      screen: 'oscar.login',
+      title: `Login to ${name}`,
+      props: { logo, sharedImageId },
+      customTransition: {
+        animations: [
+          { type: 'sharedElement', fromId: sharedImageId, toId: sharedImageId,startDelay: 0, springVelocity: 0.2, duration: 0.5 }
+        ],
+        duration: 0.8
+      }
+    }
     store.dispatch({ type: NGO_TYPES.SET_NGO_NAME, name })
+    pushScreen(this.props.componentId, options)
   }
 
   render() {
-    const { ngo, ngos, loading } = this.props
+    const { ngos, loading } = this.props
 
     if (loading) return (
       <View style={styles.loading}>
@@ -45,13 +58,13 @@ class NgoScreen extends Component {
                 const sharedElementId = `${index}-'sharedImageId'`
                 return (
                   <TouchableHighlight
-                    key={index} 
+                    key={index}
                     underlayColor="transparent"
                     onPress={() => this.handleNgoPress(ngoName, ngoLogo, sharedElementId)}
                   >
                     <View style={styles.imageWrapper}>
-                      <Navigation.Element 
-                        style={styles.shareElement} 
+                      <Navigation.Element
+                        style={styles.shareElement}
                         elementId={sharedElementId}
                       >
                           <Image
@@ -74,7 +87,6 @@ class NgoScreen extends Component {
 
 const mapState = (state) => ({
   ngos: state.ngo.data,
-  ngo: state.ngo.name,
   loading: state.ngo.loading
 })
 
@@ -82,4 +94,4 @@ const mapDispatch = {
   fetchNgos
 }
 
-export default connect(mapState, mapDispatch)(NgoScreen)
+export default connect(mapState, mapDispatch)(NgosScreen)

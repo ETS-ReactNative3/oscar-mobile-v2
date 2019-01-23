@@ -12,24 +12,25 @@ export const startScreen = (screen, props = {}) => {
   })
 }
 
-export const pushScreen = (componentId, { screen, title, props = {}, topBar = true }) => {
+export const pushScreen = (componentId, options = {}) => {
   Navigation.push(componentId, {
     component: {
-      name: screen,
-      passProps: props,
+      name: options.screen,
+      passProps: options.props,
       options: {
         bottomTabs: {
           visible: false
         },
         topBar: {
-          visible: topBar,
+          visible: options.topBar || true,
           title: {
-            text: title
+            text: options.title
           },
           backButton: {
             showTitle: false
           }
-        }
+        },
+        customTransition: options.customTransition
       }
     }
   })
@@ -41,19 +42,13 @@ export const startNgoScreen = () => {
       stack: {
         children: [{
           component: {
-            name: 'oscar.ngo',
+            name: 'oscar.ngos',
             options: {
               topBar: {
                 title: {
                   fontFamily: '.SFUIDisplay-Bold',
-                  text: 'Choose Your NGO',
                   fontSize: 25,
-                  color: '#fff',
-                  alignment: 'center'
-                },
-                background: {
-                  color: MAIN_COLOR,
-                  translucent: false
+                  text: 'Choose Your NGO'
                 }
               }
             }
@@ -62,10 +57,25 @@ export const startNgoScreen = () => {
       }
     }
   })
+}
 
+export const setDefaultOptions = () => {
   Navigation.setDefaultOptions({
     statusBar: {
       style: 'light'
+    },
+    topBar: {
+      title: {
+        color: '#fff',
+        alignment: 'center'
+      },
+      background: {
+        color: MAIN_COLOR,
+        translucent: false
+      },
+      backButton: {
+        color: '#fff'
+      }
     }
   })
 }

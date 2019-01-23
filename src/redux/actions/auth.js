@@ -56,7 +56,7 @@ export function setDefaultHeader(org, headers) {
 //     return axios
 //       .put(
 //         endpoint.baseURL(org) + endpoint.updateTokenPath,
-//         { pin_code: pinNumber },
+//         { pin_number: pinNumber },
 //         { headers: formatHeaders(headers) }
 //       )
 //       .then(response => {
@@ -76,19 +76,19 @@ export function login(credentail, currentComponentId) {
     axios
       .post(endpoint.baseURL(org) + endpoint.login, credentail)
       .then(response => {
-        const { pin_code } = response.data.data
-        pin_code && dispatch(setDefaultHeader(response.headers))
+        const { pin_number } = response.data.data
+        pin_number && dispatch(setDefaultHeader(org, response.headers))
 
         dispatch(requestLoginSuccess(response))
-        pushScreen(currentComponentId, {
-          screen: 'oscar.pinScreen',
-          topBar: false,
-          props: {
-            pinTitle: pin_code ? 'Enter Pin' : 'Set Pin',
-            pinMode: pin_code ? 'compare' : 'set',
-            pinNumber: pin_code && CryptoJS.SHA3(response.data.data.pin_code)
-          }
-        })
+        // pushScreen(currentComponentId, {
+        //   screen: 'oscar.pin',
+        //   topBar: false,
+        //   props: {
+        //     pinTitle: pin_number ? 'Enter Pin' : 'Set Pin',
+        //     pinMode: pin_number ? 'compare' : 'set',
+        //     pinNumber: pin_number && CryptoJS.SHA3(pin_number)
+        //   }
+        // })
       })
       .catch(err => {
         dispatch(requestLoginFailed(err.response.data.errors[0]))
@@ -136,7 +136,7 @@ export function login(credentail, currentComponentId) {
 //         dispatch(requestLoginSuccess(response))
 //         dispatch({ type: logoutActionTypes.RESET_STATE })
 //         dispatch(setDefaultHeader(response.headers))
-//         _goToPinScreen(CryptoJS.SHA3(response.data.data.pin_code))
+//         _goToPinScreen(CryptoJS.SHA3(response.data.data.pin_number))
 //       })
 //       .catch((err) => {
 //         _goToNgoScreen()
