@@ -1,13 +1,19 @@
 import React, { Component }   from 'react'
-import { View, Text, Image, AsyncStorage, TouchableOpacity }  from 'react-native'
 import { connect }            from 'react-redux'
 import { checkConnection }    from '../../redux/actions/internet'
 import logo                   from '../../assets/oscar-logo.png'
-import styles                 from './styles'
+import { startNgoScreen }     from '../../navigation/config'
 import { LANGUAGE_TYPES }     from '../../redux/types'
 import configureStore         from '../../redux/store'
+import styles                 from './styles'
 
-import { Navigation }         from 'react-native-navigation'
+import {
+  View,
+  Text,
+  Image,
+  AsyncStorage,
+  TouchableOpacity
+}  from 'react-native'
 
 const store = configureStore()
 
@@ -15,28 +21,7 @@ class SplashScreen extends Component {
   componentDidMount() {
     this.props.checkConnection()
     this.setLanguage()
-    setTimeout(function() {
-      Navigation.setRoot({
-        root: {
-          stack: {
-            children: [{
-              component: {
-                name: 'oscar.language',
-                options: {
-                  topBar: {
-                    title: {
-                      text: 'Language',
-                      color: '#fff'
-                    },
-                    background: { color: "#009999" }
-                  }
-                }
-              }
-            }]
-          }
-        }
-      })
-    }, 2000)
+    this.authenticateUser()
   }
 
   setLanguage = () => {
@@ -50,12 +35,26 @@ class SplashScreen extends Component {
     })
   }
 
+  authenticateUser = () => {
+    const { hasInternet } = this.props
+
+    // if (user) {
+    //   if (hasInternet) {
+    //     verifyUser()
+    //   } else {
+    //     gotoPinScreen()
+    //   }
+    // } else {
+      setTimeout(function() { startNgoScreen() }, 1500);
+    // }
+  }
+
   render() {
     return (
       <View style={ styles.container }>
-        <Image 
+        <Image
           style={ styles.logo }
-          source={ logo } 
+          source={ logo }
         />
         <TouchableOpacity>
           <Text></Text>
