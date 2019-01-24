@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { startScreen }       from '../../navigation/config'
+import { startScreen, startTabScreen }       from '../../navigation/config'
 import CryptoJS from 'crypto-js'
 import { connect } from 'react-redux'
 import { updatePin } from '../../redux/actions/auth'
@@ -34,7 +34,7 @@ class Pin extends Component {
       if (newCode == oldCode) {
         if (pinMode == 'compare') {
           setTimeout(function () {
-            startScreen('oscar.ngos')
+            startTabScreen()
           }, 200)
         } else {
           this.props.updatePin(code)

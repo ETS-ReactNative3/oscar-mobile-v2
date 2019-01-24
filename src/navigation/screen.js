@@ -8,6 +8,10 @@ import Ngos           from '../screens/Ngos'
 import Login          from '../screens/Login'
 import Pin            from '../screens/Pin'
 import WebView        from '../screens/WebView'
+import Clients        from '../screens/Clients'
+import Tasks          from '../screens/Tasks'
+import Users          from '../screens/Users'
+import Families       from '../screens/Families'
 
 const store = configureStore()
 
@@ -17,5 +21,9 @@ export default () => {
   Navigation.registerComponentWithRedux('oscar.ngos',         () => Ngos,         Provider, store)
   Navigation.registerComponentWithRedux('oscar.login',        () => Login,        Provider, store)
   Navigation.registerComponentWithRedux('oscar.pin',          () => Pin,          Provider, store)
-  Navigation.registerComponentWithRedux('oscar.WebView',      () => WebView,      Provider, store)
+  Navigation.registerComponentWithRedux('oscar.webView',      () => WebView,      Provider, store)
+  Navigation.registerComponentWithRedux('oscar.clients',      () => Clients,      Provider, store)
+  Navigation.registerComponentWithRedux('oscar.tasks',        () => Tasks,        Provider, store)
+  Navigation.registerComponentWithRedux('oscar.families',     () => Families,     Provider, store)
+  Navigation.registerComponentWithRedux('oscar.users',        () => Users,        Provider, store)
 }

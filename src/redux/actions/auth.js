@@ -3,7 +3,7 @@ import { Alert }        from "react-native"
 import CryptoJS         from 'crypto-js'
 import { AUTH_TYPES }   from "../types"
 import endpoint         from "../../constants/endpoint"
-import { pushScreen, startScreen }   from "../../navigation/config"
+import { pushScreen, startScreen, startTabScreen }   from "../../navigation/config"
 
 requestLogin = () => ({
   type: AUTH_TYPES.LOGIN_REQUEST
@@ -63,7 +63,7 @@ export function updatePin(pinCode) {
       .then(response => {
         dispatch(requestLoginSuccess(response))
         dispatch(setDefaultHeader(org, response.headers))
-        startScreen('oscar.ngos')
+        startTabScreen()
       })
       .catch(err => {
         dispatch(requestLoginFailed(err.response.data.errors[0]))

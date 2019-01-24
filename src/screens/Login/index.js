@@ -12,7 +12,8 @@ import {
   Text,
   Image,
   TextInput,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Vibration
 } from 'react-native'
 
 class LoginContainer extends Component {
@@ -38,6 +39,9 @@ class LoginContainer extends Component {
 
   displayError = (error) => {
     this.dropdown.alertWithType('error', 'Error', error)
+    setTimeout(function () {
+      Vibration.vibrate(1000)
+    }, 300);
   }
 
   render() {
