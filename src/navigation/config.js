@@ -22,7 +22,8 @@ export const pushScreen = (componentId, options = {}) => {
           visible: false
         },
         topBar: {
-          visible: options.topBar || true,
+          visible: options.topBar == undefined ? true : options.topBar,
+          drawBehind: options.drawBehind,
           title: {
             text: options.title
           },

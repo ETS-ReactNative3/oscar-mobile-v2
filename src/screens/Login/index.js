@@ -32,7 +32,7 @@ class LoginContainer extends Component {
     if (this.state.email == '' || this.state.pwd == '') {
       this.displayError('Please input email/password')
     } else {
-      this.props.login({ email: this.state.email, password: this.state.pwd }, this.props.navigator)
+      this.props.login({ email: this.state.email, password: this.state.pwd }, this.props.componentId)
     }
   }
 
