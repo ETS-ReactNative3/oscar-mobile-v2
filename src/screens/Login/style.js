@@ -31,14 +31,10 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     elevation: 3
   },
-  error: {
-  	textAlign: 'center',
-  	marginTop: 18
-  },
-  icon: {
+  showPassword: {
     position: 'absolute',
-    top: 33,
-    right: 0
+    right: 6,
+    top: 6
   }
 })
 

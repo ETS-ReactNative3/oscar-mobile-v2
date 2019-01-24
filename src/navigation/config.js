@@ -1,18 +1,7 @@
 import { Navigation } from 'react-native-navigation'
 import { MAIN_COLOR } from '../constants/colors'
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-async function perpareIcon() {
-  const icons = await Promise.all([
-    Icon.getImageSource('person', 30),
-    Icon.getImageSource('people', 30),
-    Icon.getImageSource('assignment', 30),
-    Icon.getImageSource('account-box', 30),
-    Icon.getImageSource('web', 30)
-  ])
-  const [person, people, assignment, accountBox, web ] = icons
-  return { person, people, assignment, accountBox, web }
-}
+import i18n           from '../i18n'
+import appIcon        from '../utils/Icon'
 
 export const startScreen = (screen, props = {}) => {
   Navigation.setRoot({
@@ -62,7 +51,7 @@ export const startNgoScreen = () => {
                 title: {
                   fontFamily: '.SFUIDisplay-Bold',
                   fontSize: 25,
-                  text: 'Choose Your NGO'
+                  text: i18n.t('choose_ngo')
                 }
               }
             }
@@ -95,7 +84,7 @@ export const setDefaultOptions = () => {
 }
 
 export const startTabScreen = async () => {
-  const icons = await perpareIcon()
+  const icons = await appIcon()
   Navigation.setRoot({
     root: {
       bottomTabs: {
@@ -120,6 +109,8 @@ export const startTabScreen = async () => {
                   text: "Clients",
                   testID: 'CLIENTS_TAB_BAR_BUTTON',
                   icon: icons.person,
+                  selectedIconColor: MAIN_COLOR,
+                  selectedTextColor: MAIN_COLOR
                 }
               }
             }
@@ -143,6 +134,8 @@ export const startTabScreen = async () => {
                   text: "Tasks",
                   testID: 'TASKS_TAB_BAR_BUTTON',
                   icon: icons.assignment,
+                  selectedIconColor: MAIN_COLOR,
+                  selectedTextColor: MAIN_COLOR
                 }
               }
             }
@@ -166,6 +159,8 @@ export const startTabScreen = async () => {
                   text: "Familes",
                   testID: 'FAMILIES_TAB_BAR_BUTTON',
                   icon: icons.people,
+                  selectedIconColor: MAIN_COLOR,
+                  selectedTextColor: MAIN_COLOR
                 }
               }
             }
@@ -179,8 +174,14 @@ export const startTabScreen = async () => {
                     topBar: {
                       title: {
                         text: 'Users'
-                      }
-                    }
+                      },
+                      rightButtons: [
+                        {
+                          id: 'TRANSLATION',
+                          icon: icons.translation
+                        }
+                      ]
+                    },
                   }
                 }
               }],
@@ -189,23 +190,33 @@ export const startTabScreen = async () => {
                   text: "Users",
                   testID: 'USERS_TAB_BAR_BUTTON',
                   icon: icons.accountBox,
+                  selectedIconColor: MAIN_COLOR,
+                  selectedTextColor: MAIN_COLOR
                 }
               }
             }
           },
           {
-            component: {
-              name: 'oscar.webView',
-              options: {
-                topBar: {
-                  title: {
-                    text: 'Web View'
+            stack: {
+              children: [{
+                component: {
+                  name: 'oscar.webView',
+                  options: {
+                    topBar: {
+                      title: {
+                        text: 'Oscar'
+                      }
+                    }
                   }
-                },
+                }
+              }],
+              options: {
                 bottomTab: {
-                  text: 'Web View',
+                  text: "Oscar",
                   testID: 'WEB_TAB_BAR_BUTTON',
                   icon: icons.web,
+                  selectedIconColor: MAIN_COLOR,
+                  selectedTextColor: MAIN_COLOR
                 }
               }
             }

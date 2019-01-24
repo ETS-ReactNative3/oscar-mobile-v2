@@ -1,42 +1,13 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import { connect }          from 'react-redux'
+import { LANGUAGE_TYPES }   from '../../redux/types'
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  AsyncStorage
-} from 'react-native'
-import configureStore from '../../redux/store'
-import { LANGUAGE_TYPES } from '../../redux/types'
-// import DropdownAlert from 'react-native-dropdownalert'
-
-var store = configureStore()
-const { width } = Dimensions.get('window')
+import { StyleSheet, View, Text, Image, TouchableOpacity, AsyncStorage } from 'react-native'
 
 class LanguageScreen extends Component {
-  state = {
-    currentLanguage: this.props.language
-  }
-
   updateLanguage(language) {
-    store.dispatch({
-      type: LANGUAGE_TYPES.SET_LANGUAGE,
-      language
-    })
+    this.props.setLanguage(language)
     AsyncStorage.setItem('language', language)
-    this.setState({ currentLanguage: language })
-
-    // this.dropdown.alertWithType(
-    //   'success',
-    //   'Message',
-    //   `You’ve switched your language to ${language == 'km' ? 'ខ្មែរ' : language == 'en' ? 'English' : 'Burmese'}`
-    // )
   }
 
   getLanguageObject = {
@@ -55,22 +26,22 @@ class LanguageScreen extends Component {
   }
 
   renderLanguageButton = (abbr) => {
-    const isActive = abbr === this.state.currentLanguage
+    const isActive = abbr === this.props.language
+    const language = this.getLanguageObject[abbr]
 
     return (
       <TouchableOpacity onPress={ () => this.updateLanguage(abbr) }>
         <View style={[ styles.languageWrapper, isActive ? styles.active : {} ]}>
           <Text style={[ styles.languageTitle, isActive ? styles.activeText : {} ]}>
-            { this.getLanguageObject[abbr].title }
+            { language.title }
           </Text>
-          <Image source={ this.getLanguageObject[abbr].flag } style={ styles.flag }/>
+          <Image source={ language.flag } style={ styles.flag }/>
         </View>
       </TouchableOpacity>
     )
   }
 
   render() {
-    console.log(this.props.language)
     return (
       <View style={ styles.container }>
         { this.renderLanguageButton('en') }
@@ -113,4 +84,11 @@ const mapState = (state) => ({
   language: state.language.language
 })
 
-export default connect(mapState)(LanguageScreen)
+const mapDispatch = (dispatch) => ({
+  setLanguage: (language) => dispatch({
+    type: LANGUAGE_TYPES.SET_LANGUAGE,
+    language
+  })
+})
+
+export default connect(mapState, mapDispatch)(LanguageScreen)

@@ -1,17 +1,15 @@
-import { INTERNET_TYPES as types } from '../types'
+import Immutable          from 'seamless-immutable'
+import { INTERNET_TYPES } from '../types'
 
-const initialState = {
+const initialState = Immutable({
   hasInternet: false
-}
+})
 
 export default internetReducer = (state = initialState, action) => {
   switch (action.type) {
 
-    case types.UPDATE_CONNECTION:
-      return {
-        ...state,
-        hasInternet: action.connection
-      }
+    case INTERNET_TYPES.UPDATE_CONNECTION:
+      return state.set('hasInternet', action.connection)
 
     default:
       return state

@@ -1,4 +1,4 @@
-import { NetInfo } from 'react-native'
+import { NetInfo }        from 'react-native'
 import { INTERNET_TYPES } from '../types'
 
 updateConnection = (connection) => ({

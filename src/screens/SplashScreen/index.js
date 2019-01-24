@@ -1,21 +1,11 @@
-import React, { Component }   from 'react'
-import { connect }            from 'react-redux'
-import { checkConnection }    from '../../redux/actions/internet'
-import logo                   from '../../assets/oscar-logo.png'
-import { startNgoScreen }     from '../../navigation/config'
-import { LANGUAGE_TYPES }     from '../../redux/types'
-import configureStore         from '../../redux/store'
-import styles                 from './styles'
-
-import {
-  View,
-  Text,
-  Image,
-  AsyncStorage,
-  TouchableOpacity
-}  from 'react-native'
-
-const store = configureStore()
+import React, { Component }           from 'react'
+import { connect }                    from 'react-redux'
+import { View, Image, AsyncStorage }  from 'react-native'
+import logo                           from '../../assets/oscar-logo.png'
+import { checkConnection }            from '../../redux/actions/internet'
+import { startNgoScreen }             from '../../navigation/config'
+import { LANGUAGE_TYPES }             from '../../redux/types'
+import styles                         from './styles'
 
 class SplashScreen extends Component {
   componentDidMount() {
@@ -26,27 +16,13 @@ class SplashScreen extends Component {
 
   setLanguage = () => {
     AsyncStorage.getItem('language', (err, result) => {
-      if(err === null && result !== null) {
-        store.dispatch({
-          type: LANGUAGE_TYPES.SET_LANGUAGE,
-          language: result
-        })
-      }
+      if(err === null && result !== null)
+        this.props.setLanguage(result)
     })
   }
 
   authenticateUser = () => {
-    const { hasInternet } = this.props
-
-    // if (user) {
-    //   if (hasInternet) {
-    //     verifyUser()
-    //   } else {
-    //     gotoPinScreen()
-    //   }
-    // } else {
-      setTimeout(function() { startNgoScreen() }, 1500);
-    // }
+    setTimeout(() => startNgoScreen(), 1500);
   }
 
   render() {
@@ -56,9 +32,6 @@ class SplashScreen extends Component {
           style={ styles.logo }
           source={ logo }
         />
-        <TouchableOpacity>
-          <Text></Text>
-        </TouchableOpacity>
       </View>
     )
   }
@@ -68,8 +41,12 @@ const mapState = (state) => ({
   hasInternet: state.internet.hasInternet
 })
 
-const mapDispatch = {
-  checkConnection
-}
+const mapDispatch = (dispatch) => ({
+  checkConnection: () => dispatch(checkConnection()),
+  setLanguage: (language) => dispatch({
+    type: LANGUAGE_TYPES.SET_LANGUAGE,
+    language
+  })
+})
 
 export default connect(mapState, mapDispatch)(SplashScreen)

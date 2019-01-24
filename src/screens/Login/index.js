@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { login } from '../../redux/actions/auth'
-import styles from './style'
+import { connect }          from 'react-redux'
+import { Navigation }       from 'react-native-navigation'
+import Icon                 from 'react-native-vector-icons/Ionicons'
+import Button               from 'apsl-react-native-button'
+import DropdownAlert        from 'react-native-dropdownalert'
+import { login }            from '../../redux/actions/auth'
+import styles               from './style'
 
-import Icon from 'react-native-vector-icons/Ionicons'
-import Button from 'apsl-react-native-button'
-import { Navigation }  from 'react-native-navigation'
-import DropdownAlert from 'react-native-dropdownalert'
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import {
 class LoginContainer extends Component {
   state = {
     email: '',
-    pwd: '',
+    password: '',
     secureTextEntry: true
   }
 
@@ -30,23 +30,21 @@ class LoginContainer extends Component {
   }
 
   loginHandler() {
-    if (this.state.email == '' || this.state.pwd == '') {
+    const { email, password } = this.state
+    if (!email || !password)
       this.displayError('Please input email/password')
-    } else {
-      this.props.login({ email: this.state.email, password: this.state.pwd }, this.props.componentId)
-    }
+    else
+      this.props.login({ email, password }, this.props.componentId)
   }
 
   displayError = (error) => {
-    this.dropdown.alertWithType('error', 'Error', error)
-    setTimeout(function () {
-      Vibration.vibrate(1000)
-    }, 300);
+    this.refs.dropdown.alertWithType('error', 'Error', error)
+    setTimeout(() => Vibration.vibrate(1000), 300)
   }
 
   render() {
     const { user, error, loading } = this.props
-    const { email, pwd, secureTextEntry } = this.state
+    const { email, password, secureTextEntry } = this.state
 
     return (
         <KeyboardAvoidingView style={styles.container}>
@@ -63,46 +61,48 @@ class LoginContainer extends Component {
           </View>
           <TextInput
             value={email}
-            autoCapitalize="sentences"
+            autoCapitalize="none"
             style={styles.input}
             keyboardType="email-address"
             placeholderTextColor="#ccc"
             placeholder="Email"
             onSubmitEditing={() => this.refs.password.focus()}
             returnKeyType="next"
-            textInputRef="email"
-            onChangeText={email => this.setState({ email: email })}
+            onChangeText={email => this.setState({ email })}
           />
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TextInput
-              value={pwd}
-              autoCapitalize="sentences"
+              value={password}
+              autoCapitalize="none"
               ref="password"
               style={[styles.input, { flex: 1 }]}
               placeholderTextColor="#ccc"
               secureTextEntry={secureTextEntry}
               placeholder="Password"
-              textInputRef="password"
               returnKeyType="done"
               onSubmitEditing={() => this.loginHandler()}
-              onChangeText={pwd => this.setState({ pwd: pwd })}
+              onChangeText={password => this.setState({ password })}
             />
             <Icon
-              onPress={() => this.setState({ secureTextEntry: !this.state.secureTextEntry })}
-              name={ this.state.secureTextEntry ? 'ios-eye' : 'ios-eye-off'  }
+              onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
+              name={ secureTextEntry ? 'ios-eye' : 'ios-eye-off'  }
               size={30}
-              style={{position: 'absolute', right: 6, top: 6}}
+              style={styles.showPassword}
             />
           </View>
           <Button
-            loading={loading}
+            isLoading={loading}
             isDisabled={loading}
             style={styles.loginButton}
             textStyle={{ color: '#fff' }}
             onPress={() => this.loginHandler()}>
             LOGIN
           </Button>
-          <DropdownAlert ref={ref => this.dropdown = ref} updateStatusBar={false} useNativeDriver={true} />
+          <DropdownAlert
+            ref='dropdown'
+            updateStatusBar={false}
+            useNativeDriver={true}
+          />
         </KeyboardAvoidingView>
     )
   }

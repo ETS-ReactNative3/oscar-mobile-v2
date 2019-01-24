@@ -3,7 +3,6 @@ import { connect }          from 'react-redux'
 import { Navigation }       from 'react-native-navigation'
 import { fetchNgos }        from '../../redux/actions/ngo'
 import { NGO_TYPES }        from '../../redux/types'
-import configureStore       from '../../redux/store'
 import { pushScreen }       from '../../navigation/config'
 import styles               from './styles'
 
@@ -14,8 +13,6 @@ import {
   TouchableHighlight,
   ActivityIndicator
 } from 'react-native'
-
-const store = configureStore()
 
 class NgosScreen extends Component {
   componentDidMount() {
@@ -34,7 +31,7 @@ class NgosScreen extends Component {
         duration: 0.8
       }
     }
-    store.dispatch({ type: NGO_TYPES.SET_NGO_NAME, name })
+    this.props.setNgoName(name)
     pushScreen(this.props.componentId, options)
   }
 
@@ -90,8 +87,9 @@ const mapState = (state) => ({
   loading: state.ngo.loading
 })
 
-const mapDispatch = {
-  fetchNgos
-}
+const mapDispatch = (dispatch) => ({
+  fetchNgos: () => dispatch(fetchNgos()),
+  setNgoName: (name) => dispatch({ type: NGO_TYPES.SET_NGO_NAME, name })
+})
 
 export default connect(mapState, mapDispatch)(NgosScreen)

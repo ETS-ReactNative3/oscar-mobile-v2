@@ -11,7 +11,7 @@ requestLogin = () => ({
 
 requestLoginSuccess = ({ data, headers }) => ({
   type: AUTH_TYPES.LOGIN_REQUEST_SUCCESS,
-  data,
+  data: data.data,
   headers
 })
 

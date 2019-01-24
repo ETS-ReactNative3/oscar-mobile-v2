@@ -1,14 +1,10 @@
-import React, { Component } from 'react'
-import { startScreen, startTabScreen }       from '../../navigation/config'
-import CryptoJS from 'crypto-js'
-import { connect } from 'react-redux'
-import { updatePin } from '../../redux/actions/auth'
-import {
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native'
-import PinCode from '../../components/pin'
+import React, { Component }             from 'react'
+import { connect }                      from 'react-redux'
+import { View, Text, StyleSheet }       from 'react-native'
+import CryptoJS                         from 'crypto-js'
+import { startScreen, startTabScreen }  from '../../navigation/config'
+import { updatePin }                    from '../../redux/actions/auth'
+import PinCode                          from '../../components/pin'
 
 class Pin extends Component {
   state = {
@@ -32,13 +28,10 @@ class Pin extends Component {
       const oldCode = String(pinCode)
 
       if (newCode == oldCode) {
-        if (pinMode == 'compare') {
-          setTimeout(function () {
-            startTabScreen()
-          }, 200)
-        } else {
+        if (pinMode == 'compare')
+          setTimeout(() => startTabScreen(), 200)
+        else
           this.props.updatePin(code)
-        }
       } else {
         vibration()
         clear()
