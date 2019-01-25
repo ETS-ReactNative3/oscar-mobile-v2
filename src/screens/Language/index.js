@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
 import { connect }          from 'react-redux'
 import { LANGUAGE_TYPES }   from '../../redux/types'
+import Database             from '../../config/Database'
 
 import { StyleSheet, View, Text, Image, TouchableOpacity, AsyncStorage } from 'react-native'
 
 class LanguageScreen extends Component {
   updateLanguage(language) {
     this.props.setLanguage(language)
-    AsyncStorage.setItem('language', language)
+
+    const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
+    Database.write(() => { languageSetting.value = language })
   }
 
   getLanguageObject = {
