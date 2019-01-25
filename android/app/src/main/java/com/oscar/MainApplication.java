@@ -3,6 +3,7 @@ package com.oscar;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import io.realm.react.RealmReactPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.facebook.react.ReactNativeHost;
@@ -43,7 +44,8 @@ public class MainApplication extends NavigationApplication {
         return Arrays.<ReactPackage>asList(
             new RNI18nPackage(),
             new VectorIconsPackage(),
-            new RealmReactPackage()
+            new RealmReactPackage(),
+            new ReactNativeRestartPackage()
         );
     }
 

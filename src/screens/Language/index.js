@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
+import { Alert }            from 'react-native'
 import { connect }          from 'react-redux'
 import { LANGUAGE_TYPES }   from '../../redux/types'
 import Database             from '../../config/Database'
+import RNRestart            from 'react-native-restart'
+import i18n                 from '../../i18n/index'
 
 import { StyleSheet, View, Text, Image, TouchableOpacity, AsyncStorage } from 'react-native'
 
@@ -11,6 +14,16 @@ class LanguageScreen extends Component {
 
     const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
     Database.write(() => { languageSetting.value = language })
+
+    Alert.alert(
+      i18n.t('language.alert_title'),
+      i18n.t('language.restart_now'),
+      [
+        { text: i18n.t('language.yes'), onPress: () => RNRestart.Restart() },
+        { text: i18n.t('language.no'), style: 'cancel' }
+      ],
+      { cancelable: false }
+    )
   }
 
   getLanguageObject = {
@@ -31,7 +44,6 @@ class LanguageScreen extends Component {
   renderLanguageButton = (abbr) => {
     const isActive = abbr === this.props.language
     const language = this.getLanguageObject[abbr]
-
     return (
       <TouchableOpacity onPress={ () => this.updateLanguage(abbr) }>
         <View style={[ styles.languageWrapper, isActive ? styles.active : {} ]}>

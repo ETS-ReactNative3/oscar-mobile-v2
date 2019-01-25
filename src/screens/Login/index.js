@@ -6,6 +6,7 @@ import Button               from 'apsl-react-native-button'
 import DropdownAlert        from 'react-native-dropdownalert'
 import { login }            from '../../redux/actions/auth'
 import styles               from './style'
+import i18n                 from '../../i18n/index'
 
 import {
   View,
@@ -65,7 +66,7 @@ class LoginContainer extends Component {
             style={styles.input}
             keyboardType="email-address"
             placeholderTextColor="#ccc"
-            placeholder="Email"
+            placeholder={i18n.t('auth.email')}
             onSubmitEditing={() => this.refs.password.focus()}
             returnKeyType="next"
             onChangeText={email => this.setState({ email })}
@@ -78,7 +79,7 @@ class LoginContainer extends Component {
               style={[styles.input, { flex: 1 }]}
               placeholderTextColor="#ccc"
               secureTextEntry={secureTextEntry}
-              placeholder="Password"
+              placeholder={i18n.t('auth.password')}
               returnKeyType="done"
               onSubmitEditing={() => this.loginHandler()}
               onChangeText={password => this.setState({ password })}
@@ -96,7 +97,7 @@ class LoginContainer extends Component {
             style={styles.loginButton}
             textStyle={{ color: '#fff' }}
             onPress={() => this.loginHandler()}>
-            LOGIN
+            {i18n.t('auth.login')}
           </Button>
           <DropdownAlert
             ref='dropdown'

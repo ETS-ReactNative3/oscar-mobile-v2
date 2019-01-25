@@ -21,6 +21,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-i18n": "^2.0.15",
     "react-native-navigation": "^2.7.1",
+    "react-native-restart": "0.0.8",
     "react-native-vector-icons": "^6.2.0",
     "react-redux": "^6.0.0",
     "realm": "^2.22.0",

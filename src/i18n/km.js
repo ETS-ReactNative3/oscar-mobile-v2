@@ -1,7 +1,23 @@
 export default {
   choose_ngo:"ជ្រើសរើសអង្គការរបស់អ្នក",
+  language: {
+    languages: 'ភាសា',
+    alert_title: 'ប្ដូរ​ភាសា',
+    restart_now: 'តើអ្នកចង់ចាប់ផ្តើមកម្មវិធីឡើងវិញឥឡូវនេះទេ?',
+    yes: 'បាទ/ចាស',
+    no: 'ទេ'
+  },
+  auth: {
+    confirm_pin: 'បញ្ជាក់PINកូដ',
+    enter_pin: 'បញ្ចូលលេខកូដសម្ងាត់',
+    set_pin: 'បញ្ចូលលេខកូដសម្ងាត់',
+    login: 'ចូល',
+    login_to: 'ចូល​ទៅ​ក្នុង',
+    email: 'អុីម៉ែល',
+    password: 'ពាក្យសម្ងាត់'
+  },
   client: {
-    title: 'CLIENTS',
+    title: 'អតិថិជន',
     assessments: 'របាយការណ៍នៃការប៉ាន់ប្រមាណ',
     case_notes: 'កំណត់ត្រាករណី',
     tasks: 'កាតព្វកិច្ច',
@@ -196,7 +212,8 @@ export default {
     set_pin: 'កំណត់លេខសំងាត់',
   },
   user: {
-    title: 'ពត៌មានផ្ទាល់ខ្លួន',
+    about_user: 'ពត៌មានផ្ទាល់ខ្លួន',
+    title: 'អ្នក​ប្រើ',
     first_name: 'នាមខ្លួនជាអក្សរឡាតាំង',
     last_name: 'នាមត្រកូល',
     job_title: 'មុខតំណែង',

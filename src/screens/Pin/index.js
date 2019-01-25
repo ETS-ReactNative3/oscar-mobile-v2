@@ -5,6 +5,7 @@ import CryptoJS                         from 'crypto-js'
 import { startScreen, startTabScreen }  from '../../navigation/config'
 import { updatePin }                    from '../../redux/actions/auth'
 import PinCode                          from '../../components/pin'
+import i18n                             from '../../i18n/index'
 
 class Pin extends Component {
   state = {
@@ -19,7 +20,7 @@ class Pin extends Component {
     if (pinMode == 'set') {
       this.setState({
         pinCode:  CryptoJS.SHA3(code),
-        pinTitle: 'Confirm Your Pin Code',
+        pinTitle: i18n.t('auth.confirm_pin'),
         pinMode: 'confirm'
       })
       clear()

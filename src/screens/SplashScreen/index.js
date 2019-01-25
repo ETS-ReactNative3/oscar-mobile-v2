@@ -6,6 +6,7 @@ import { checkConnection }            from '../../redux/actions/internet'
 import { startNgoScreen }             from '../../navigation/config'
 import { LANGUAGE_TYPES }             from '../../redux/types'
 import styles                         from './styles'
+import Database                       from '../../config/Database'
 
 class SplashScreen extends Component {
   componentDidMount() {
@@ -15,10 +16,10 @@ class SplashScreen extends Component {
   }
 
   setLanguage = () => {
-    AsyncStorage.getItem('language', (err, result) => {
-      if(err === null && result !== null)
-        this.props.setLanguage(result)
-    })
+    const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
+    if (languageSetting.value !== null) {
+      this.props.setLanguage(languageSetting.value)
+    }
   }
 
   authenticateUser = () => {

@@ -3,6 +3,7 @@ import { Alert }        from "react-native"
 import CryptoJS         from 'crypto-js'
 import { AUTH_TYPES }   from "../types"
 import endpoint         from "../../constants/endpoint"
+import i18n             from '../../i18n/index'
 import { pushScreen, startScreen, startTabScreen }   from "../../navigation/config"
 
 requestLogin = () => ({
@@ -87,7 +88,7 @@ export function login(credentail, currentComponentId) {
           topBar: false,
           drawBehind: true,
           props: {
-            pinTitle: pin_code ? 'Enter Your Pin Code' : 'Enter a Pin Code',
+            pinTitle: pin_code ? i18n.t('auth.enter_pin') : i18n.t('auth.set_pin'),
             pinMode: pin_code ? 'compare' : 'set',
             pinCode: pin_code && CryptoJS.SHA3(pin_code)
           }

@@ -98,7 +98,7 @@ export const startTabScreen = async () => {
                   options: {
                     topBar: {
                       title: {
-                        text: 'Clients',
+                        text: i18n.t('client.title'),
                       }
                     }
                   }
@@ -106,7 +106,7 @@ export const startTabScreen = async () => {
               }],
               options: {
                 bottomTab: {
-                  text: "Clients",
+                  text: i18n.t('client.title'),
                   testID: 'CLIENTS_TAB_BAR_BUTTON',
                   icon: icons.person,
                   selectedIconColor: MAIN_COLOR,
@@ -123,7 +123,7 @@ export const startTabScreen = async () => {
                   options: {
                     topBar: {
                       title: {
-                        text: 'Tasks'
+                        text: i18n.t('task.title')
                       }
                     }
                   }
@@ -131,7 +131,7 @@ export const startTabScreen = async () => {
               }],
               options: {
                 bottomTab: {
-                  text: "Tasks",
+                  text: i18n.t('task.title'),
                   testID: 'TASKS_TAB_BAR_BUTTON',
                   icon: icons.assignment,
                   selectedIconColor: MAIN_COLOR,
@@ -148,7 +148,7 @@ export const startTabScreen = async () => {
                   options: {
                     topBar: {
                       title: {
-                        text: 'Familes'
+                        text: i18n.t('family.title')
                       }
                     }
                   }
@@ -156,7 +156,7 @@ export const startTabScreen = async () => {
               }],
               options: {
                 bottomTab: {
-                  text: "Familes",
+                  text: i18n.t('family.title'),
                   testID: 'FAMILIES_TAB_BAR_BUTTON',
                   icon: icons.people,
                   selectedIconColor: MAIN_COLOR,
@@ -173,12 +173,13 @@ export const startTabScreen = async () => {
                   options: {
                     topBar: {
                       title: {
-                        text: 'Users'
+                        text: i18n.t('user.about_user')
                       },
                       rightButtons: [
                         {
                           id: 'TRANSLATION',
-                          icon: icons.translation
+                          icon: icons.translation,
+                          color: '#fff'
                         }
                       ]
                     },
@@ -187,7 +188,7 @@ export const startTabScreen = async () => {
               }],
               options: {
                 bottomTab: {
-                  text: "Users",
+                  text: i18n.t('user.title'),
                   testID: 'USERS_TAB_BAR_BUTTON',
                   icon: icons.accountBox,
                   selectedIconColor: MAIN_COLOR,

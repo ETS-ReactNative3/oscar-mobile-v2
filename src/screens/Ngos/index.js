@@ -5,6 +5,7 @@ import { fetchNgos }        from '../../redux/actions/ngo'
 import { NGO_TYPES }        from '../../redux/types'
 import { pushScreen }       from '../../navigation/config'
 import styles               from './styles'
+import i18n                 from '../../i18n/index'
 
 import {
   View,
@@ -22,7 +23,7 @@ class NgosScreen extends Component {
   handleNgoPress(name, logo, sharedImageId) {
     const options = {
       screen: 'oscar.login',
-      title: `Login to ${name}`,
+      title: `${i18n.t('auth.login_to')} ${name}`,
       props: { logo, sharedImageId },
       customTransition: {
         animations: [
