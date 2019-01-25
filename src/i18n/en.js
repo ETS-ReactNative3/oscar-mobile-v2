@@ -156,7 +156,7 @@ export default {
     title: 'Tasks',
     overdue: 'Overdue Tasks',
     today: 'Today Tasks',
-    upcomming: 'Upcomming Tasks',
+    upcoming: 'Upcoming Tasks',
     domain: 'Domain',
     task_detail: 'Enter Task details',
     complete_date: 'Completion Date',

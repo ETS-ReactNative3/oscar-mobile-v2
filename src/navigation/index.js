@@ -1,6 +1,6 @@
 import { Navigation }  from 'react-native-navigation'
-import { startScreen, setDefaultOptions } from './config'
 import registerScreens from './screen'
+import { startScreen, setDefaultOptions } from './config'
 
 Navigation.events().registerAppLaunchedListener(() => {
   setDefaultOptions()

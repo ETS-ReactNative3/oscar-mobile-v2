@@ -20,3 +20,16 @@ export const AUTH_TYPES = createConstants(
   'UPDATE_USER_SUCCESS',
   'UPDATE_USER_FAILED',
 )
+
+export const USER_TYPES = createConstants(
+  'UPDATE_USER',
+  'USERS_REQUESTING',
+  'USERS_REQUEST_SUCCESS',
+  'USERS_REQUEST_FAILED',
+)
+
+export const DOMAIN_TYPES = createConstants(
+  'DOMAIN_REQUESTING',
+  'DOMAIN_REQUEST_SUCCESS',
+  'DOMAIN_REQUEST_FAILED',
+)

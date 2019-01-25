@@ -157,7 +157,7 @@ export default {
     title: 'កាតព្វកិច្ច',
     overdue: 'កាតព្វកិច្ចផុតកំណត់',
     today: 'កាតព្វកិច្ចថ្ងៃនេះ',
-    upcomming: 'កាតព្វកិច្ចបន្ទាប់',
+    upcoming: 'កាតព្វកិច្ចបន្ទាប់',
     domain: 'កត្តា',
     task_detail: 'ព័ត៌មានពីកាតព្វកិច្ច',
     complete_date: 'ថ្ងៃកំណត់',
