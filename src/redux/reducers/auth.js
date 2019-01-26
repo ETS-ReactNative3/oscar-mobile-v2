@@ -3,7 +3,7 @@ import { AUTH_TYPES } from '../types'
 
 const initialState = Immutable({
   error: '',
-  data: {},
+  data: null,
   headers: {},
   loading: false
 })

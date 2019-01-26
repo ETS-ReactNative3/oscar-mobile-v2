@@ -5,11 +5,11 @@ import { fetchNgos }        from '../../redux/actions/ngo'
 import { NGO_TYPES }        from '../../redux/types'
 import { pushScreen }       from '../../navigation/config'
 import styles               from './styles'
-import i18n                 from '../../i18n/index'
+import i18n                 from '../../i18n'
+import FastImage            from 'react-native-fast-image'
 
 import {
   View,
-  Image,
   ScrollView,
   TouchableHighlight,
   ActivityIndicator
@@ -65,7 +65,7 @@ class NgosScreen extends Component {
                         style={styles.shareElement}
                         elementId={sharedElementId}
                       >
-                          <Image
+                          <FastImage
                             resizeMode="contain"
                             style={styles.logo}
                             source={{ uri: ngoLogo }}

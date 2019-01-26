@@ -4,9 +4,15 @@ import { connect }          from 'react-redux'
 import { LANGUAGE_TYPES }   from '../../redux/types'
 import Database             from '../../config/Database'
 import RNRestart            from 'react-native-restart'
-import i18n                 from '../../i18n/index'
+import i18n                 from '../../i18n'
 
-import { StyleSheet, View, Text, Image, TouchableOpacity, AsyncStorage } from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity
+} from 'react-native'
 
 class LanguageScreen extends Component {
   updateLanguage(language) {

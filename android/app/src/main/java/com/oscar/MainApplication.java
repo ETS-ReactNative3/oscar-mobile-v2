@@ -3,6 +3,7 @@ package com.oscar;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.dylanvann.fastimage.FastImageViewPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import io.realm.react.RealmReactPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
@@ -45,7 +46,8 @@ public class MainApplication extends NavigationApplication {
             new RNI18nPackage(),
             new VectorIconsPackage(),
             new RealmReactPackage(),
-            new ReactNativeRestartPackage()
+            new ReactNativeRestartPackage(),
+            new FastImageViewPackage()
         );
     }
 

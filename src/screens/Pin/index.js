@@ -5,7 +5,7 @@ import CryptoJS                         from 'crypto-js'
 import { startScreen, startTabScreen }  from '../../navigation/config'
 import { updatePin }                    from '../../redux/actions/auth'
 import PinCode                          from '../../components/pin'
-import i18n                             from '../../i18n/index'
+import i18n                             from '../../i18n'
 
 class Pin extends Component {
   state = {
@@ -16,7 +16,6 @@ class Pin extends Component {
 
   verifyCode = (code, clear, vibration) => {
     const { pinMode, pinCode  } = this.state
-
     if (pinMode == 'set') {
       this.setState({
         pinCode:  CryptoJS.SHA3(code),
@@ -65,8 +64,13 @@ const styles = StyleSheet.create({
   }
 })
 
+const mapState = (state) => ({
+  user: state.auth.data,
+  headers: state.auth.headers
+})
+
 const mapDispatch = {
   updatePin
 }
 
-export default connect(null, mapDispatch)(Pin)
+export default connect(mapState, mapDispatch)(Pin)

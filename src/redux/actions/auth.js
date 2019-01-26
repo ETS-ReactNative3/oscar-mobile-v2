@@ -1,10 +1,15 @@
 import axios            from "axios"
-import { Alert }        from "react-native"
+import { Alert, AsyncStorage }        from "react-native"
 import CryptoJS         from 'crypto-js'
 import { AUTH_TYPES }   from "../types"
 import endpoint         from "../../constants/endpoint"
-import i18n             from '../../i18n/index'
-import { pushScreen, startScreen, startTabScreen }   from "../../navigation/config"
+import i18n             from '../../i18n'
+import {
+  pushScreen,
+  startScreen,
+  startTabScreen,
+  startNgoScreen
+} from "../../navigation/config"
 
 requestLogin = () => ({
   type: AUTH_TYPES.LOGIN_REQUEST
@@ -41,8 +46,13 @@ formatHeaders = (headers) => ({
   uid: headers["uid"]
 })
 
-export function setDefaultHeader(org, headers) {
-  return (dispatch) => {
+export function setDefaultHeader(accHeaders) {
+  let headers = accHeaders
+  return (dispatch, getState) => {
+    const org = getState().ngo.name
+    if (headers == null) {
+      headers = getState().auth.headers
+    }
     axios.defaults.headers.common['access-token'] = headers['access-token']
     axios.defaults.headers.common['client'] = headers['client']
     axios.defaults.headers.common['uid'] = headers['uid']
@@ -55,7 +65,7 @@ export function updatePin(pinCode) {
     const org = getState().ngo.name
     const headers = getState().auth.headers
     dispatch(requestLogin())
-    return axios
+    axios
       .put(
         endpoint.baseURL(org) + endpoint.updateTokenPath,
         { pin_code: pinCode },
@@ -63,7 +73,7 @@ export function updatePin(pinCode) {
       )
       .then(response => {
         dispatch(requestLoginSuccess(response))
-        dispatch(setDefaultHeader(org, response.headers))
+        dispatch(setDefaultHeader(response.headers))
         startTabScreen()
       })
       .catch(err => {
@@ -80,7 +90,7 @@ export function login(credentail, currentComponentId) {
       .post(endpoint.baseURL(org) + endpoint.login, credentail)
       .then(response => {
         const { pin_code } = response.data.data
-        pin_code && dispatch(setDefaultHeader(org, response.headers))
+        pin_code && dispatch(setDefaultHeader(response.headers))
 
         dispatch(requestLoginSuccess(response))
         pushScreen(currentComponentId, {
@@ -128,25 +138,33 @@ export function login(credentail, currentComponentId) {
 //   }
 // }
 
-// export function verifyUser(_goToPinScreen, _goToNgoScreen) {
-//   return (dispatch, getState) => {
-//     const org     = getState().ngoReducer.get("name")
-//     const headers = getState().userReducer.get("headers")
-//     const config  = { headers: formatHeaders(headers) }
+export function verifyUser(goToPin) {
+  return (dispatch, getState) => {
+    const org     = getState().ngo.name
+    const headers = getState().auth.headers
+    const config  = { headers: formatHeaders(headers) }
+    axios
+      .get(endpoint.baseURL(org) + endpoint.tokenValidationPath, config)
+      .then((response) => {
+        const { pin_code } = response.data.data
+        dispatch(requestLoginSuccess(response))
+        dispatch(setDefaultHeader(response.headers))
+        goToPin(CryptoJS.SHA3(pin_code))
+      })
+      .catch((err) => {
+        startNgoScreen()
+        dispatch(clearAppData())
+        Alert.alert("Session", 'User session has been expired.')
+        dispatch(requestLoginFailed(err.response.data.errors.full_messages[0]))
+      })
+  }
+}
 
-//     return axios
-//       .get(endpoint.baseURL(org) + endpoint.tokenValidationPath, config)
-//       .then((response) => {
-//         dispatch(requestLoginSuccess(response))
-//         dispatch({ type: logoutActionTypes.RESET_STATE })
-//         dispatch(setDefaultHeader(response.headers))
-//         _goToPinScreen(CryptoJS.SHA3(response.data.data.pin_code))
-//       })
-//       .catch((err) => {
-//         _goToNgoScreen()
-//         Alert.alert("Session", 'User session has been expired.')
-//         dispatch(clearAppData())
-//         dispatch(requestLoginFailed(err.response.data.errors.full_messages[0]))
-//       })
-//   }
-// }
+export function clearAppData() {
+  return dispatch => {
+    setTimeout(function () {
+      dispatch({ type: AUTH_TYPES.RESET_AUTH_STATE})
+      AsyncStorage.clear()
+    }, 500);
+  }
+}

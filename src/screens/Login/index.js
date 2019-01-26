@@ -6,7 +6,7 @@ import Button               from 'apsl-react-native-button'
 import DropdownAlert        from 'react-native-dropdownalert'
 import { login }            from '../../redux/actions/auth'
 import styles               from './style'
-import i18n                 from '../../i18n/index'
+import i18n                 from '../../i18n'
 
 import {
   View,
