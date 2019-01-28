@@ -35,8 +35,9 @@ class Tasks extends Component {
     const user  = users[auth.id]
 
     if (!user) return 0
-    const tasks = user.clients.map(client => client[type]).flat()
-    return tasks.length
+    const clients = user.clients || []
+    const tasks   = clients.reduce((sum, client) => sum += client[type].length, 0)
+    return tasks
   }
 
   render() {
