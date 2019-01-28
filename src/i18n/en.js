@@ -1,7 +1,23 @@
 export default {
   choose_ngo:"Choose your NGO",
+  language: {
+    languages: 'Languages',
+    alert_title: 'Change Language',
+    restart_now: 'Do you want to restart app now?',
+    yes: 'Yes',
+    no: 'No'
+  },
+  auth: {
+    confirm_pin: 'Confirm Your Pin Code',
+    enter_pin: 'Enter Your Pin Code',
+    set_pin: 'Enter a Pin Code',
+    login: 'Login',
+    login_to: 'Login To',
+    email: 'Email',
+    password: 'Password'
+  },
   client: {
-    title: 'CLIENTS',
+    title: 'Clients',
     assessments: 'Assessments',
     case_notes: 'Case Notes',
     tasks: 'Tasks',
@@ -121,6 +137,7 @@ export default {
     }
   },
   family: {
+    title: 'Families',
     about_family: 'About Family',
     address: 'Address',
     caregiver_information: 'Caregiver Information',
@@ -195,7 +212,8 @@ export default {
     set_pin: 'Set PIN',
   },
   user: {
-    title: 'About User',
+    about_user: 'About User',
+    title: 'User',
     first_name: 'First Name',
     last_name: 'Last Name',
     job_title: 'Job Title',

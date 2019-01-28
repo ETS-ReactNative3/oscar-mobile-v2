@@ -1,7 +1,23 @@
 export default {
-  choose_ngo:"Choose your NGO",
+  choose_ngo:"നിങ്ങളുടെ സന്നദ്ധസംഘടന തിരഞ്ഞെടുക്കുക",
+  language: {
+    languages: 'ഭാഷകൾ',
+    alert_title: 'ഭാഷ മാറ്റുക',
+    restart_now: 'നഇപ്പോൾ അപ്ലിക്കേഷൻ പുനരാരംഭിക്കാൻ നിങ്ങൾക്ക് താൽപ്പര്യമുണ്ടോ?',
+    yes: 'അതെ',
+    no: 'ഇല്ല'
+  },
+  auth: {
+    confirm_pin: 'നിങ്ങളുടെ പിൻ കോഡ് സ്ഥിരീകരിക്കുക',
+    enter_pin: 'നിങ്ങളുടെ പിൻ കോഡ് നൽകുക',
+    set_pin: 'പിൻ കോഡ് നൽകുക',
+    login: 'ലോഗിൻ',
+    login_to: 'ഇതിലേയ്ക്ക് ലോഗിൻ ചെയ്യുക',
+    email: 'ഇമെയിൽ',
+    password: 'പാസ്വേഡ്'
+  },
   client: {
-    title: 'အမႈသည္မ်ား',
+    title: 'Clients',
     assessments: 'လုပ္ငန္းအသစ္',
     case_notes: 'အမႈမွတ္စုမ်ား',
     tasks: 'လုပ္ငန္းမ်ား',
@@ -121,8 +137,8 @@ export default {
     }
   },
   family: {
-    title: 'FAMILIES',
-    about_family: 'About Family',
+    title: 'Families',
+    about_family: 'കുടുംബത്തെക്കുറിച്ച്',
     address: 'လိပ္စာ',
     caregiver_information: 'ေစာင့္ေရွာက္သူ၏ အခ်က္အလက္',
     case_history: 'အမႈသမိုင္း',
@@ -196,7 +212,8 @@ export default {
     set_pin: 'Set PIN',
   },
   user: {
-    title: 'About User',
+    about_user: 'ഉപയോക്താവിനെക്കുറിച്ച്',
+    title: 'User',
     first_name: 'First Name',
     last_name: 'Last Name',
     job_title: 'Job Title',

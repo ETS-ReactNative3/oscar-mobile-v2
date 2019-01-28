@@ -17,7 +17,7 @@ export default class Users extends Component {
     if (buttonId === 'TRANSLATION') {
       pushScreen(this.props.componentId, {
         screen: 'oscar.language',
-        title: 'TRANSLATED CONTENTS'
+        title: 'Languages'
       })
     }
   }
