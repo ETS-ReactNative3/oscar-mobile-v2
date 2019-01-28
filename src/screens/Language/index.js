@@ -5,6 +5,7 @@ import { LANGUAGE_TYPES }   from '../../redux/types'
 import Database             from '../../config/Database'
 import RNRestart            from 'react-native-restart'
 import i18n                 from '../../i18n'
+import FastImage            from 'react-native-fast-image'
 
 import {
   StyleSheet,
@@ -16,20 +17,23 @@ import {
 
 class LanguageScreen extends Component {
   updateLanguage(language) {
-    this.props.setLanguage(language)
-
-    const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
-    Database.write(() => { languageSetting.value = language })
-
     Alert.alert(
-      i18n.t('language.alert_title'),
+      '',
       i18n.t('language.restart_now'),
       [
-        { text: i18n.t('language.yes'), onPress: () => RNRestart.Restart() },
+        { text: i18n.t('language.yes'), onPress: () => this.setLanguage(language) },
         { text: i18n.t('language.no'), style: 'cancel' }
       ],
       { cancelable: false }
     )
+  }
+
+  setLanguage = (language) => {
+    this.props.setLanguage(language)
+
+    const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
+    Database.write(() => { languageSetting.value = language })
+    RNRestart.Restart()
   }
 
   getLanguageObject = {
@@ -56,7 +60,7 @@ class LanguageScreen extends Component {
           <Text style={[ styles.languageTitle, isActive ? styles.activeText : {} ]}>
             { language.title }
           </Text>
-          <Image source={ language.flag } style={ styles.flag }/>
+          <FastImage source={ language.flag } style={ styles.flag }/>
         </View>
       </TouchableOpacity>
     )
