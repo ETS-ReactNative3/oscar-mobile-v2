@@ -9,7 +9,6 @@ export default (state = initialState, action) => {
   switch (action.type) {
 
     case LANGUAGE_TYPES.SET_LANGUAGE:
-      console.log("Change ====> " + action.language)
       return state.set('language', action.language)
 
     default:

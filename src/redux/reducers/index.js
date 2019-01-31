@@ -1,5 +1,6 @@
 import { combineReducers }        from "redux"
 import auth                       from "./auth"
+import clients                    from "./clients"
 import internet                   from "./internet"
 import language                   from "./language"
 import ngo                        from "./ngo"
@@ -9,9 +10,11 @@ import villages                   from "./villages"
 import departments                from "./departments"
 import users                      from "./users"
 import domains                    from './domains'
+import families                   from './families'
 
 export default combineReducers({
   auth,
+  clients,
   users,
   internet,
   ngo,
@@ -20,5 +23,6 @@ export default combineReducers({
   provinces,
   communes,
   villages,
-  departments
+  departments,
+  families,
 })
