@@ -211,33 +211,33 @@ export const startTabScreen = async () => {
               }
             }
           },
-          {
-            stack: {
-              children: [
-                {
-                  component: {
-                    name: 'oscar.webView',
-                    options: {
-                      topBar: {
-                        title: {
-                          text: 'Oscar'
-                        }
-                      }
-                    }
-                  }
-                }
-              ],
-              options: {
-                bottomTab: {
-                  text: 'Oscar',
-                  testID: 'WEB_TAB_BAR_BUTTON',
-                  icon: icons.web,
-                  selectedIconColor: MAIN_COLOR,
-                  selectedTextColor: MAIN_COLOR
-                }
-              }
-            }
-          }
+          // {
+          //   stack: {
+          //     children: [
+          //       {
+          //         component: {
+          //           name: 'oscar.webView',
+          //           options: {
+          //             topBar: {
+          //               title: {
+          //                 text: 'Oscar'
+          //               }
+          //             }
+          //           }
+          //         }
+          //       }
+          //     ],
+          //     options: {
+          //       bottomTab: {
+          //         text: 'Oscar',
+          //         testID: 'WEB_TAB_BAR_BUTTON',
+          //         icon: icons.web,
+          //         selectedIconColor: MAIN_COLOR,
+          //         selectedTextColor: MAIN_COLOR
+          //       }
+          //     }
+          //   }
+          // }
         ]
       }
     }
