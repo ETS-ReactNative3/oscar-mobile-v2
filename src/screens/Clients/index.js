@@ -8,7 +8,7 @@ import styles from './styles'
 
 class Clients extends Component {
   componentDidMount() {
-    this.props.fetchClients()
+    // this.props.fetchClients()
   }
 
   clientName = ({ given_name, family_name }) => {

@@ -3,12 +3,13 @@ import { connect }                from 'react-redux'
 import { ScrollView, View, Text } from 'react-native'
 import { fetchFamilies }          from '../../redux/actions/families'
 import FlatList                   from '../../components/FlatList'
+import { pushScreen }             from '../../navigation/config'
 import i18n                       from '../../i18n'
 import styles                     from './styles'
 
 class Families extends Component {
   componentDidMount() {
-    this.props.fetchFamilies()
+    // this.props.fetchFamilies()
   }
 
   subItems = (family) => {
@@ -19,6 +20,16 @@ class Families extends Component {
       familyType,
       `${ clientsCount } ${ i18n.t('family.member_count') }`,
     ]
+  }
+
+  onPress = (family) => {
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.familyDetail',
+      title: family.name,
+      props: {
+        family
+      }
+    })
   }
 
   render() {
@@ -34,6 +45,7 @@ class Families extends Component {
           data={ this.props.families }
           title={ ({ name }) => name || '(No Name)' }
           subItems={ this.subItems }
+          onPress={ this.onPress }
         />
       </ScrollView>
     )
