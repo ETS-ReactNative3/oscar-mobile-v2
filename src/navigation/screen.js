@@ -16,7 +16,13 @@ import EditUser from '../screens/Users/Edit'
 import TaskDetail from '../screens/Tasks/Detail'
 import EditTask from '../screens/Tasks/Edit'
 import FamilyDetail from '../screens/Families/Detail'
+import EditFamily from '../screens/Families/Edit'
+import ListAddForms from '../screens/Families/ListAddForms'
+import ListAdditionalForms from '../screens/Families/ListAdditionalForms'
+import AdditionalFormDetail from '../screens/AdditionalForm/AdditionalFormDetail'
 import ClientDetail from '../screens/Clients/Detail'
+import CreateCustomForm from '../screens/CreateCustomForm'
+import EditCustomForm from '../screens/EditCustomForm'
 
 const store = configureStore()
 
@@ -35,5 +41,11 @@ export default () => {
   Navigation.registerComponentWithRedux('oscar.taskDetail', () => TaskDetail, Provider, store)
   Navigation.registerComponentWithRedux('oscar.editTask', () => EditTask, Provider, store)
   Navigation.registerComponentWithRedux('oscar.familyDetail', () => FamilyDetail, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.editFamily', () => EditFamily, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.addFormFamily', () => ListAddForms, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.additionalFormFamily', () => ListAdditionalForms, Provider, store)
   Navigation.registerComponentWithRedux('oscar.clientDetail', () => ClientDetail, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.createCustomForm', () => CreateCustomForm, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.editCustomForm', () => EditCustomForm, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.additionalFormDetail', () => AdditionalFormDetail, Provider, store)
 }
