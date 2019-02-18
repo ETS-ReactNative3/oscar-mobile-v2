@@ -69,7 +69,6 @@ class AdditionalFormDetailList extends Component {
     pushScreen(this.props.componentId, {
       screen: 'oscar.editCustomForm',
       title: 'Edit Additinal Form',
-      drawBehind: true,
       props: {
         customForm: this.props.customForm,
         custom_field: customFieldProperty,

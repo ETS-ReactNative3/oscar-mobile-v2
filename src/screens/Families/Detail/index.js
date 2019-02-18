@@ -44,7 +44,6 @@ class FamilyDetail extends Component {
     pushScreen(this.props.componentId, {
       screen: 'oscar.additionalForms',
       title: 'Additional Form',
-      drawBehind: true,
       props: {
         entityId: family.id,
         type: 'family'
@@ -56,7 +55,6 @@ class FamilyDetail extends Component {
     pushScreen(this.props.componentId, {
       screen: 'oscar.addForms',
       title: 'Add Form',
-      drawBehind: true,
       props: {
         entityId: family.id,
         entityDetailComponentId: this.props.componentId,

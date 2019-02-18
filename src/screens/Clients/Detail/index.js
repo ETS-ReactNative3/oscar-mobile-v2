@@ -25,7 +25,6 @@ class ClientDetail extends Component {
     pushScreen(this.props.componentId, {
       screen: 'oscar.additionalForms',
       title: 'Additional Form',
-      drawBehind: true,
       props: {
         entityId: client.id,
         type: 'client'
@@ -37,7 +36,6 @@ class ClientDetail extends Component {
     pushScreen(this.props.componentId, {
       screen: 'oscar.addForms',
       title: 'Add Form',
-      drawBehind: true,
       props: {
         entityId: client.id,
         entityDetailComponentId: this.props.componentId,

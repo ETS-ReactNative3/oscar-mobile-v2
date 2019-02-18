@@ -120,7 +120,6 @@ export default class CreateCustomFormWidget extends Component {
           autoCapitalize="sentences"
           returnKeyType="next"
           style={customFormStyles.input}
-          underlineColorAndroid="#009999"
           onChangeText={newData => this.updateField(label, newData)}
           value={value}
         />
@@ -137,7 +136,6 @@ export default class CreateCustomFormWidget extends Component {
           autoCapitalize="sentences"
           returnKeyType="next"
           style={customFormStyles.input}
-          underlineColorAndroid="#009999"
           keyboardType="numeric"
           onChangeText={newData => this.updateField(label, newData)}
           value={value}
@@ -157,7 +155,6 @@ export default class CreateCustomFormWidget extends Component {
           placeholderTextColor="#b7b3b3"
           returnKeyType="next"
           style={customFormStyles.inputTextArea}
-          underlineColorAndroid="transparent"
           multiline={true}
           textAlignVertical="top"
           numberOfLines={3}
