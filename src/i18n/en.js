@@ -1,5 +1,6 @@
 export default {
   choose_ngo: 'Choose your NGO',
+  no_data: 'No Data',
   language: {
     languages: 'Languages',
     restart_now: 'The app will be restarted',
@@ -139,8 +140,8 @@ export default {
     title: 'Families',
     about_family: 'About Family',
     address: 'Address',
-    additional_form: 'Additional Form',
-    add_form: 'Add Form',
+    additional_form: 'Additional Forms',
+    add_form: 'Add Forms',
     caregiver_information: 'Caregiver Information',
     case_history: 'Case History',
     case_workers: 'Case Workers',

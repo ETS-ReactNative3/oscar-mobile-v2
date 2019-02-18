@@ -211,7 +211,7 @@ export const startTabScreen = async () => {
                 }
               }
             }
-          },
+          }
           // {
           //   stack: {
           //     children: [

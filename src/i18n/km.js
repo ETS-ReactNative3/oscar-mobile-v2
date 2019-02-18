@@ -1,5 +1,6 @@
 export default {
   choose_ngo: 'ជ្រើសរើសអង្គការរបស់អ្នក',
+  no_data: 'គ្មាន​ទិន្នន័យ',
   language: {
     languages: 'ភាសា',
     restart_now: 'កម្មវិធីនឹងបើកម្ដងទៀត',
@@ -139,6 +140,8 @@ export default {
     title: 'គ្រួសារ',
     about_family: 'អំពីគ្រួសារ',
     address: 'ឣាសយដ្ឋាន',
+    additional_form: 'ទម្រង់បែបបទរបស់គ្រួសារដែលកំពុងប្រើ',
+    add_form: 'បន្ថែមទម្រង់បែបបទទៅឲ្យគ្រួសារ',
     caregiver_information: 'ព័ត៌មាននៃអ្នកថែទាំ',
     case_history: 'ប្រវត្តិគ្រួសារ',
     case_workers: 'បុគ្គលិកគ្រប់គ្រងករណី',
@@ -153,6 +156,7 @@ export default {
     select_commune: 'សូមជ្រើសរើសឃុំ/សង្កាត់',
     select_village: 'សូមជ្រើសរើសភូមិ',
     select_clients: 'សូមជ្រើសរើសឣតិថិជន',
+    select_status: 'សូមជ្រើសរើសស្ថានភាព',
     confirm: 'ព្រម',
     search: 'ស្វែងរក',
     family: 'គ្រួសារ',
@@ -174,6 +178,7 @@ export default {
     district: 'ស្រុក/ខណ្ឌ',
     commune: 'ឃុំ/សង្កាត់',
     village: 'ភូមិ',
+    status: 'ស្ថានភាព',
     significant_family_member_count: 'ចំនួនសមាជិកគ្រួសារដែលចូលរួមរកប្រាក់ចំណូល',
     total: 'សរុប',
     view: 'មើល',

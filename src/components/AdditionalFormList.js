@@ -9,6 +9,8 @@ import appIcon from '../utils/Icon'
 var moment = require('moment')
 const { height } = Dimensions.get('window')
 import { connect } from 'react-redux'
+import Card from './Card'
+import i18n from '../i18n'
 
 class AdditionalFormList extends Component {
   constructor(props) {
@@ -54,9 +56,13 @@ class AdditionalFormList extends Component {
     }
   }
 
-  redirectListAdditionalForms = () => {
-    if (this.props.customForm.custom_field_properties.length == 0) {
-      Navigation.popTo(this.props.listAddtionalFormComponentId)
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.customForm === undefined) {
+      Navigation.mergeOptions(nextProps.componentId, {
+        topBar: {
+          rightButtons: []
+        }
+      })
     }
   }
 
@@ -65,7 +71,7 @@ class AdditionalFormList extends Component {
     Alert.alert('Warning', 'Are you sure you want to delete?', [
       {
         text: 'OK',
-        onPress: () => deleteFamilyAdditionalForm(customForm, family, this.redirectListAdditionalForms, this.props)
+        onPress: () => deleteFamilyAdditionalForm(customForm, family, this.props)
       },
       { text: 'Cancel' }
     ])
@@ -146,6 +152,23 @@ class AdditionalFormList extends Component {
     )
   }
 
+  renderActions(customFieldProperty) {
+    return (
+      <View style={styles.iconWrapper}>
+        <TouchableWithoutFeedback onPress={() => this.editAdditionalForm(customFieldProperty)}>
+          <View>
+            <Icon color="#fff" name="edit" size={25} />
+          </View>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => this.deleteAdditionalForm(customFieldProperty)}>
+          <View style={styles.deleteIcon}>
+            <Icon color="#fff" name="delete" size={25} />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    )
+  }
+
   renderFormField = customFieldProperty => {
     const self = this
     const { customForm } = this.props
@@ -180,7 +203,7 @@ class AdditionalFormList extends Component {
     if (customForm == undefined) {
       return (
         <View style={[mainContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-          <Text>No Data</Text>
+          <Text>{i18n.t('no_data')}</Text>
         </View>
       )
     }
@@ -195,25 +218,16 @@ class AdditionalFormList extends Component {
         {customForm.custom_field_properties.map((customFieldProperty, index) => {
           const createdAt = moment(customFieldProperty.created_at).format('DD MMMM, YYYY')
           return (
-            <View key={customFieldProperty.id} style={mainContainer}>
-              <View style={[styles.cardTitleWrapper, styles.titleWrapper]}>
-                <Text style={[styles.cardTitle, styles.title]}>{createdAt}</Text>
-                <View style={styles.iconWrapper}>
-                  <TouchableWithoutFeedback onPress={() => this.editAdditionalForm(customFieldProperty)}>
-                    <View>
-                      <Icon color="#fff" name="edit" size={25} />
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback onPress={() => this.deleteAdditionalForm(customFieldProperty)}>
-                    <View style={styles.deleteIcon}>
-                      <Icon color="#fff" name="delete" size={25} />
-                    </View>
-                  </TouchableWithoutFeedback>
+            <View key={index}>
+              <Card
+                style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }}
+                title={createdAt}
+                rightButton={this.renderActions(customFieldProperty)}
+              >
+                <View key={customFieldProperty.id.toString()} style={{ height: '85%' }}>
+                  <ScrollView ref="caseNoteCard">{this.renderFormField(customFieldProperty)}</ScrollView>
                 </View>
-              </View>
-              <ScrollView ref="caseNoteCard" style={container}>
-                {this.renderFormField(customFieldProperty)}
-              </ScrollView>
+              </Card>
             </View>
           )
         })}
@@ -231,7 +245,7 @@ const styles = StyleSheet.create({
     height: '12%'
   },
   title: { flex: 1 },
-  iconWrapper: { flex: 0.2, flexDirection: 'row' },
+  iconWrapper: { flex: 0.4, flexDirection: 'row' },
   deleteIcon: { marginLeft: 15 },
   mainContainer: {
     height: '95%',

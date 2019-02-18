@@ -205,7 +205,7 @@ export function editFamilyAdditionalForm(properties, familyProfile, custom_field
   }
 }
 
-export function deleteFamilyAdditionalForm(customFieldProperty, familyProfile, redirectListAdditionalForms, actions) {
+export function deleteFamilyAdditionalForm(customFieldProperty, familyProfile, actions) {
   return dispatch => {
     let deleteFamilyAdditonalFormPath = _.template(endpoint.createFamilyAdditonalFormPath)
     deleteFamilyAdditonalFormPath = deleteFamilyAdditonalFormPath({ family_id: familyProfile.id })

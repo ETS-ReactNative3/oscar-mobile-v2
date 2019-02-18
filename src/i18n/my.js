@@ -1,5 +1,6 @@
 export default {
   choose_ngo: 'നിങ്ങളുടെ സന്നദ്ധസംഘടന തിരഞ്ഞെടുക്കുക',
+  no_data: 'ഡാറ്റാ ഇല്ല',
   language: {
     languages: 'ഭാഷകൾ',
     restart_now: 'അപ്ലിക്കേഷൻ പുനരാരംഭിക്കും',
@@ -139,6 +140,8 @@ export default {
     title: 'Families',
     about_family: 'കുടുംബത്തെക്കുറിച്ച്',
     address: 'လိပ္စာ',
+    additional_form: 'ထပ္ေဆာင္းပံုစံမ်ား',
+    add_form: 'ပံုစံအသစ္',
     caregiver_information: 'ေစာင့္ေရွာက္သူ၏ အခ်က္အလက္',
     case_history: 'အမႈသမိုင္း',
     case_workers: 'အမႈအတြက္ေဆာင္ရြက္ေပးသူ',
@@ -153,6 +156,7 @@ export default {
     select_commune: 'ദയവായി കമ്യൂൺ തിരഞ്ഞെടുക്കുക',
     select_village: 'ദയവായി ഗ്രാമം തിരഞ്ഞെടുക്കുക',
     select_clients: 'ക്ലയന്റുകൾ തിരഞ്ഞെടുക്കുക',
+    select_status: 'നില തിരഞ്ഞെടുക്കുക',
     confirm: 'സ്ഥിരീകരിക്കുക',
     search: 'തിരയുക',
     family: 'မိသားစု',
@@ -174,6 +178,7 @@ export default {
     district: 'ജില്ല',
     commune: 'കമ്യൂൺ',
     village: 'ഗ്രാമം',
+    status: 'အေျခအေန',
     significant_family_member_count: 'မိသားစု၀င္မ်ားသည့္ အေရအတြက္',
     total: 'စုစုေပါင္း',
     view: 'ျမင္ကြင္း',
