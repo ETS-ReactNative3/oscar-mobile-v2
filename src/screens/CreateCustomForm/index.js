@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-
 import CreateCustomFormWidget from '../../components/CreateCustomFormWidget'
-import { createFamilyAdditionalForm } from '../../redux/actions/families'
+import { connect } from 'react-redux'
+import { createAdditionalForm } from '../../redux/actions/customForms'
 
 class CreateCustomForm extends Component {
   render() {
@@ -11,7 +10,7 @@ class CreateCustomForm extends Component {
 }
 
 const mapDispatch = {
-  createFamilyAdditionalForm
+  createAdditionalForm
 }
 
 export default connect(

@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
 
 import { connect } from 'react-redux'
-import { deleteFamilyAdditionalForm } from '../../redux/actions/families'
+import { deleteAdditionalForm } from '../../redux/actions/customForms'
 
-import AdditionalFormList from '../../components/AdditionalFormList'
+import AdditionalFormDetailList from '../../components/AdditionalFormDetailList'
 
 class AdditionalFormDetail extends Component {
   render() {
-    return <AdditionalFormList {...this.props} />
+    return <AdditionalFormDetailList {...this.props} />
   }
 }
 
 const mapDispatch = {
-  deleteFamilyAdditionalForm
+  deleteAdditionalForm
 }
 
 export default connect(

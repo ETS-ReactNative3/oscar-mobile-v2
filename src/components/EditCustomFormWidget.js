@@ -1,4 +1,16 @@
 import React, { Component } from 'react'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import ImagePicker from 'react-native-image-picker'
+import SectionedMultiSelect from 'react-native-sectioned-multi-select'
+import DatePicker from 'react-native-datepicker'
+import _ from 'lodash'
+import i18n from '../i18n'
+import { CheckBox, Divider } from 'react-native-elements'
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
+import { options, MAX_SIZE } from '../constants/option.js'
+import { MAIN_COLOR } from '../constants/colors'
+import { Navigation } from 'react-native-navigation'
+import { customFormStyles } from '../styls'
 import {
   View,
   Text,
@@ -11,20 +23,6 @@ import {
   Image,
   TouchableWithoutFeedback
 } from 'react-native'
-import { CheckBox, Divider } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import ImagePicker from 'react-native-image-picker'
-
-import { options, MAX_SIZE } from '../constants/option.js'
-import { MAIN_COLOR } from '../constants/colors'
-import i18n from '../i18n'
-import { Navigation } from 'react-native-navigation'
-import { customFormStyles } from '../styls'
-
 import { validateCustomForm, validateAdditonalForm, formTypes, disabledUpload } from '../utils/validation'
 
 var moment = require('moment')
@@ -33,8 +31,7 @@ export default class EditAdditionalFormWidget extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      client: props.client,
-      family: props.family,
+      entity: props.entity,
       customForm: props.customForm,
       custom_field: props.custom_field,
       fields: {},
@@ -87,16 +84,12 @@ export default class EditAdditionalFormWidget extends Component {
 
   navigationButtonPressed({ buttonId }) {
     if (buttonId === 'SAVE_CUSTOM_FORM') {
-      const { family, client, fields, customForm, custom_field_property, custom_field } = this.state
+      const { entity, fields, customForm, custom_field_property, custom_field } = this.state
       const { type } = this.props
 
       const validated = validateCustomForm(fields, customForm.fields)
       if (validated) {
-        if (type == undefined) {
-          this.props.editAdditionalForm(fields, client, custom_field, customForm, this.props)
-        } else if (type != undefined && type == 'family') {
-          this.props.editFamilyAdditionalForm(fields, family, custom_field, customForm, this.props)
-        }
+        this.props.editAdditionalForm(fields, entity, custom_field, customForm, this.props)
       }
     }
   }
