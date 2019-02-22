@@ -10,7 +10,17 @@ import Menu from './Menu'
 import styles from './styles'
 
 class ClientDetail extends Component {
-  navigateToAssessments = client => {}
+  navigateToAssessments = (client) => {
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.assessments',
+      title: i18n.t('client.assessments'),
+      props: {
+        clientId: client.id,
+        setting: this.props.setting
+      }
+    })
+  }
+
   navigateToCaseNotes = client => {}
   navigateToTasks = client => {
     pushScreen(this.props.componentId, {
@@ -19,6 +29,7 @@ class ClientDetail extends Component {
       props: { clientId: client.id }
     })
   }
+
   navigateToEnrollProgramStreams = client => {}
   navigateToProgramStreams = client => {}
   navigateToAdditionalForms = client => {
@@ -44,6 +55,7 @@ class ClientDetail extends Component {
     })
   }
 
+
   render() {
     const { clients, setting } = this.props
     const client = clients[this.props.clientId]
@@ -59,9 +71,10 @@ class ClientDetail extends Component {
     const availableProgramStreams = allProgramStreams - inactiveProgramStreams - activeProgramStreams
     const programStreams = `${inactiveProgramStreams} / ${availableProgramStreams}`
 
-    const overdue = client.tasks.overdue.length
-    const today = client.tasks.today.length
-    const upcoming = client.tasks.upcoming.length
+    const overdue   = client.tasks.overdue.length
+    const today     = client.tasks.today.length
+    const upcoming  = client.tasks.upcoming.length
+
     return (
       <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
         <ScrollView showsVerticalScrollIndicator={false}>
