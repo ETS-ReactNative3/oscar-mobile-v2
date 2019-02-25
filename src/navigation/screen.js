@@ -23,6 +23,16 @@ import CreateCustomForm from '../screens/CreateCustomForm'
 import EditCustomForm from '../screens/EditCustomForm'
 import ListAddForms from '../screens/ListAddForms'
 import ListAdditionalForms from '../screens/ListAdditionalForms'
+import ActiveProgramStreams from '../screens/Clients/programStreams/ActiveProgramStreams'
+import EnrolledProgramStreams from '../screens/Clients/programStreams/EnrolledProgramStreams'
+import ProgramStreamDetail from '../screens/Clients/programStreams/ProgramStreamDetail'
+import EnrollmentDetail from '../screens/Clients/programStreams/EnrollmentDetail'
+import EnrollmentForm from '../screens/Clients/programStreams/EnrollmentForm'
+import EditForm from '../screens/Clients/programStreams/EditForm'
+import ListTracking from '../screens/Clients/programStreams/ListTracking'
+import ExitForm from '../screens/Clients/programStreams/ExitForm'
+import TrackingForm from '../screens/Clients/programStreams/TrackingForm'
+import TrackingDetail from '../screens/Clients/programStreams/TrackingDetail'
 
 const store = configureStore()
 
@@ -48,4 +58,14 @@ export default () => {
   Navigation.registerComponentWithRedux('oscar.createCustomForm', () => CreateCustomForm, Provider, store)
   Navigation.registerComponentWithRedux('oscar.editCustomForm', () => EditCustomForm, Provider, store)
   Navigation.registerComponentWithRedux('oscar.additionalFormDetail', () => AdditionalFormDetail, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.programStreamDetail', () => ProgramStreamDetail, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.enrollmentDetail', () => EnrollmentDetail, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.enrollmentForm', () => EnrollmentForm, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.editForm', () => EditForm, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.activeProgramStreams', () => ActiveProgramStreams, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.enrolledProgramStreams', () => EnrolledProgramStreams, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.listTracking', () => ListTracking, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.exitForm', () => ExitForm, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.trackingForm', () => TrackingForm, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.trackingDetail', () => TrackingDetail, Provider, store)
 }

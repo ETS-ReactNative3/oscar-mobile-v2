@@ -19,8 +19,26 @@ class ClientDetail extends Component {
       props: { clientId: client.id }
     })
   }
-  navigateToEnrollProgramStreams = client => {}
-  navigateToProgramStreams = client => {}
+  navigateToEnrollProgramStreams = client => {
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.enrolledProgramStreams',
+      title: 'Active Program Streams',
+      props: {
+        clientId: client.id,
+        clientDetailComponentId: this.props.componentId
+      }
+    })
+  }
+  navigateToActiveProgramStreams = client => {
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.activeProgramStreams',
+      title: 'Active Program Streams',
+      props: {
+        client: client,
+        clientDetailComponentId: this.props.componentId
+      }
+    })
+  }
   navigateToAdditionalForms = client => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.additionalForms',
@@ -49,9 +67,8 @@ class ClientDetail extends Component {
     const client = clients[this.props.clientId]
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
 
-    const enrolledProgramStreamCount = client.program_streams.filter(program_stream =>
-      _.some(program_stream.enrollments, { status: 'Active' })
-    ).length
+    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => _.some(program_stream.enrollments, { status: 'Active' }))
+      .length
 
     const inactiveProgramStreams = client.inactive_program_streams.length
     const activeProgramStreams = client.program_streams.length
@@ -105,7 +122,7 @@ class ClientDetail extends Component {
                   value={programStreams}
                   color="#1ab394"
                   loading={this.props.programStreamsLoading}
-                  onPress={() => this.navigateToProgramStreams(client)}
+                  onPress={() => this.navigateToActiveProgramStreams(client)}
                 />
               </View>
               <View style={[styles.widgetRow, { marginBottom: 30 }]}>

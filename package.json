@@ -25,6 +25,7 @@
     "react-native-fast-image": "^5.1.2",
     "react-native-i18n": "^2.0.15",
     "react-native-image-picker": "^0.28.0",
+    "react-native-modal": "^9.0.0",
     "react-native-navigation": "^2.7.1",
     "react-native-restart": "0.0.8",
     "react-native-sectioned-multi-select": "^0.6.4",

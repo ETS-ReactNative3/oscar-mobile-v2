@@ -15,6 +15,7 @@ class AddForm extends Component {
       props: {
         entity: this.props.entity,
         customForm: customForm,
+        formType: 'customForm',
         entityDetailComponentId: this.props.entityDetailComponentId,
         type: this.props.type
       },

@@ -61,13 +61,7 @@ class Clients extends Component {
       )
     return (
       <ScrollView style={styles.container}>
-        <FlatList
-          data={this.props.clients}
-          title={this.clientName}
-          subItems={this.subItems}
-          onPress={this.onClientPress}
-          isClientList
-        />
+        <FlatList data={this.props.clients} title={this.clientName} subItems={this.subItems} onPress={this.onClientPress} isClientList />
       </ScrollView>
     )
   }
