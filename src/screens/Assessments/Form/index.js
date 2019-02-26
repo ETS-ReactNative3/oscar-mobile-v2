@@ -342,10 +342,9 @@ class AssessmentForm extends Component {
 
   renderButtonDone = () => {
     const { assessmentDomains } = this.state
-    // const isDisabled = assessmentDomains.reduce(
-    //   (result, ad) => result || this.isRequireTask(ad),
-    //   false)
-    const isDisabled = false
+    const isDisabled = assessmentDomains.reduce(
+      (result, ad) => result || this.isRequireTask(ad),
+      false)
 
     return (
       <View style={{ marginTop: 10 }}>

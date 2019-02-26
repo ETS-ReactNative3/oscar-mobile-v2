@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import Swiper from 'react-native-swiper'
 import _ from 'lodash'
 import { pushScreen } from '../../../navigation/config'
+import appIcons from '../../../utils/Icon'
 import i18n from '../../../i18n'
 import ClientInformation from './Information'
 import Menu from './Menu'
@@ -21,7 +22,21 @@ class ClientDetail extends Component {
     })
   }
 
-  navigateToCaseNotes = client => {}
+  navigateToCaseNotes = async client => {
+    const icons = await appIcons()
+
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.caseNotes',
+      title: i18n.t('client.case_notes'),
+      props: { clientId: client.id },
+      rightButtons: [{
+        id: 'ADD_CASE_NOTE',
+        icon: icons.add,
+        color: '#fff'
+      }]
+    })
+  }
+
   navigateToTasks = client => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.tasks',
