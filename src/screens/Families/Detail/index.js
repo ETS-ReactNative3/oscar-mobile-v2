@@ -65,8 +65,7 @@ class FamilyDetail extends Component {
 
   render() {
     const { family } = this.props
-    const memberCount =
-      family.female_children_count + family.male_children_count + family.female_adult_count + family.male_adult_count
+    const memberCount = family.female_children_count + family.male_children_count + family.female_adult_count + family.male_adult_count
 
     return (
       <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
@@ -90,27 +89,15 @@ class FamilyDetail extends Component {
           </View>
           <Card style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }} title={i18n.t('family.about_family')}>
             <Field name={i18n.t('family.code')} value={family.code} />
-            <Field
-              name={i18n.t('family.family_type')}
-              value={family.family_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            />
+            <Field name={i18n.t('family.family_type')} value={family.family_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} />
             <Field name={i18n.t('family.status')} value={family.status} />
             <Field name={i18n.t('family.case_history')} value={family.case_history} />
             <Field name={i18n.t('family.address')} value={family.address} />
             <Field name={i18n.t('family.member_count')} value={`${memberCount} People` || '0'} />
             <Field name={i18n.t('family.caregiver_information')} value={family.caregiver_information} />
-            <Field
-              name={i18n.t('family.significant_family_member_count')}
-              value={family.significant_family_member_count}
-            />
-            <Field
-              name={i18n.t('family.household_income')}
-              value={`$${parseFloat(family.household_income).toFixed(2)}`}
-            />
-            <Field
-              name={i18n.t('family.dependable_income')}
-              value={family.dependable_income == false ? i18n.t('family.no') : i18n.t('family.yes')}
-            />
+            <Field name={i18n.t('family.significant_family_member_count')} value={family.significant_family_member_count} />
+            <Field name={i18n.t('family.household_income')} value={`$${parseFloat(family.household_income).toFixed(2)}`} />
+            <Field name={i18n.t('family.dependable_income')} value={family.dependable_income == false ? i18n.t('family.no') : i18n.t('family.yes')} />
             <Field name={i18n.t('family.female_children_count')} value={family.female_children_count} />
             <Field name={i18n.t('family.male_children_count')} value={family.male_children_count} />
             <Field name={i18n.t('family.female_adult_count')} value={family.female_adult_count} />
@@ -118,8 +105,8 @@ class FamilyDetail extends Component {
             <Field name={i18n.t('family.contract_date')} value={moment(family.contract_date).format('DD MMMM, YYYY')} />
             <Field name={i18n.t('family.province')} value={family.province != null ? family.province.name : ''} />
             <Field name={i18n.t('family.district')} value={family.district != null ? family.district.name : ''} />
-            <Field name={i18n.t('family.commune')} value={family.commune != null ? family.commune.name : ''} />
-            <Field name={i18n.t('family.village')} value={family.village != null ? family.village.name : ''} />
+            <Field name={i18n.t('family.commune')} value={family.commune != null ? `${family.commune.name_kh} / ${family.commune.name_en}` : ''} />
+            <Field name={i18n.t('family.village')} value={family.village != null ? `${family.village.name_kh} / ${family.village.name_en}` : ''} />
           </Card>
         </ScrollView>
       </View>

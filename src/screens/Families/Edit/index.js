@@ -9,18 +9,7 @@ import { updateFamily } from '../../../redux/actions/families'
 import styles from './styles'
 import i18n from '../../../i18n'
 import _ from 'lodash'
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  ScrollView,
-  TextInput,
-  Alert,
-  Platform,
-  ActivityIndicator,
-  Modal,
-  StyleSheet
-} from 'react-native'
+import { View, Text, KeyboardAvoidingView, ScrollView, TextInput, Alert, Platform, ActivityIndicator, Modal, StyleSheet } from 'react-native'
 
 class UserEdit extends Component {
   state = { family: this.props.family }
@@ -28,6 +17,18 @@ class UserEdit extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
+  }
+
+  componentDidMount() {
+    const { family } = this.state
+    this.setState(prevState => ({
+      family: Object.assign({}, prevState.family, {
+        province_id: family.province != null ? family.province.id : '',
+        district_id: family.district != null ? family.district.id : '',
+        commune_id: family.commune != null ? family.commune.id : '',
+        village_id: family.village != null ? family.village.id : ''
+      })
+    }))
   }
 
   navigationButtonPressed({ buttonId }) {
@@ -172,7 +173,7 @@ class UserEdit extends Component {
                 placeholder="0"
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 style={styles.input}
                 onChangeText={text => this.setUpdateFamily('significant_family_member_count', text)}
                 value={String(family.significant_family_member_count)}
@@ -185,7 +186,7 @@ class UserEdit extends Component {
                 placeholder="0"
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 style={styles.input}
                 onChangeText={text => this.setUpdateFamily('female_children_count', text)}
                 value={String(family.female_children_count)}
@@ -198,7 +199,7 @@ class UserEdit extends Component {
                 placeholder="0"
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 style={styles.input}
                 onChangeText={text => this.setUpdateFamily('male_children_count', text)}
                 value={String(family.male_children_count)}
@@ -211,7 +212,7 @@ class UserEdit extends Component {
                 placeholder="0"
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 style={styles.input}
                 onChangeText={text => this.setUpdateFamily('female_adult_count', text)}
                 value={String(family.female_adult_count)}
@@ -270,9 +271,7 @@ class UserEdit extends Component {
                   button: { backgroundColor: MAIN_COLOR }
                 }}
                 onSelectedItemsChange={district => {
-                  this.setUpdateFamily('district_id', district[0]),
-                    this.setUpdateFamily('commune_id', null),
-                    this.setUpdateFamily('village_id', null)
+                  this.setUpdateFamily('district_id', district[0]), this.setUpdateFamily('commune_id', null), this.setUpdateFamily('village_id', null)
                 }}
                 selectedItems={[family.district_id]}
               />
@@ -318,12 +317,34 @@ class UserEdit extends Component {
               />
             </View>
             <View style={styles.inputContainer}>
+              <Text style={styles.label}>{i18n.t('family.street')}</Text>
+              <TextInput
+                autoCapitalize="sentences"
+                style={styles.input}
+                value={family.street}
+                placeholder={i18n.t('family.street')}
+                placeholderTextColor="#d5d5d5"
+                onChangeText={text => this.setUpdateFamily('street', text)}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>{i18n.t('family.house')}</Text>
+              <TextInput
+                autoCapitalize="sentences"
+                style={styles.input}
+                value={family.house}
+                placeholder={i18n.t('family.house')}
+                placeholderTextColor="#d5d5d5"
+                onChangeText={text => this.setUpdateFamily('house', text)}
+              />
+            </View>
+            <View style={styles.inputContainer}>
               <Text style={styles.label}>{i18n.t('family.household_income')}</Text>
               <TextInput
                 placeholder={i18n.t('family.household_income')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
-                keyboardType="numeric"
+                keyboardType="decimal-pad"
                 style={styles.input}
                 onChangeText={text => this.setUpdateFamily('household_income', text)}
                 value={String(family.household_income)}
