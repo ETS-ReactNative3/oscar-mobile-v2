@@ -12,18 +12,7 @@ import { MAIN_COLOR } from '../constants/colors'
 import { validateCustomForm, formTypes, disabledUpload } from '../utils/validation'
 import i18n from '../i18n'
 import { customFormStyles } from '../styles/customForm'
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  Picker,
-  AppState,
-  Alert,
-  Image,
-  TouchableWithoutFeedback
-} from 'react-native'
+import { View, Text, StyleSheet, TextInput, ScrollView, Picker, AppState, Alert, Image, TouchableWithoutFeedback } from 'react-native'
 
 export default class CreateCustomFormWidget extends Component {
   constructor(props) {
@@ -224,16 +213,15 @@ export default class CreateCustomFormWidget extends Component {
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
-          selectText={i18n.t('family.select_family_type')}
+          modalWithSafeAreaView
+          selectText={i18n.t('select_option')}
           searchPlaceholderText={i18n.t('family.search')}
           confirmText={i18n.t('family.confirm')}
           showDropDowns={true}
           single={true}
           hideSearch={false}
           showCancelButton={true}
-          customFormStyles={{
-            button: { backgroundColor: MAIN_COLOR }
-          }}
+          styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
           onSelectedItemsChange={itemValue => this.updateField(label, itemValue[0])}
           selectedItems={[value]}
         />
@@ -336,8 +324,7 @@ export default class CreateCustomFormWidget extends Component {
         size: fileSize / 1024
       }
 
-      fieldProperties[label] =
-        formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
+      fieldProperties[label] = formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
       this.setState({ fileSize: this.state.fileSize + fileSize / 1024, fieldProperties })
     } else {
       Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
@@ -362,12 +349,8 @@ export default class CreateCustomFormWidget extends Component {
                 {fieldType == 'date' && this.datePickerType(label, fieldProperties[label])}
                 {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, fieldProperties[label])}
                 {fieldType == 'radio-group' && this.radioType(label, formField, fieldProperties[label])}
-                {fieldType == 'select' &&
-                  formField.multiple &&
-                  this.checkBoxType(label, formField, fieldProperties[label])}
-                {fieldType == 'select' &&
-                  !formField.multiple &&
-                  this.selectType(label, formField, fieldProperties[label])}
+                {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, fieldProperties[label])}
+                {fieldType == 'select' && !formField.multiple && this.selectType(label, formField, fieldProperties[label])}
                 {fieldType == 'file' && this.fileUploader(label, formField, fieldProperties[label])}
                 {fieldType == 'paragraph' && this.renderParagraph(label)}
                 {fieldType == 'separateLine' && <Divider style={{ backgroundColor: '#ccc', marginTop: 20 }} />}

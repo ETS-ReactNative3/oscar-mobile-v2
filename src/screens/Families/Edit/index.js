@@ -107,7 +107,7 @@ class UserEdit extends Component {
               <SectionedMultiSelect
                 items={familyType}
                 uniqueKey="id"
-                selectText={i18n.t('family.select_family_type')}
+                selectText={i18n.t('select_option')}
                 searchPlaceholderText={i18n.t('family.search')}
                 confirmText={i18n.t('family.confirm')}
                 showDropDowns={true}

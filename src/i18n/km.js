@@ -1,6 +1,7 @@
 export default {
   choose_ngo: 'ជ្រើសរើសអង្គការរបស់អ្នក',
   no_data: 'គ្មាន​ទិន្នន័យ',
+  select_option: 'សូមជ្រើសរើស',
   language: {
     languages: 'ភាសា',
     restart_now: 'កម្មវិធីនឹងបើកម្ដងទៀត',

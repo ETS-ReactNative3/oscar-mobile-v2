@@ -134,7 +134,6 @@ class ExitForm extends Component {
           autoCapitalize="sentences"
           returnKeyType="next"
           style={customFormStyles.input}
-          underlineColorAndroid="#009999"
           onChangeText={newData => this._updateField(label, newData)}
           value={value}
         />
@@ -151,7 +150,6 @@ class ExitForm extends Component {
           autoCapitalize="sentences"
           returnKeyType="next"
           style={customFormStyles.input}
-          underlineColorAndroid="#009999"
           keyboardType="numeric"
           onChangeText={newData => this._updateField(label, newData)}
           value={value}
@@ -171,7 +169,6 @@ class ExitForm extends Component {
           placeholderTextColor="#b7b3b3"
           returnKeyType="next"
           style={customFormStyles.inputTextArea}
-          underlineColorAndroid="transparent"
           multiline={true}
           textAlignVertical="top"
           numberOfLines={3}
@@ -245,16 +242,15 @@ class ExitForm extends Component {
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
-          selectText={i18n.t('family.select_family_type')}
+          modalWithSafeAreaView
+          selectText={i18n.t('select_option')}
           searchPlaceholderText={i18n.t('family.search')}
           confirmText={i18n.t('family.confirm')}
           showDropDowns={true}
           single={true}
           hideSearch={false}
           showCancelButton={true}
-          customFormStyles={{
-            button: { backgroundColor: MAIN_COLOR }
-          }}
+          styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
           onSelectedItemsChange={itemValue => this._updateField(label, itemValue[0])}
           selectedItems={[value]}
         />

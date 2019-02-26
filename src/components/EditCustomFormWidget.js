@@ -11,18 +11,7 @@ import { options, MAX_SIZE } from '../constants/option.js'
 import { MAIN_COLOR } from '../constants/colors'
 import { Navigation } from 'react-native-navigation'
 import { customFormStyles } from '../styles/customForm'
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  Picker,
-  Alert,
-  AppState,
-  Image,
-  TouchableWithoutFeedback
-} from 'react-native'
+import { View, Text, StyleSheet, TextInput, ScrollView, Picker, Alert, AppState, Image, TouchableWithoutFeedback } from 'react-native'
 import { validateCustomForm, validateAdditonalForm, formTypes, disabledUpload } from '../utils/validation'
 
 var moment = require('moment')
@@ -261,16 +250,15 @@ export default class EditAdditionalFormWidget extends Component {
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
-          selectText={i18n.t('family.select_family_type')}
+          modalWithSafeAreaView
+          selectText={i18n.t('select_option')}
           searchPlaceholderText={i18n.t('family.search')}
           confirmText={i18n.t('family.confirm')}
           showDropDowns={true}
           single={true}
           hideSearch={false}
           showCancelButton={true}
-          customFormStyles={{
-            button: { backgroundColor: MAIN_COLOR }
-          }}
+          styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
           onSelectedItemsChange={itemValue => this.updateField(label, itemValue[0])}
           selectedItems={[value]}
         />

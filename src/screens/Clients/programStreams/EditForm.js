@@ -161,7 +161,6 @@ class EditForm extends Component {
           autoCapitalize="sentences"
           returnKeyType="next"
           style={customFormStyles.input}
-          underlineColorAndroid="#009999"
           keyboardType="numeric"
           onChangeText={newData => this.updateField(label, newData)}
           value={value}
@@ -181,7 +180,6 @@ class EditForm extends Component {
           placeholderTextColor="#b7b3b3"
           returnKeyType="next"
           style={textType == 'text' ? customFormStyles.input : customFormStyles.inputTextArea}
-          underlineColorAndroid={textType == 'text' ? '#009999' : 'transparent'}
           multiline={textType == 'text' ? false : true}
           textAlignVertical="top"
           numberOfLines={3}
@@ -247,16 +245,15 @@ class EditForm extends Component {
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
-          selectText={i18n.t('family.select_family_type')}
+          modalWithSafeAreaView
+          selectText={i18n.t('select_option')}
           searchPlaceholderText={i18n.t('family.search')}
           confirmText={i18n.t('family.confirm')}
           showDropDowns={true}
           single={true}
           hideSearch={false}
           showCancelButton={true}
-          customFormStyles={{
-            button: { backgroundColor: MAIN_COLOR }
-          }}
+          styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
           onSelectedItemsChange={itemValue => this.updateField(label, itemValue[0])}
           selectedItems={[value]}
         />

@@ -1,6 +1,7 @@
 export default {
   choose_ngo: 'Choose your NGO',
   no_data: 'No Data',
+  select_option: 'Please Select Option',
   language: {
     languages: 'Languages',
     restart_now: 'The app will be restarted',

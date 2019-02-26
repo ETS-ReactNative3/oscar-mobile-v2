@@ -1,6 +1,7 @@
 export default {
   choose_ngo: 'നിങ്ങളുടെ സന്നദ്ധസംഘടന തിരഞ്ഞെടുക്കുക',
   no_data: 'ഡാറ്റാ ഇല്ല',
+  select_option: 'ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക',
   language: {
     languages: 'ഭാഷകൾ',
     restart_now: 'അപ്ലിക്കേഷൻ പുനരാരംഭിക്കും',
