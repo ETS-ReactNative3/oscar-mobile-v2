@@ -19,7 +19,6 @@ export function validateProgramStreamForm(
   enrollment,
   program_stream,
   client_enrolled_programs_id,
-  client_id,
   exit_date,
   enrollment_date,
   actions
@@ -61,12 +60,12 @@ export function validateProgramStreamForm(
   if (formrequired.length + numberBetween.length + emailValidation.length == 0) {
     if (type == 'Exit') {
       if (status == 'update') {
-        actions.updateLeaveProgram(
+        actions.updateLeaveProgramForm(
           type,
           field_properties,
           enrollment,
           client_enrolled_programs_id,
-          client_id,
+          actions.client.id,
           enrollment.id,
           exit_date,
           actions
@@ -74,23 +73,23 @@ export function validateProgramStreamForm(
       }
     } else if (type == 'Enroll') {
       if (status == 'update') {
-        actions.updateEnrolledProgram(
+        actions.updateEnrollmentForm(
           type,
           field_properties,
           enrollment,
           client_enrolled_programs_id,
-          client_id,
+          actions.client.id,
           enrollment_date,
           actions
         )
       }
     } else {
       if (status == 'update') {
-        actions.updateTrackingEnrolledProgram(
+        actions.updateTrackingForm(
           type,
           field_properties,
           enrollment,
-          client_id,
+          actions.client.id,
           enrollment.client_enrollment_id,
           enrollment.id,
           actions

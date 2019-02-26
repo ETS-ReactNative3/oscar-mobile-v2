@@ -12,6 +12,7 @@ var moment = require('moment')
 const { height } = Dimensions.get('window')
 import { connect } from 'react-redux'
 import { pushScreen } from '../navigation/config'
+import { additionalFormDetailList } from '../styles'
 
 class AdditionalFormDetailList extends Component {
   constructor(props) {
@@ -96,9 +97,9 @@ class AdditionalFormDetailList extends Component {
 
   renderFile(key, files) {
     return (
-      <View key={key} style={styles.fieldContainer}>
+      <View key={key} style={additionalFormDetailList.fieldContainer}>
         <View>
-          <Text style={styles.field}>{key}</Text>
+          <Text style={additionalFormDetailList.field}>{key}</Text>
           {files.map((file, index) => {
             let url = file.url
             if (url == undefined) {
@@ -108,13 +109,9 @@ class AdditionalFormDetailList extends Component {
               const filename = url.substring(url.lastIndexOf('/') + 1)
               if (filename != 'image-placeholder.png') {
                 return (
-                  <View key={index} style={styles.multipleFiledContainer}>
-                    <Image
-                      resizeMode="center"
-                      style={styles.thumnail}
-                      source={{ uri: file.url != undefined ? url : file.uri }}
-                    />
-                    <Text style={[styles.fieldData]}>{filename.substring(filename.length - 20, filename.length)}</Text>
+                  <View key={index} style={additionalFormDetailList.multipleFiledContainer}>
+                    <Image resizeMode="center" style={additionalFormDetailList.thumnail} source={{ uri: file.url != undefined ? url : file.uri }} />
+                    <Text style={[additionalFormDetailList.fieldData]}>{filename.substring(filename.length - 20, filename.length)}</Text>
                   </View>
                 )
               }
@@ -127,14 +124,14 @@ class AdditionalFormDetailList extends Component {
 
   renderActions(customFieldProperty) {
     return (
-      <View style={styles.iconWrapper}>
+      <View style={additionalFormDetailList.iconWrapper}>
         <TouchableWithoutFeedback onPress={() => this.editAdditionalForm(customFieldProperty)}>
           <View>
             <Icon color="#fff" name="edit" size={25} />
           </View>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => this.deleteAdditionalForm(customFieldProperty)}>
-          <View style={styles.deleteIcon}>
+          <View style={additionalFormDetailList.deleteIcon}>
             <Icon color="#fff" name="delete" size={25} />
           </View>
         </TouchableWithoutFeedback>
@@ -172,7 +169,7 @@ class AdditionalFormDetailList extends Component {
 
   render() {
     const { customForm, visible } = this.props
-    const { mainContainer, container } = styles
+    const { mainContainer, container } = additionalFormDetailList
     if (customForm == undefined) {
       return (
         <View style={[mainContainer, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -181,13 +178,7 @@ class AdditionalFormDetailList extends Component {
       )
     }
     return (
-      <Swiper
-        height={visible ? height - 82 : height - 81}
-        showsButtons={false}
-        loop={false}
-        style={mainContainer}
-        paginationStyle={{ bottom: 10 }}
-      >
+      <Swiper height={visible ? height - 82 : height - 81} showsButtons={false} loop={false} style={mainContainer} paginationStyle={{ bottom: 10 }}>
         {customForm.custom_field_properties.map((customFieldProperty, index) => {
           const createdAt = moment(customFieldProperty.created_at).format('DD MMMM, YYYY')
           return (
@@ -209,71 +200,8 @@ class AdditionalFormDetailList extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  titleWrapper: {
-    flexDirection: 'row',
-    margin: 20,
-    marginBottom: 0,
-    elevation: 15,
-    height: '12%'
-  },
-  title: { flex: 1 },
-  iconWrapper: { flex: 0.4, flexDirection: 'row' },
-  deleteIcon: { marginLeft: 15 },
-  mainContainer: {
-    height: '95%',
-    backgroundColor: '#EDEFF1'
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    elevation: 15,
-    borderRadius: 15,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    margin: 20,
-    marginTop: 0
-  },
-  cardTitleWrapper: {
-    padding: 20,
-    backgroundColor: '#088'
-  },
-  cardTitle: {
-    color: '#fff'
-  },
-  fieldContainer: {
-    padding: 20,
-    paddingTop: 10,
-    paddingBottom: 5,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0)',
-    borderTopColor: '#EDEFF1'
-  },
-  field: {
-    fontWeight: 'bold',
-    fontSize: 11,
-    color: '#009999'
-  },
-  fieldData: {
-    fontSize: 18
-  },
-  multipleFiledContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#dedede',
-    borderRadius: 2,
-    padding: 4,
-    marginBottom: 2
-  },
-  thumnail: {
-    width: 35,
-    height: 35,
-    marginRight: 12
-  }
-})
-
 const mapState = (state, ownProps) => {
-  const entity =
-    ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
+  const entity = ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
 
   const customForm = _.find(entity.additional_form, { id: ownProps.customFormId })
   return { entity, customForm, visible: true }

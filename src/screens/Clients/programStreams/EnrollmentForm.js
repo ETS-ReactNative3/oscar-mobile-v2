@@ -1,42 +1,32 @@
 import React, { Component } from 'react'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import { View, Text, TextInput, ScrollView, Dimensions, Alert, Image, TouchableWithoutFeedback } from 'react-native'
+import { CheckBox, Button, Divider } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
-import ImagePicker from 'react-native-image-picker'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select'
 import _ from 'lodash'
-import { Navigation } from 'react-native-navigation'
-import { CheckBox, Button, Divider } from 'react-native-elements'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import { options, MAX_SIZE } from '../constants/option'
-import { MAIN_COLOR } from '../constants/colors'
-import { validateCustomForm, formTypes, disabledUpload } from '../utils/validation'
-import i18n from '../i18n'
-import { customFormStyles } from '../styles/customForm'
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  Picker,
-  AppState,
-  Alert,
-  Image,
-  TouchableWithoutFeedback
-} from 'react-native'
-
-export default class CreateCustomFormWidget extends Component {
+import ImagePicker from 'react-native-image-picker'
+import { Navigation } from 'react-native-navigation'
+import moment from 'moment'
+import i18n from '../../../i18n'
+import { customFormStyles } from '../../../styles'
+import { options, MAX_SIZE } from '../../../constants/option'
+import { MAIN_COLOR } from '../../../constants/colors'
+import { validateCustomForm, formTypes, disabledUpload } from '../../../utils/validation'
+import { createEnrollmentForm } from '../../../redux/actions/programStreams'
+import { connect } from 'react-redux'
+class EnrollmentForm extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { fieldProperties: {}, fileSize: 0 }
+    this.state = { enrollment_date: '', fieldProperties: {}, fileSize: 0 }
   }
 
   componentWillMount() {
-    const { customForm } = this.props
+    const { programStream } = this.props
     let { fieldProperties } = this.state
-
-    _.map(customForm.fields, field => {
+    _.map(programStream.enrollment, field => {
       if (formTypes.includes(field.type)) {
         if (['checkbox-group', 'multiple', 'select'].includes(field.type)) {
           fieldProperties[field.label] = []
@@ -52,12 +42,17 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   navigationButtonPressed({ buttonId }) {
-    if (buttonId === 'SAVE_CUSTOM_FORM') {
-      const { customForm, entity, type } = this.props
-      const { fieldProperties } = this.state
-      const validated = validateCustomForm(fieldProperties, customForm.fields)
-      if (validated) {
-        this.props.createAdditionalForm(fieldProperties, entity, customForm, this.props)
+    if (buttonId === 'SAVE_ENROLLMENT') {
+      let { programStream, client } = this.props
+      const { fieldProperties, enrollment_date } = this.state
+      programStream.enrollment_field = programStream.enrollment
+      if (enrollment_date != '') {
+        const validated = validateCustomForm(fieldProperties, programStream.enrollment_field)
+        if (validated) {
+          this.props.createEnrollmentForm(fieldProperties, programStream, client.id, enrollment_date, this.props)
+        }
+      } else {
+        Alert.alert('Warning', "Enroll Date can't be blank.")
       }
     }
   }
@@ -66,10 +61,6 @@ export default class CreateCustomFormWidget extends Component {
     const { fieldProperties } = this.state
     fieldProperties[label] = updatedValue != 'default' ? updatedValue : ''
     this.setState(fieldProperties)
-  }
-
-  listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
   }
 
   updateMultipleSelect(label, value) {
@@ -84,8 +75,15 @@ export default class CreateCustomFormWidget extends Component {
     this.setState(fieldProperties)
   }
 
+  listItems(options) {
+    return _.map(options, option => ({ name: option.label, id: option.label }))
+  }
+
   datePickerType(label, data) {
     const value = data != undefined ? data : ''
+    const minDate = moment(this.state.enrollment_date, 'YYYY-MM-DD')
+      .add(1, 'days')
+      .format('YYYY-MM-DD')
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
@@ -93,6 +91,7 @@ export default class CreateCustomFormWidget extends Component {
           date={value}
           style={customFormStyles.datePicker}
           mode="date"
+          minDate={label == 'Enroll Date' ? minDate : '1980-01-01'}
           confirmBtnText="Done"
           cancelBtnText="Cancel"
           placeholder={i18n.t('client.select_date')}
@@ -101,7 +100,7 @@ export default class CreateCustomFormWidget extends Component {
           customStyles={{
             dateInput: customFormStyles.datePickerBorder
           }}
-          onDateChange={date => this.updateField(label, date)}
+          onDateChange={date => (label == 'Enroll Date' ? this.setState({ enrollment_date: date }) : this.updateField(label, date))}
         />
       </View>
     )
@@ -253,7 +252,7 @@ export default class CreateCustomFormWidget extends Component {
           }}
         >
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
-          <Icon name="add-circle" size={22} color="#fff" onPress={() => this.uploader(label, formField, data)} />
+          <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
         {_.map(data, (attachment, index) => {
           const name = attachment.name.substring(0, 16)
@@ -283,7 +282,7 @@ export default class CreateCustomFormWidget extends Component {
     this.setState(fieldProperties)
   }
 
-  selectAllFile(label, formField, data) {
+  _selectAllFile(label, formField, data) {
     DocumentPicker.show(
       {
         filetype: [DocumentPickerUtil.allFiles()]
@@ -301,11 +300,11 @@ export default class CreateCustomFormWidget extends Component {
     )
   }
 
-  uploader(label, formField, data) {
+  _uploader(label, formField, data) {
     if (disabledUpload()) {
       Alert.alert(
         'Warning',
-        'OSCaR Mobile does not yet support File upload to custom forms. Please save your form and upload the file on oscarhq.com'
+        'OSCaR Mobile does not yet support File Upload to Program Stream forms. Please save your form and upload the file on oscarhq.com'
       )
     } else {
       ImagePicker.showImagePicker(options, response => {
@@ -313,7 +312,7 @@ export default class CreateCustomFormWidget extends Component {
         } else if (response.error) {
           alert('ImagePicker Error: ', response.error)
         } else if (response.customButton) {
-          this.selectAllFile(label, formField, data)
+          this._selectAllFile(label, formField, data)
         } else if (response.didCancel) {
         } else {
           this.handleSelectedFile(response, label, formField, data)
@@ -336,22 +335,21 @@ export default class CreateCustomFormWidget extends Component {
         size: fileSize / 1024
       }
 
-      fieldProperties[label] =
-        formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
+      fieldProperties[label] = formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
       this.setState({ fileSize: this.state.fileSize + fileSize / 1024, fieldProperties })
     } else {
       Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
     }
     this.setState({ error: null })
   }
-
   render() {
-    const { customForm } = this.props
-    const { fieldProperties } = this.state
+    const { programStream } = this.props
+    const { fieldProperties, enrollment_date } = this.state
     return (
       <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
         <View style={customFormStyles.aboutClientContainer}>
-          {_.map(customForm.fields, (formField, index) => {
+          {this.datePickerType('Enroll Date', enrollment_date)}
+          {_.map(programStream.enrollment, (formField, index) => {
             const fieldType = formField.type
             const label = formField.label
             return (
@@ -362,12 +360,8 @@ export default class CreateCustomFormWidget extends Component {
                 {fieldType == 'date' && this.datePickerType(label, fieldProperties[label])}
                 {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, fieldProperties[label])}
                 {fieldType == 'radio-group' && this.radioType(label, formField, fieldProperties[label])}
-                {fieldType == 'select' &&
-                  formField.multiple &&
-                  this.checkBoxType(label, formField, fieldProperties[label])}
-                {fieldType == 'select' &&
-                  !formField.multiple &&
-                  this.selectType(label, formField, fieldProperties[label])}
+                {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, fieldProperties[label])}
+                {fieldType == 'select' && !formField.multiple && this.selectType(label, formField, fieldProperties[label])}
                 {fieldType == 'file' && this.fileUploader(label, formField, fieldProperties[label])}
                 {fieldType == 'paragraph' && this.renderParagraph(label)}
                 {fieldType == 'separateLine' && <Divider style={{ backgroundColor: '#ccc', marginTop: 20 }} />}
@@ -379,3 +373,11 @@ export default class CreateCustomFormWidget extends Component {
     )
   }
 }
+const mapDispatch = {
+  createEnrollmentForm
+}
+
+export default connect(
+  null,
+  mapDispatch
+)(EnrollmentForm)

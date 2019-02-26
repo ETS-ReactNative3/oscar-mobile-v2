@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native'
 
-export const customFormStyles = StyleSheet.create({
+const customFormStyles = StyleSheet.create({
   row: {
     flexDirection: 'row'
   },
@@ -122,3 +122,67 @@ export const customFormStyles = StyleSheet.create({
     backgroundColor: 'transparent'
   }
 })
+
+const additionalFormDetailList = StyleSheet.create({
+  titleWrapper: {
+    flexDirection: 'row',
+    margin: 20,
+    marginBottom: 0,
+    elevation: 15,
+    height: '12%'
+  },
+  title: { flex: 1 },
+  iconWrapper: { flexDirection: 'row' },
+  deleteIcon: { marginLeft: 15 },
+  mainContainer: {
+    height: '95%',
+    backgroundColor: '#EDEFF1'
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    elevation: 15,
+    borderRadius: 15,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    margin: 20,
+    marginTop: 0
+  },
+  cardTitleWrapper: {
+    padding: 20,
+    backgroundColor: '#088'
+  },
+  cardTitle: {
+    color: '#fff'
+  },
+  fieldContainer: {
+    padding: 20,
+    paddingTop: 10,
+    paddingBottom: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0)',
+    borderTopColor: '#EDEFF1'
+  },
+  field: {
+    fontWeight: 'bold',
+    fontSize: 11,
+    color: '#009999'
+  },
+  fieldData: {
+    fontSize: 18
+  },
+  multipleFiledContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#dedede',
+    borderRadius: 2,
+    padding: 4,
+    marginBottom: 2
+  },
+  thumnail: {
+    width: 35,
+    height: 35,
+    marginRight: 12
+  }
+})
+
+export { customFormStyles, additionalFormDetailList }

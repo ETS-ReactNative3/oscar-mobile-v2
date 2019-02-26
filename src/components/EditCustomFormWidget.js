@@ -10,7 +10,7 @@ import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker
 import { options, MAX_SIZE } from '../constants/option.js'
 import { MAIN_COLOR } from '../constants/colors'
 import { Navigation } from 'react-native-navigation'
-import { customFormStyles } from '../styls'
+import { customFormStyles } from '../styles/customForm'
 import {
   View,
   Text,
