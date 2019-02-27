@@ -35,7 +35,7 @@ class Assessments extends Component {
     const { client, domains } = this.state
 
     if (isCustom) {
-      const customDomains = domains.domains.filter(d => d.custom_domain)
+      const customDomains = domains.filter(d => d.custom_domain)
       if (customDomains.length === 0) {
         Alert.alert(
           i18n.t('client.assessment_form.no_custom_domains_available'),
