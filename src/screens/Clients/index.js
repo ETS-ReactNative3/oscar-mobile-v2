@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { ScrollView, View, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import { fetchClients } from '../../redux/actions/clients'
 import { fetchProvinces } from '../../redux/actions/provinces'
 import { fetchDistricts } from '../../redux/actions/districts'
@@ -60,9 +60,17 @@ class Clients extends Component {
         </View>
       )
     return (
-      <ScrollView style={styles.container}>
-        <FlatList data={this.props.clients} title={this.clientName} subItems={this.subItems} onPress={this.onClientPress} isClientList />
-      </ScrollView>
+      <View style={styles.container}>
+        <FlatList
+          data={this.props.clients}
+          title={this.clientName}
+          subItems={this.subItems}
+          onPress={this.onClientPress}
+          refreshing={this.props.loading}
+          onRefresh={() => this.props.fetchClients()}
+          isClientList
+        />
+      </View>
     )
   }
 }
@@ -70,7 +78,8 @@ class Clients extends Component {
 const mapState = state => ({
   clients: state.clients.data,
   loading: state.clients.loading,
-  setting: state.setting.data
+  setting: state.setting.data,
+  hasInternet: state.internet.hasInternet
 })
 
 const mapDispatch = {

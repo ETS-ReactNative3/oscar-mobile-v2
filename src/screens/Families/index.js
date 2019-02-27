@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import FlatList from '../../components/FlatList'
 import { Navigation } from 'react-native-navigation'
-import { ScrollView, View, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
 import { pushScreen } from '../../navigation/config'
 import { fetchFamilies, requestFamiliesSuccess } from '../../redux/actions/families'
@@ -47,16 +47,24 @@ class Families extends Component {
         </View>
       )
     return (
-      <ScrollView style={styles.container}>
-        <FlatList data={this.props.families} title={({ name }) => name || '(No Name)'} subItems={this.subItems} onPress={this.onPress} />
-      </ScrollView>
+      <View style={styles.container}>
+        <FlatList
+          data={this.props.families}
+          title={({ name }) => name || '(No Name)'}
+          subItems={this.subItems}
+          onPress={this.onPress}
+          refreshing={this.props.loading}
+          onRefresh={() => this.props.hasInternet && this.props.fetchFamilies()}
+        />
+      </View>
     )
   }
 }
 
 const mapState = state => ({
   families: state.families.data,
-  loading: state.families.loading
+  loading: state.families.loading,
+  hasInternet: state.internet.hasInternet
 })
 
 const mapDispatch = {
