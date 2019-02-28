@@ -5,7 +5,7 @@ const initialState = Immutable({
   hasInternet: false
 })
 
-export default (internetReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case INTERNET_TYPES.UPDATE_CONNECTION:
       return state.set('hasInternet', action.connection)
@@ -13,4 +13,4 @@ export default (internetReducer = (state = initialState, action) => {
     default:
       return state
   }
-})
+}

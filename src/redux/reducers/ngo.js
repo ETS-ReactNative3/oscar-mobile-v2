@@ -8,7 +8,7 @@ const initialState = Immutable({
   loading: false
 })
 
-export default (ngoReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case NGO_TYPES.SET_NGO_NAME:
       return state.set('name', action.name)
@@ -25,4 +25,4 @@ export default (ngoReducer = (state = initialState, action) => {
     default:
       return state
   }
-})
+}

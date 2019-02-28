@@ -7,7 +7,7 @@ const initialState = Immutable({
   loading: false
 })
 
-export default (ngoReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case DOMAIN_TYPES.DOMAIN_REQUESTING:
       return state.set('error', '').set('loading', true)
@@ -21,4 +21,4 @@ export default (ngoReducer = (state = initialState, action) => {
     default:
       return state
   }
-})
+}

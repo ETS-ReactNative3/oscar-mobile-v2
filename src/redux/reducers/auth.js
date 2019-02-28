@@ -8,7 +8,7 @@ const initialState = Immutable({
   loading: false
 })
 
-export default (userReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case AUTH_TYPES.LOGIN_REQUEST:
       return state.set('error', '').set('loading', true)
@@ -54,4 +54,4 @@ export default (userReducer = (state = initialState, action) => {
     default:
       return state
   }
-})
+}

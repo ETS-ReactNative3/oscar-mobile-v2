@@ -1,24 +1,21 @@
 import Immutable from 'seamless-immutable'
-import { USER_TYPES } from '../types'
+import { DONOR_TYPES } from '../types'
 
 const initialState = Immutable({
-  data: {},
   error: '',
+  data: [],
   loading: false
 })
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case USER_TYPES.UPDATE_USER:
-      return state.setIn(['data', action.user.id], action.user)
-
-    case USER_TYPES.USERS_REQUESTING:
+    case DONOR_TYPES.DONORS_REQUESTING:
       return state.set('error', '').set('loading', true)
 
-    case USER_TYPES.USERS_REQUEST_SUCCESS:
+    case DONOR_TYPES.DONORS_SUCCESS:
       return state.set('data', action.data).set('loading', false)
 
-    case USER_TYPES.USERS_REQUEST_FAILED:
+    case DONOR_TYPES.DONORS_FAILED:
       return state.set('error', action.error).set('loading', false)
 
     default:

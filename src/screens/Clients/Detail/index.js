@@ -8,8 +8,36 @@ import i18n from '../../../i18n'
 import ClientInformation from './Information'
 import Menu from './Menu'
 import styles from './styles'
-
+import appIcon from '../../../utils/Icon'
+import { Navigation } from 'react-native-navigation'
 class ClientDetail extends Component {
+  constructor(props) {
+    super(props)
+    Navigation.events().bindComponent(this)
+  }
+
+  async navigationButtonPressed({ buttonId }) {
+    if (buttonId === 'EDIT_CLIENT') {
+      const { client } = this.props
+      const icons = await appIcon()
+      pushScreen(this.props.componentId, {
+        screen: 'oscar.editClient',
+        title: 'EDIT CLIENT',
+        props: {
+          client,
+          clientDetailComponentId: this.props.componentId
+        },
+        rightButtons: [
+          {
+            id: 'SAVE_CLIENT',
+            icon: icons.save,
+            color: '#fff'
+          }
+        ]
+      })
+    }
+  }
+
   navigateToAssessments = client => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.assessments',
@@ -73,8 +101,7 @@ class ClientDetail extends Component {
   }
 
   render() {
-    const { clients, setting } = this.props
-    const client = clients[this.props.clientId]
+    const { client, setting } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
 
     const enrolledProgramStreamCount = client.program_streams.filter(program_stream => _.some(program_stream.enrollments, { status: 'Active' }))
@@ -167,10 +194,10 @@ class ClientDetail extends Component {
   }
 }
 
-const mapState = state => ({
+const mapState = (state, ownProps) => ({
   programStreams: state.programStreams.data,
   programStreamsLoading: state.programStreams.loading,
-  clients: state.clients.data
+  client: state.clients.data[ownProps.clientId]
 })
 
 export default connect(mapState)(ClientDetail)

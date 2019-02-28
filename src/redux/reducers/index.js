@@ -14,6 +14,10 @@ import clients from './clients'
 import families from './families'
 import setting from './setting'
 import programStreams from './programStreams'
+import quantitativeTypes from './quantitativeTypes'
+import referralSources from './referralSources'
+import agencies from './agencies'
+import donors from './donors'
 
 export default combineReducers({
   auth,
@@ -30,5 +34,9 @@ export default combineReducers({
   departments,
   families,
   setting,
-  programStreams
+  programStreams,
+  quantitativeTypes,
+  referralSources,
+  agencies,
+  donors
 })

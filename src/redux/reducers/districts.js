@@ -7,7 +7,7 @@ const initialState = Immutable({
   loading: false
 })
 
-export default (districtsReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case DISTRICT_TYPES.DISTRICTS_REQUESTING:
       return state.set('error', '').set('loading', true)
@@ -21,4 +21,4 @@ export default (districtsReducer = (state = initialState, action) => {
     default:
       return state
   }
-})
+}

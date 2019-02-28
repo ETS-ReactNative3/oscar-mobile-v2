@@ -8,10 +8,16 @@ import { fetchCommunes } from '../../redux/actions/communes'
 import { fetchVillages } from '../../redux/actions/villages'
 import { fetchSetting } from '../../redux/actions/setting'
 import { fetchProgramStreams } from '../../redux/actions/programStreams'
+import { fetchReferralSources } from '../../redux/actions/referralSources'
+import { fetchQuantitativeTypes } from '../../redux/actions/quantitativeTypes'
+import { fetchAgencies } from '../../redux/actions/agencies'
+import { fetchDonors } from '../../redux/actions/donors'
+import { fetchUsers } from '../../redux/actions/users'
 import { pushScreen } from '../../navigation/config'
 import FlatList from '../../components/FlatList'
 import i18n from '../../i18n'
 import styles from './styles'
+import appIcon from '../../utils/Icon'
 
 class Clients extends Component {
   componentDidMount() {
@@ -22,16 +28,29 @@ class Clients extends Component {
     this.props.fetchVillages()
     this.props.fetchSetting()
     this.props.fetchProgramStreams()
+    this.props.fetchReferralSources()
+    this.props.fetchQuantitativeTypes()
+    this.props.fetchAgencies()
+    this.props.fetchDonors()
+    this.props.fetchUsers()
   }
 
-  onClientPress = client => {
+  onClientPress = async client => {
+    const icons = await appIcon()
     pushScreen(this.props.componentId, {
       screen: 'oscar.clientDetail',
       title: this.clientName(client),
       props: {
         clientId: client.id,
         setting: this.props.setting
-      }
+      },
+      rightButtons: [
+        {
+          id: 'EDIT_CLIENT',
+          icon: icons.edit,
+          color: '#fff'
+        }
+      ]
     })
   }
 
@@ -80,7 +99,12 @@ const mapDispatch = {
   fetchCommunes,
   fetchVillages,
   fetchSetting,
-  fetchProgramStreams
+  fetchProgramStreams,
+  fetchReferralSources,
+  fetchQuantitativeTypes,
+  fetchAgencies,
+  fetchDonors,
+  fetchUsers
 }
 
 export default connect(

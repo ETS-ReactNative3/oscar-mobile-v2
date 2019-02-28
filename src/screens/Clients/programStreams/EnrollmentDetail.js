@@ -145,7 +145,6 @@ class EnrollmentDetail extends Component {
   render() {
     const { deleteAble, editAble, enrollment, type } = this.props
     const form = type.match(/Tracking|Enroll/) ? enrollment : enrollment.leave_program
-    debugger
     if (form == undefined) {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
