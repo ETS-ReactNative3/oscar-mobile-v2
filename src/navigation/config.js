@@ -103,7 +103,14 @@ export const startTabScreen = async () => {
                       topBar: {
                         title: {
                           text: i18n.t('client.title')
-                        }
+                        },
+                        rightButtons: [
+                          {
+                            id: 'SEARCH_USER',
+                            icon: icons.search,
+                            color: '#fff'
+                          }
+                        ]
                       }
                     }
                   }

@@ -216,7 +216,6 @@ class AssessmentForm extends Component {
   }
 
   handleValidation = (e, state, context) => {
-    return
     if (state.index == 0) return
 
     const previousIndex         = state.index - 1
@@ -552,7 +551,6 @@ class AssessmentForm extends Component {
           { !ad.required_task_last && this.renderButtonAddTask(ad) }
           { this.renderAttachment(ad) }
           <View>{ this.renderIncompletedTask(ad) }</View>
-          { this.renderButtonDone() }
         </View>
       </ScrollView>
     )
