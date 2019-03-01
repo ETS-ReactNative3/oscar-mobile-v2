@@ -2,17 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import Modal from 'react-native-modal'
-import ClientFormWidget from '../../../components/ClientFormWidget'
-
+import ClientForm from '../../../components/ClientForm'
 import { updateClientProperty } from '../../../redux/actions/clients'
 
-class ClientForm extends Component {
+class EditClient extends Component {
   render() {
-    return (
-      <View style={styles.container}>
-        <ClientFormWidget {...this.props} />
-      </View>
-    )
+    return <ClientForm {...this.props} />
   }
 }
 
@@ -31,6 +26,7 @@ const mapState = state => ({
 const mapDispatch = {
   updateClientProperty
 }
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
@@ -41,4 +37,4 @@ const styles = StyleSheet.create({
 export default connect(
   mapState,
   mapDispatch
-)(ClientForm)
+)(EditClient)

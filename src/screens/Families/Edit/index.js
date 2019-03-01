@@ -9,7 +9,7 @@ import { updateFamily } from '../../../redux/actions/families'
 import styles from './styles'
 import i18n from '../../../i18n'
 import _ from 'lodash'
-import { View, Text, KeyboardAvoidingView, ScrollView, TextInput, Alert, Platform, ActivityIndicator, Modal, StyleSheet } from 'react-native'
+import { View, Text, KeyboardAvoidingView, ScrollView, TextInput, Alert, Platform, ActivityIndicator, Modal } from 'react-native'
 
 class UserEdit extends Component {
   state = { family: this.props.family }
@@ -115,7 +115,10 @@ class UserEdit extends Component {
                 hideSearch={false}
                 showCancelButton={true}
                 styles={{
-                  button: { backgroundColor: MAIN_COLOR }
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
                 onSelectedItemsChange={family_type => this.setUpdateFamily('family_type', family_type[0])}
                 selectedItems={[family.family_type]}
@@ -123,22 +126,26 @@ class UserEdit extends Component {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>{i18n.t('family.status')}</Text>
-              <SectionedMultiSelect
-                items={status}
-                uniqueKey="id"
-                selectText={i18n.t('family.select_status')}
-                searchPlaceholderText={i18n.t('search')}
-                confirmText={i18n.t('confirm')}
-                showDropDowns={true}
-                single={true}
-                hideSearch={false}
-                showCancelButton={true}
-                styles={{
-                  button: { backgroundColor: MAIN_COLOR }
-                }}
-                onSelectedItemsChange={status => this.setUpdateFamily('status', status[0])}
-                selectedItems={[family.status]}
-              />
+              <View style={styles.row}>
+                <CheckBox
+                  title="Active"
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checkedColor="#009999"
+                  style={{ backgroundColor: 'transparent' }}
+                  checked={family.status == 'Active'}
+                  onPress={() => this.setUpdateFamily('status', 'Active')}
+                />
+                <CheckBox
+                  title="Inactive"
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checkedColor="#009999"
+                  style={{ backgroundColor: 'transparent' }}
+                  checked={family.status == 'Inactive'}
+                  onPress={() => this.setUpdateFamily('status', 'Inactive')}
+                />
+              </View>
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>{i18n.t('family.case_history')}</Text>
@@ -244,7 +251,10 @@ class UserEdit extends Component {
                 hideSearch={false}
                 showCancelButton={true}
                 styles={{
-                  button: { backgroundColor: MAIN_COLOR }
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
                 onSelectedItemsChange={province => {
                   this.setUpdateFamily('province_id', province[0]),
@@ -268,7 +278,10 @@ class UserEdit extends Component {
                 hideSearch={false}
                 showCancelButton={true}
                 styles={{
-                  button: { backgroundColor: MAIN_COLOR }
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
                 onSelectedItemsChange={district => {
                   this.setUpdateFamily('district_id', district[0]), this.setUpdateFamily('commune_id', null), this.setUpdateFamily('village_id', null)
@@ -289,7 +302,10 @@ class UserEdit extends Component {
                 hideSearch={false}
                 showCancelButton={true}
                 styles={{
-                  button: { backgroundColor: MAIN_COLOR }
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
                 onSelectedItemsChange={commune => {
                   this.setUpdateFamily('commune_id', commune[0]), this.setUpdateFamily('village_id', null)
@@ -310,7 +326,10 @@ class UserEdit extends Component {
                 hideSearch={false}
                 showCancelButton={true}
                 styles={{
-                  button: { backgroundColor: MAIN_COLOR }
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
                 onSelectedItemsChange={village => this.setUpdateFamily('village_id', village[0])}
                 selectedItems={[family.village_id]}
@@ -385,7 +404,10 @@ class UserEdit extends Component {
                 hideSearch={false}
                 showCancelButton={true}
                 styles={{
-                  button: { backgroundColor: MAIN_COLOR }
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
                 onSelectedItemsChange={children => this.setUpdateFamily('children', children)}
                 selectedItems={family.children}

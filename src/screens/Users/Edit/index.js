@@ -9,18 +9,7 @@ import { updateUser } from '../../../redux/actions/auth'
 import { MAIN_COLOR } from '../../../constants/colors'
 import styles from './styles'
 import i18n from '../../../i18n'
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  ScrollView,
-  TextInput,
-  Alert,
-  Platform,
-  ActivityIndicator,
-  Modal,
-  StyleSheet
-} from 'react-native'
+import { View, Text, KeyboardAvoidingView, ScrollView, TextInput, Alert, Platform, ActivityIndicator, Modal } from 'react-native'
 
 class UserEdit extends Component {
   state = { user: this.props.user }

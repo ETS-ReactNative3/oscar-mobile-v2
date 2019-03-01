@@ -258,7 +258,12 @@ export default class EditAdditionalFormWidget extends Component {
           single={true}
           hideSearch={false}
           showCancelButton={true}
-          styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+          styles={{
+            button: { backgroundColor: MAIN_COLOR },
+            cancelButton: { width: 150 },
+            chipText: { maxWidth: 280 },
+            selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
+          }}
           onSelectedItemsChange={itemValue => this.updateField(label, itemValue[0])}
           selectedItems={[value]}
         />
