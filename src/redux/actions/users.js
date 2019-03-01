@@ -42,7 +42,11 @@ export function fetchUsers() {
     axios
       .get(endpoint.usersPath)
       .then(response => {
-        dispatch(requestUsersSuccess(response.data.users))
+        const users = response.data.users.reduce((res, user) => {
+          res[user.id] = user
+          return res
+        }, {})
+        dispatch(requestUsersSuccess(users))
       })
       .catch(error => {
         dispatch(requestUsersFailed(error))

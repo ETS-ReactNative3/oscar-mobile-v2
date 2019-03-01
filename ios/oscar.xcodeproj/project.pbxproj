@@ -1763,6 +1763,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rotati.oscarhq;
 				PRODUCT_NAME = oscar;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1796,6 +1797,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rotati.oscarhq;
 				PRODUCT_NAME = oscar;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
