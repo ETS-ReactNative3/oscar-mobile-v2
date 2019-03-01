@@ -10,8 +10,9 @@ export default async () => {
     Icon.getImageSource('g-translate', 20),
     Icon.getImageSource('edit', 20),
     Icon.getImageSource('save', 20),
-    Icon.getImageSource('add-circle', 20)
+    Icon.getImageSource('add-circle', 20),
+    Icon.getImageSource('search', 20),
   ])
-  const [person, people, assignment, accountBox, web, translation, edit, save, add] = icons
-  return { person, people, assignment, accountBox, web, translation, edit, save, add }
+  const [person, people, assignment, accountBox, web, translation, edit, save, add, search] = icons
+  return { person, people, assignment, accountBox, web, translation, edit, save, add, search }
 }

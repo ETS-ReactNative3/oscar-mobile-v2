@@ -37,7 +37,17 @@ export default class OscarFlatList extends Component {
 
   render() {
     const data = Object.values(this.props.data)
-    return <FlatList data={data} keyExtractor={this.keyExtractor} renderItem={this.renderItem} />
+
+    return (
+      <FlatList
+        data={data}
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        refreshing={this.props.refreshing}
+        onRefresh={ () => this.props.onRefresh() }
+        showsVerticalScrollIndicator={false}
+      />
+    )
   }
 }
 
