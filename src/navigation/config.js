@@ -69,7 +69,11 @@ export const startNgoScreen = () => {
 export const setDefaultOptions = () => {
   Navigation.setDefaultOptions({
     statusBar: {
-      style: 'light'
+      style: 'light',
+      backgroundColor: '#008282'
+    },
+    layout: {
+      orientation: ['portrait']
     },
     topBar: {
       title: {
