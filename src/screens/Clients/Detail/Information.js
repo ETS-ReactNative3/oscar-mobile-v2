@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import moment from 'moment'
 import _ from 'lodash'
 import Field from '../../../components/Field'
 import Card from '../../../components/Card'
 import i18n from '../../../i18n'
 import { pushScreen } from '../../../navigation/config'
-
+import FastImage from 'react-native-fast-image'
 export default class ClientInformation extends Component {
   calculateAge = () => {
     const { client } = this.props
@@ -49,7 +49,7 @@ export default class ClientInformation extends Component {
     return (
       <View style={styles.container}>
         <Card title={i18n.t('client.about_client')}>
-          {client.profile && <Image style={styles.profile} source={{ uri: client.profile.uri }} resizeMode="contain" />}
+          {client.profile && <FastImage style={styles.profile} source={{ uri: client.profile.uri }} resizeMode="contain" />}
           <Field name={i18n.t('client.form.given_name')} value={client.given_name} />
           <Field name={i18n.t('client.form.family_name')} value={client.family_name} />
           <Field name={i18n.t('client.form.age')} value={this.calculateAge()} />

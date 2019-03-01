@@ -2,6 +2,8 @@ export default {
   choose_ngo: 'ជ្រើសរើសអង្គការរបស់អ្នក',
   no_data: 'គ្មាន​ទិន្នន័យ',
   select_option: 'សូមជ្រើសរើស',
+  confirm: 'ព្រម',
+  search: 'ស្វែងរក',
   language: {
     languages: 'ភាសា',
     restart_now: 'កម្មវិធីនឹងបើកម្ដងទៀត',
@@ -159,8 +161,6 @@ export default {
     select_village: 'សូមជ្រើសរើសភូមិ',
     select_clients: 'សូមជ្រើសរើសឣតិថិជន',
     select_status: 'សូមជ្រើសរើសស្ថានភាព',
-    confirm: 'ព្រម',
-    search: 'ស្វែងរក',
     family: 'គ្រួសារ',
     family_preservation: 'ករណីអភិរក្សគ្រួសារ?',
     family_type: 'ប្រភេទគ្រួសារ',

@@ -108,8 +108,8 @@ class UserEdit extends Component {
                 items={familyType}
                 uniqueKey="id"
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
@@ -127,8 +127,8 @@ class UserEdit extends Component {
                 items={status}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_status')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
@@ -237,8 +237,8 @@ class UserEdit extends Component {
                 items={this.listItems(provinces)}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_province')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
@@ -261,8 +261,8 @@ class UserEdit extends Component {
                 items={this.listItems(districtOptions)}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_district')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
@@ -282,8 +282,8 @@ class UserEdit extends Component {
                 items={this.listItems(communeOptions)}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_commune')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
@@ -303,8 +303,8 @@ class UserEdit extends Component {
                 items={this.listItems(villageOptions)}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_village')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
@@ -379,8 +379,8 @@ class UserEdit extends Component {
                 items={this.listClients(clientOptions)}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_clients')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 hideSearch={false}
                 showCancelButton={true}

@@ -2,6 +2,8 @@ export default {
   choose_ngo: 'Choose your NGO',
   no_data: 'No Data',
   select_option: 'Please Select Option',
+  confirm: 'Confirm',
+  search: 'Search',
   language: {
     languages: 'Languages',
     restart_now: 'The app will be restarted',
@@ -159,8 +161,6 @@ export default {
     select_village: 'Please choose village',
     select_clients: 'Please choose clients',
     select_status: 'Please choose status',
-    confirm: 'Confirm',
-    search: 'Search',
     family: 'Family',
     family_preservation: 'Family Preservation?',
     family_type: 'Family Type',

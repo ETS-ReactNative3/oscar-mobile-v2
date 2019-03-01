@@ -57,11 +57,13 @@ class ClientDetail extends Component {
       screen: 'oscar.caseNotes',
       title: i18n.t('client.case_notes'),
       props: { clientId: client.id },
-      rightButtons: [{
-        id: 'ADD_CASE_NOTE',
-        icon: icons.add,
-        color: '#fff'
-      }]
+      rightButtons: [
+        {
+          id: 'ADD_CASE_NOTE',
+          icon: icons.add,
+          color: '#fff'
+        }
+      ]
     })
   }
 

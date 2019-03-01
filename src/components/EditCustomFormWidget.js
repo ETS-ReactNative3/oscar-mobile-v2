@@ -252,8 +252,8 @@ export default class EditAdditionalFormWidget extends Component {
           uniqueKey="id"
           modalWithSafeAreaView
           selectText={i18n.t('select_option')}
-          searchPlaceholderText={i18n.t('family.search')}
-          confirmText={i18n.t('family.confirm')}
+          searchPlaceholderText={i18n.t('search')}
+          confirmText={i18n.t('confirm')}
           showDropDowns={true}
           single={true}
           hideSearch={false}

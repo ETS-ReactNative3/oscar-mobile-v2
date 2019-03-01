@@ -2,6 +2,8 @@ export default {
   choose_ngo: 'നിങ്ങളുടെ സന്നദ്ധസംഘടന തിരഞ്ഞെടുക്കുക',
   no_data: 'ഡാറ്റാ ഇല്ല',
   select_option: 'ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക',
+  confirm: 'സ്ഥിരീകരിക്കുക',
+  search: 'തിരയുക',
   language: {
     languages: 'ഭാഷകൾ',
     restart_now: 'അപ്ലിക്കേഷൻ പുനരാരംഭിക്കും',
@@ -159,8 +161,6 @@ export default {
     select_village: 'ദയവായി ഗ്രാമം തിരഞ്ഞെടുക്കുക',
     select_clients: 'ക്ലയന്റുകൾ തിരഞ്ഞെടുക്കുക',
     select_status: 'നില തിരഞ്ഞെടുക്കുക',
-    confirm: 'സ്ഥിരീകരിക്കുക',
-    search: 'തിരയുക',
     family: 'မိသားစု',
     family_preservation: 'မိသားစု၏ ေစာင့္ေရွာက္မႈ ရွိပါသလား',
     family_type: 'မိသားစုအမ်ိဳးအစား',

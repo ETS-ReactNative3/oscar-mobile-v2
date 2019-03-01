@@ -9,10 +9,6 @@ import i18n from '../i18n'
 import { schoolGrades, poorIds, genders } from '../constants/clientOptions'
 import { connect } from 'react-redux'
 import { MAIN_COLOR } from '../constants/colors'
-import Agencies from './clients/Agencies'
-import CaseWorker from './clients/CaseWorker'
-import Donors from './clients/Donors'
-import QuantitiveCase from './clients/QuantitiveCase'
 import { Navigation } from 'react-native-navigation'
 import _ from 'lodash'
 
@@ -28,23 +24,23 @@ class ClientForm extends Component {
       this.props.updateClientProperty(this.state.client, this.props)
     }
   }
+
   componentDidMount() {
     const { client } = this.state
     const { quantitativeTypes } = this.props
     let agencyIds = []
-    let quantitativesID = []
+    let quantitativeIds = []
     let caseWorkersID = []
     let donorIds = []
-
     if (client.quantitative_cases.length > 0) {
-      if (quantitativeTypes.quantitative_types != undefined) {
-        _.map(quantitativeTypes.quantitative_types, quantitative_type => {
+      if (quantitativeTypes != undefined) {
+        _.map(quantitativeTypes, quantitative_type => {
           _.map(client.quantitative_cases, c_case => {
             if (c_case.quantitative_type == quantitative_type.name) {
               _.map(c_case.client_quantitative_cases, client_case => {
                 _.map(quantitative_type.quantitative_cases, quantitative_case => {
                   if (quantitative_case.value == client_case) {
-                    quantitativesID = quantitativesID.concat(quantitative_case.id)
+                    quantitativeIds = quantitativeIds.concat(quantitative_case.id)
                   }
                 })
               })
@@ -53,7 +49,6 @@ class ClientForm extends Component {
         })
       }
     }
-
     if (client.agencies.length > 0) {
       agencyIds = _.map(client.agencies, 'id')
     }
@@ -72,7 +67,7 @@ class ClientForm extends Component {
         user_ids: caseWorkersID,
         referral_source_id: client.referral_source != null ? client.referral_source.id : '',
         agency_ids: agencyIds,
-        quantitative_case_ids: quantitativesID,
+        quantitative_case_ids: quantitativeIds,
         province_id: client.current_province != null ? client.current_province.id : '',
         district_id: client.district != null ? client.district.id : '',
         commune_id: client.commune != null ? client.commune.id : '',
@@ -97,85 +92,34 @@ class ClientForm extends Component {
     return _.map(users, user => ({ name: `${user.first_name} ${user.last_name}`, id: user.id }))
   }
 
-  selectQuantitativeTypes(quantitativeType) {}
-
-  _renderCaseWorkers = () => {
-    const { users } = this.props
-    if (users != undefined && users.length > 0) {
-      return (
-        <CaseWorker _setCaseWorkers={this._setCaseWorkers} _removeCaseWorkers={this._removeCaseWorkers} users={users} client={this.state.client} />
-      )
-    }
-  }
-
-  _setCaseWorkers = value => {
-    const { client } = this.state
-    if (client.user_ids != undefined) {
-      const newCaseWorkers = client.user_ids.concat(value)
-      this.updateClientState('user_ids', _.uniq(newCaseWorkers))
-    } else {
-      this.updateClientState('user_ids', value)
-    }
-  }
-
-  _removeCaseWorkers = value => {
-    const { client } = this.state
-    const newCaseWorkers = _.filter(client.user_ids, id => {
-      return id != value
-    })
-    this.updateClientState('user_ids', newCaseWorkers)
-  }
-
-  _renderDonors = () => {
-    const { donors } = this.props
-
-    if (donors != undefined) {
-      return <Donors key="donors" updateClientState={this.updateClientState} donors={donors} client={this.state.client} />
-    }
-  }
-
-  _renderQuantitativeTypes = () => {
+  renderQuantitativeTypes = () => {
     const { quantitativeTypes } = this.props
+    const { client } = this.state
     if (quantitativeTypes != undefined) {
       return quantitativeTypes.map((quantitative_type, index) => {
         return (
           <View key={index} style={customFormStyles.fieldContainer}>
             <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{quantitative_type.name}</Text>
-            <View style={[customFormStyles.pickerContainer, { padding: 0 }]}>
-              <QuantitiveCase
-                _setQuantitativeCases={this._setQuantitativeCases}
-                _removeQuantitativeCase={this._removeQuantitativeCase}
-                quantitativeType={quantitative_type}
-                client={this.state.client}
-              />
-            </View>
+            <SectionedMultiSelect
+              items={_.map(quantitative_type.quantitative_cases, quantitativeCase => ({ name: quantitativeCase.value, id: quantitativeCase.id }))}
+              uniqueKey="id"
+              modalWithSafeAreaView
+              selectText={i18n.t('select_option')}
+              alwaysShowSelectText={true}
+              searchPlaceholderText={i18n.t('search')}
+              confirmText={i18n.t('confirm')}
+              showDropDowns={true}
+              hideSearch={false}
+              showCancelButton={true}
+              styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
+              onSelectedItemsChange={itemValue => {
+                this.updateClientState('quantitative_case_ids', itemValue)
+              }}
+              selectedItems={client.quantitative_case_ids}
+            />
           </View>
         )
       })
-    }
-  }
-
-  _setQuantitativeCases = value => {
-    const { client } = this.state
-    if (client.quantitative_case_ids != undefined) {
-      const newCases = client.quantitative_case_ids.concat(value)
-      this.updateClientState('quantitative_case_ids', _.uniq(newCases))
-    } else {
-      this.updateClientState('quantitative_case_ids', value)
-    }
-  }
-
-  _removeQuantitativeCase = value => {
-    const newCases = _.filter(this.state.client.quantitative_case_ids, id => {
-      return id != value
-    })
-    this.updateClientState('quantitative_case_ids', newCases)
-  }
-
-  _renderAgencies = () => {
-    const { agencies } = this.props
-    if (agencies != undefined) {
-      return <Agencies key="agency" updateClientState={this.updateClientState} agencies={agencies} client={this.state.client} />
     }
   }
 
@@ -266,20 +210,36 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('birth_province_id', itemValue[0])}
                 selectedItems={[client.birth_province_id]}
               />
             </View>
             <View style={customFormStyles.fieldContainer}>
               <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{i18n.t('client.form.donor')}</Text>
-              <View style={[customFormStyles.pickerContainer, { padding: 0 }]}>{this._renderDonors()}</View>
+              <SectionedMultiSelect
+                items={this.listItems(donors)}
+                uniqueKey="id"
+                modalWithSafeAreaView
+                selectText={i18n.t('select_option')}
+                alwaysShowSelectText={true}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
+                showDropDowns={true}
+                hideSearch={false}
+                showCancelButton={true}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
+                onSelectedItemsChange={itemValue => {
+                  this.updateClientState('donor_ids', itemValue)
+                }}
+                selectedItems={client.donor_ids}
+              />
             </View>
             <View style={customFormStyles.fieldContainer}>
               <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{i18n.t('client.form.gender')}</Text>
@@ -288,13 +248,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('gender', itemValue[0])}
                 selectedItems={[client.gender]}
               />
@@ -332,13 +292,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => {
                   this.updateClientState('province_id', itemValue[0]),
                     this.updateClientState('district_id', null),
@@ -354,13 +314,13 @@ class ClientForm extends Component {
                 items={this.listItems(districtOptions)}
                 uniqueKey="id"
                 selectText={i18n.t('family.select_district')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => {
                   this.updateClientState('district_id', itemValue[0]),
                     this.updateClientState('commune_id', null),
@@ -376,13 +336,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => {
                   this.updateClientState('commune_id', itemValue[0]), this.updateClientState('village_id', null)
                 }}
@@ -396,13 +356,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('village_id', itemValue[0])}
                 selectedItems={[client.village_id]}
               />
@@ -474,13 +434,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('referral_source_id', itemValue[0])}
                 selectedItems={[client.referral_source_id]}
               />
@@ -546,13 +506,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('rated_for_id_poor', itemValue[0])}
                 selectedItems={[client.rated_for_id_poor]}
               />
@@ -564,13 +524,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('received_by_id', itemValue[0])}
                 selectedItems={[client.received_by_id]}
               />
@@ -582,13 +542,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('followed_up_by_id', itemValue[0])}
                 selectedItems={[client.followed_up_by_id]}
               />
@@ -630,13 +590,13 @@ class ClientForm extends Component {
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('family.search')}
-                confirmText={i18n.t('family.confirm')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
                 showDropDowns={true}
                 single={true}
                 hideSearch={false}
                 showCancelButton={true}
-                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 } }}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
                 onSelectedItemsChange={itemValue => this.updateClientState('school_grade', itemValue[0])}
                 selectedItems={[client.school_grade]}
               />
@@ -718,13 +678,45 @@ class ClientForm extends Component {
             </View>
             <View style={customFormStyles.fieldContainer}>
               <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{i18n.t('client.form.case_worker')}</Text>
-              <View style={[customFormStyles.pickerContainer, { padding: 0 }]}>{this._renderCaseWorkers()}</View>
+              <SectionedMultiSelect
+                items={this.listUserItems(users)}
+                uniqueKey="id"
+                modalWithSafeAreaView
+                selectText={i18n.t('select_option')}
+                alwaysShowSelectText={true}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
+                showDropDowns={true}
+                hideSearch={false}
+                showCancelButton={true}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
+                onSelectedItemsChange={itemValue => {
+                  this.updateClientState('user_ids', itemValue)
+                }}
+                selectedItems={client.user_ids}
+              />
             </View>
             <View style={customFormStyles.fieldContainer}>
               <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{i18n.t('client.form.agencies_involved')}</Text>
-              <View style={[customFormStyles.pickerContainer, { padding: 0 }]}>{this._renderAgencies()}</View>
+              <SectionedMultiSelect
+                items={this.listItems(agencies)}
+                uniqueKey="id"
+                modalWithSafeAreaView
+                selectText={i18n.t('select_option')}
+                alwaysShowSelectText={true}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
+                showDropDowns={true}
+                hideSearch={false}
+                showCancelButton={true}
+                styles={{ button: { backgroundColor: MAIN_COLOR }, cancelButton: { width: 150 }, chipText: { maxWidth: 280 } }}
+                onSelectedItemsChange={itemValue => {
+                  this.updateClientState('agency_ids', itemValue)
+                }}
+                selectedItems={client.agency_ids}
+              />
             </View>
-            {this._renderQuantitativeTypes()}
+            {this.renderQuantitativeTypes()}
           </View>
         </ScrollView>
       </View>
