@@ -4,6 +4,7 @@ import { FAMILY_TYPES } from '../types'
 import endpoint from '../../constants/endpoint'
 import { formTypes } from '../../utils/validation'
 import _ from 'lodash'
+import i18n from '../../i18n'
 import { Navigation } from 'react-native-navigation'
 
 requestFamilies = () => ({
@@ -50,18 +51,14 @@ export function updateFamily(familyParams, actions) {
       .put(endpoint.familiesPath + '/' + familyParams.id, familyParams)
       .then(response => {
         dispatch(updateFamilySuccess(response.data.family))
-        Alert.alert(
-          'Message',
-          'You have update successfully.',
-          [{ text: 'Ok', onPress: () => Navigation.popTo(actions.familyDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.familyDetailComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         let errors = _.map(error.response.data, (value, key) => {
-          return _.capitalize(key) + ' ' + value[0]
+          return i18n.t('family' + key, { locale: 'en' }) + ' ' + value[0]
         })
-        alert(errors)
+        dispatch(requestFamiliesFailed(errors))
       })
   }
 }

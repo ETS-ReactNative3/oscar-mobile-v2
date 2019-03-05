@@ -20,7 +20,8 @@ const mapState = state => ({
   referralSources: state.referralSources.data,
   quantitativeTypes: state.quantitativeTypes.data,
   users: state.users.data,
-  agencies: state.agencies.data
+  agencies: state.agencies.data,
+  error: state.clients.error
 })
 
 const mapDispatch = {

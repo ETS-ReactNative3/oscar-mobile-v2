@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import Swiper from 'react-native-swiper'
 import Field from './Field'
 import Card from './Card'
+import DropdownAlert from 'react-native-dropdownalert'
 import _ from 'lodash'
 import i18n from '../i18n'
 import appIcon from '../utils/Icon'
@@ -31,7 +32,8 @@ class AdditionalFormDetailList extends Component {
           customForm: this.props.customForm,
           entityDetailComponentId: this.props.componentId,
           type: this.props.type,
-          clickForm: 'additionalForm'
+          clickForm: 'additionalForm',
+          alertMessage: () => this.alertMessage('Custom Field Properties has been successfully created.')
         },
         rightButtons: [
           {
@@ -54,12 +56,17 @@ class AdditionalFormDetailList extends Component {
     }
   }
 
+  alertMessage = message => {
+    this.refs.dropdown.alertWithType('success', 'Success', message)
+  }
+
   deleteAdditionalForm = customForm => {
     const { deleteAdditionalForm, entity } = this.props
     Alert.alert('Warning', 'Are you sure you want to delete?', [
       {
         text: 'OK',
-        onPress: () => deleteAdditionalForm(customForm, entity, this.props)
+        onPress: () =>
+          deleteAdditionalForm(customForm, entity, this.props, () => this.alertMessage('Custom Field Properties has been successfully deleted.'))
       },
       { text: 'Cancel' }
     ])
@@ -75,7 +82,8 @@ class AdditionalFormDetailList extends Component {
         custom_field: customFieldProperty,
         entity: this.props.entity,
         type: this.props.type,
-        currentComponentId: this.props.componentId
+        currentComponentId: this.props.componentId,
+        alertMessage: () => this.alertMessage('Custom Field Properties has been successfully updated.')
       },
       rightButtons: [
         {
@@ -174,37 +182,41 @@ class AdditionalFormDetailList extends Component {
       return (
         <View style={[mainContainer, { justifyContent: 'center', alignItems: 'center' }]}>
           <Text>{i18n.t('no_data')}</Text>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
         </View>
       )
     }
     return (
-      <Swiper height={visible ? height - 82 : height - 81} showsButtons={false} loop={false} style={mainContainer} paginationStyle={{ bottom: 10 }}>
-        {customForm.custom_field_properties.map((customFieldProperty, index) => {
-          const createdAt = moment(customFieldProperty.created_at).format('DD MMMM, YYYY')
-          return (
-            <View key={index}>
-              <Card
-                style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }}
-                title={createdAt}
-                rightButton={this.renderActions(customFieldProperty)}
-              >
-                <View key={customFieldProperty.id.toString()} style={{ height: '85%' }}>
-                  <ScrollView ref="caseNoteCard">{this.renderFormField(customFieldProperty)}</ScrollView>
-                </View>
-              </Card>
-            </View>
-          )
-        })}
-      </Swiper>
+      <View style={{ flex: 1 }}>
+        <Swiper height={visible ? height - 82 : height - 81} showsButtons={false} loop={false} style={mainContainer} paginationStyle={{ bottom: 10 }}>
+          {customForm.custom_field_properties.map((customFieldProperty, index) => {
+            const createdAt = moment(customFieldProperty.created_at).format('DD MMMM, YYYY')
+            return (
+              <View key={index}>
+                <Card
+                  style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }}
+                  title={createdAt}
+                  rightButton={this.renderActions(customFieldProperty)}
+                >
+                  <View key={customFieldProperty.id.toString()} style={{ height: '85%' }}>
+                    <ScrollView ref="caseNoteCard">{this.renderFormField(customFieldProperty)}</ScrollView>
+                  </View>
+                </Card>
+              </View>
+            )
+          })}
+        </Swiper>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+      </View>
     )
   }
 }
 
 const mapState = (state, ownProps) => {
   const entity = ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
-
+  const message = ownProps.type == 'client' ? state.clients.message : state.families.message
   const customForm = _.find(entity.additional_form, { id: ownProps.customFormId })
-  return { entity, customForm, visible: true }
+  return { entity, customForm, visible: true, message: message }
 }
 
 export default connect(mapState)(AdditionalFormDetailList)

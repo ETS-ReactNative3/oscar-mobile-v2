@@ -17,7 +17,8 @@ class AddForm extends Component {
         customForm: customForm,
         formType: 'customForm',
         entityDetailComponentId: this.props.entityDetailComponentId,
-        type: this.props.type
+        type: this.props.type,
+        alertMessage: this.props.alertMessage
       },
       rightButtons: [
         {
@@ -40,11 +41,7 @@ class AddForm extends Component {
   }
 
   renderItem = ({ item }) => (
-    <ListItem
-      key={item.id}
-      title={item.form_title == ' ' ? '(unknow)' : item.form_title}
-      onPress={() => this.createCustomForm(item)}
-    />
+    <ListItem key={item.id} title={item.form_title == ' ' ? '(unknow)' : item.form_title} onPress={() => this.createCustomForm(item)} />
   )
 
   keyExtractor = (item, index) => item.id.toString()
@@ -89,8 +86,7 @@ const styles = StyleSheet.create({
 })
 
 const mapState = (state, ownProps) => {
-  const entity =
-    ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
+  const entity = ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
   return { entity }
 }
 export default connect(mapState)(AddForm)

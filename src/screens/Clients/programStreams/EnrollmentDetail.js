@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-
 import { View, Text, ScrollView, TouchableWithoutFeedback, Image, Alert } from 'react-native'
 import { Divider } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -9,11 +8,11 @@ import moment from 'moment'
 import appIcon from '../../../utils/Icon'
 import { pushScreen } from '../../../navigation/config'
 import { connect } from 'react-redux'
-// import ModalImage from '../ModalImage.js'
 import { enrollmentDetail } from '../../../styles'
 import { deleteEnrollmentForm, deleteTrackingForm } from '../../../redux/actions/programStreams'
 import i18n from '../../../i18n'
 import ModalImage from '../../../components/ModalImage'
+import DropdownAlert from 'react-native-dropdownalert'
 class EnrollmentDetail extends Component {
   constructor(props) {
     super(props)
@@ -88,13 +87,23 @@ class EnrollmentDetail extends Component {
         id: this.props.enrollmentId,
         tracking_id: enrollment.formId
       }
-      this.props.deleteTrackingForm(params, this.props.client.id, this.props.enrollmentId, enrollment.id, this.props)
+      this.props.deleteTrackingForm(params, this.props.client.id, this.props.enrollmentId, enrollment.id, this.props, () =>
+        this.alertMessage('Tracking has been successfully deleted.')
+      )
     }
+  }
+
+  alertMessage = message => {
+    this.refs.dropdown.alertWithType('success', 'Success', message)
   }
 
   async _editForm(enrollment, deleteAble) {
     const formType = this.props.type
     const title = `${formType == 'Tracking' ? 'Edit Tracking' : formType == 'Enroll' ? 'Edit Enrollment' : 'Edit Leave Program'}`
+    const enrollmentMessage = 'Enrollment has been successfully updated.'
+    const trackingMessage = 'Tracking has been successfully updated.'
+    const leaveProgramMessage = 'Leave Program has been successfully updated.'
+    const message = `${formType == 'Tracking' ? trackingMessage : formType == 'Enroll' ? enrollmentMessage : leaveProgramMessage}`
     const icons = await appIcon()
     pushScreen(this.props.componentId, {
       screen: 'oscar.editForm',
@@ -107,7 +116,8 @@ class EnrollmentDetail extends Component {
         enrollment_date: this.props.enrollment.enrollment_date,
         client: this.props.client,
         clickForm: this.props.clickForm,
-        enrollmentDetailComponentId: this.props.componentId
+        enrollmentDetailComponentId: this.props.componentId,
+        alertMessage: () => this.alertMessage(message)
       },
       rightButtons: [
         {
@@ -149,6 +159,7 @@ class EnrollmentDetail extends Component {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>{i18n.t('no_data')}</Text>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
         </View>
       )
     } else {
@@ -161,34 +172,37 @@ class EnrollmentDetail extends Component {
       const newDate = !_.isEmpty(date) ? moment(date).format('D MMM, YYYY') : ''
       const title = `on ${newDate}`
       return (
-        <ScrollView style={enrollmentDetail.container}>
-          <Card
-            style={{ paddingTop: 30, paddingLeft: 10, paddingRight: 10 }}
-            title={cardTitle + ' ' + title}
-            rightButton={this.renderActions(form, this.props)}
-          >
-            <ScrollView ref="caseNoteCard">
-              {_.map(keys, (field, index) => {
-                if (types[index] != 'separateLine') {
-                  return (
-                    <View key={`${Math.random()}-${index}`}>
-                      <View style={enrollmentDetail.fieldContainer}>
-                        <Text style={[enrollmentDetail.label, enrollmentDetail.labelMargin]}>{field}</Text>
-                        {typeof values[field] == 'object' && values[field] != '' && values[field] != null && values[field].length > 0
-                          ? types[index] == 'file'
-                            ? this._renderFile(values[field])
-                            : this._renderMutipleValue(values[field])
-                          : this._renderField(values[field], types[index])}
+        <View style={{ flex: 1 }}>
+          <ScrollView style={enrollmentDetail.container}>
+            <Card
+              style={{ paddingTop: 30, paddingLeft: 10, paddingRight: 10 }}
+              title={cardTitle + ' ' + title}
+              rightButton={this.renderActions(form, this.props)}
+            >
+              <ScrollView ref="caseNoteCard">
+                {_.map(keys, (field, index) => {
+                  if (types[index] != 'separateLine') {
+                    return (
+                      <View key={`${Math.random()}-${index}`}>
+                        <View style={enrollmentDetail.fieldContainer}>
+                          <Text style={[enrollmentDetail.label, enrollmentDetail.labelMargin]}>{field}</Text>
+                          {typeof values[field] == 'object' && values[field] != '' && values[field] != null && values[field].length > 0
+                            ? types[index] == 'file'
+                              ? this._renderFile(values[field])
+                              : this._renderMutipleValue(values[field])
+                            : this._renderField(values[field], types[index])}
+                        </View>
+                        <Divider style={{ backgroundColor: '#EDEFF1', marginTop: 6 }} />
                       </View>
-                      <Divider style={{ backgroundColor: '#EDEFF1', marginTop: 6 }} />
-                    </View>
-                  )
-                }
-              })}
-            </ScrollView>
-            <ModalImage isVisible={this.state.isVisible} image={this.state.image} hideModal={this._hideModal} />
-          </Card>
-        </ScrollView>
+                    )
+                  }
+                })}
+              </ScrollView>
+              <ModalImage isVisible={this.state.isVisible} image={this.state.image} hideModal={this._hideModal} />
+            </Card>
+          </ScrollView>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+        </View>
       )
     }
   }

@@ -7,6 +7,7 @@ import { pushScreen } from '../../../navigation/config'
 import _ from 'lodash'
 import appIcon from '../../../utils/Icon'
 import { Navigation } from 'react-native-navigation'
+import DropdownAlert from 'react-native-dropdownalert'
 import { connect } from 'react-redux'
 class ActiveProgramStreams extends Component {
   constructor(props) {
@@ -62,7 +63,7 @@ class ActiveProgramStreams extends Component {
     if (!_.isEmpty(program_stream.program_exclusive) || !_.isEmpty(program_stream.mutual_dependence)) {
       if (!_.isEmpty(program_stream.program_exclusive)) {
         if (program_stream.program_exclusive.includes(program_stream.id)) {
-          Alert.alert('Warning', "Client desn't match with this program rules")
+          this.refs.dropdown.alertWithType('warn', 'Warning', "Client doesn't match with this program rules")
         } else {
           this._handleClietEnroll(clientsEnrollAble, client_program_stream, client)
         }
@@ -70,7 +71,7 @@ class ActiveProgramStreams extends Component {
         if (program_stream.mutual_dependence.includes(program_stream.id)) {
           this._handleClietEnroll(clientsEnrollAble, client_program_stream, client)
         } else {
-          Alert.alert('Warning', "Client desn't match with this program rules")
+          this.refs.dropdown.alertWithType('warn', 'Warning', "Client doesn't match with this program rules")
         }
       }
     } else {
@@ -83,7 +84,7 @@ class ActiveProgramStreams extends Component {
       if (clientsEnrollAble.includes(client.id)) {
         this._renderEnrollForm(program_stream, client)
       } else {
-        Alert.alert('Message', "Client desn't match with this program rules")
+        this.refs.dropdown.alertWithType('warn', 'Warning', "Client doesn't match with this program rules")
       }
     } else {
       this._renderEnrollForm(program_stream, client)
@@ -101,7 +102,8 @@ class ActiveProgramStreams extends Component {
         programStreams: this.state.program_streams,
         originalProgramStreams: this.state.original_program_streams,
         clientDetailComponentId: this.props.clientDetailComponentId,
-        createEnrollment: this.createEnrollment
+        createEnrollment: this.createEnrollment,
+        alertMessage: this.props.alertMessage
       },
       rightButtons: [
         {
@@ -141,7 +143,7 @@ class ActiveProgramStreams extends Component {
 
     if (filterProgramStreams.length <= 0 && (text != '' && text.length >= 1)) {
       filterProgramStreams = original_program_streams
-      Alert.alert('Message', `No program stream found with the following name "${text}"`)
+      this.refs.dropdown.alertWithType('warn', 'Warning', `No program stream found with the following name "${text}"`)
     }
     this.setState({ isFiltering: false, program_streams: filterProgramStreams })
   }
@@ -275,6 +277,7 @@ class ActiveProgramStreams extends Component {
               )
             })}
           </ScrollView>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
         </View>
       )
     }

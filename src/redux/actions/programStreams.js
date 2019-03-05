@@ -220,12 +220,8 @@ export function createEnrollmentForm(field_properties, enrollment, client_id, en
       .then(response => {
         const clientUpdated = createEnrollment(response.data, enrollment, actions.programStreams, actions.client)
         dispatch(requestUpdateclient(clientUpdated))
-        Alert.alert(
-          'Message',
-          'You have create new client enrollment form successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.clientDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.clientDetailComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         alert(JSON.stringify(error))
@@ -239,12 +235,8 @@ export function updateEnrollmentForm(type, field_properties, enrollment, client_
       .then(response => {
         const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
         dispatch(requestUpdateclient(clientUpdated))
-        Alert.alert(
-          'Message',
-          'You have update client enrollment form successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.enrollmentDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.enrollmentDetailComponentId)
+        actions.alertMessage()
       })
       .catch(err => {
         alert(JSON.stringify(err))
@@ -263,9 +255,8 @@ export function deleteEnrollmentForm(enrollment, client_enrolled_programs_id, cl
         const clientDeletedEnrollment = updateDeleteEnrollment(enrollment, actions.programStream, actions.client, actions.clickForm)
         dispatch(requestUpdateclient(clientDeletedEnrollment.clientUpdated))
         const popToComponentId = clientDeletedEnrollment.enrollmentIsEmpty ? actions.clientDetailComponentId : actions.programStreamDetailComponentId
-        Alert.alert('Message', 'You have successfully delete an enrollment.', [{ text: 'OK', onPress: () => Navigation.popTo(popToComponentId) }], {
-          cancelable: false
-        })
+        Navigation.popTo(popToComponentId)
+        actions.alertEnrollmentMessage()
       })
       .catch(error => {
         alert('Error delete Enrollment => ' + JSON.stringify(error))
@@ -279,12 +270,8 @@ export function createLeaveProgramForm(field_properties, enrollment, client_enro
       .then(response => {
         const clientUpdated = createLeaveProgram(response.data, enrollment, enrollment.program_stream_id, actions.programStreams, actions.client)
         dispatch(requestUpdateclient(clientUpdated))
-        Alert.alert(
-          'Message',
-          'You have exit program successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.clientDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.clientDetailComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         alert(JSON.stringify(error))
@@ -307,12 +294,8 @@ export function updateLeaveProgramForm(
       .then(response => {
         const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
         dispatch(requestUpdateclient(clientUpdated))
-        Alert.alert(
-          'Message',
-          'You have exit program successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.enrollmentDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.enrollmentDetailComponentId)
+        actions.alertMessage()
       })
       .catch(err => {
         alert(JSON.stringify(err))
@@ -326,12 +309,8 @@ export function createTrackingForm(field_properties, enrollment, client_enrolled
       .then(response => {
         const clientUpdated = createTracking(response.data, enrollment, actions.programStream, actions.client)
         dispatch(requestUpdateclient(clientUpdated))
-        Alert.alert(
-          'Message',
-          'You have create new tracking form successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.listTrackingComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.listTrackingComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         alert(JSON.stringify(error))
@@ -345,12 +324,8 @@ export function updateTrackingForm(type, field_properties, enrollment, client_id
       .then(response => {
         const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
         dispatch(requestUpdateclient(clientUpdated))
-        Alert.alert(
-          'Message',
-          'You have update tracking form successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.enrollmentDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.enrollmentDetailComponentId)
+        actions.alertMessage()
       })
       .catch(err => {
         alert(JSON.stringify(err))
@@ -358,7 +333,7 @@ export function updateTrackingForm(type, field_properties, enrollment, client_id
   }
 }
 
-export function deleteTrackingForm(enrollment, client_id, client_enrolled_programs_id, tracking_id, actions) {
+export function deleteTrackingForm(enrollment, client_id, client_enrolled_programs_id, tracking_id, actions, alertMessage) {
   return dispatch => {
     let trackingProgramPath = _.template(endpoint.editTrackingProgramPath)
     trackingProgramPath = trackingProgramPath({ client_id: client_id, client_enrollment_id: client_enrolled_programs_id, id: tracking_id })
@@ -368,9 +343,7 @@ export function deleteTrackingForm(enrollment, client_id, client_enrolled_progra
       .then(response => {
         const clientDeletedTracking = updateDeleteTracking(enrollment.id, tracking_id, actions.programStreamId, actions.client)
         dispatch(requestUpdateclient(clientDeletedTracking.clientUpdated))
-        Alert.alert('Message', 'You have successfully delete a tracking report.', [{ text: 'OK', onPress: () => console.log('1') }], {
-          cancelable: false
-        })
+        alertMessage()
       })
       .catch(error => {
         alert('Error delete Tracking => ' + JSON.stringify(error))

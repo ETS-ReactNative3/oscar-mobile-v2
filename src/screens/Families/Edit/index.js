@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import DatePicker from 'react-native-datepicker'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select'
+import DropdownAlert from 'react-native-dropdownalert'
 import { CheckBox } from 'react-native-elements'
 import { Navigation } from 'react-native-navigation'
 import { connect } from 'react-redux'
@@ -29,6 +30,13 @@ class UserEdit extends Component {
         village_id: family.village != null ? family.village.id : ''
       })
     }))
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.error) {
+      errors = nextProps.error.join(', ')
+      this.refs.dropdown.alertWithType('error', 'Error', errors)
+    }
   }
 
   navigationButtonPressed({ buttonId }) {
@@ -447,6 +455,7 @@ class UserEdit extends Component {
             </View>
           </KeyboardAvoidingView>
         </ScrollView>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }
@@ -458,7 +467,8 @@ const mapState = state => ({
   communes: state.communes.data,
   villages: state.villages.data,
   clients: state.clients.data,
-  loading: state.auth.loading
+  loading: state.auth.loading,
+  error: state.families.error
 })
 
 const mapDispatch = {

@@ -6,6 +6,7 @@ import { pushScreen } from '../../../navigation/config'
 import appIcon from '../../../utils/Icon'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/Ionicons'
+import DropdownAlert from 'react-native-dropdownalert'
 class ListTracking extends Component {
   async renderCreateTackingForm(tracking, programStream) {
     const icons = await appIcon()
@@ -17,7 +18,8 @@ class ListTracking extends Component {
         programStream: programStream,
         client: this.props.client,
         listTrackingComponentId: this.props.componentId,
-        action: 'create'
+        action: 'create',
+        alertMessage: this.alertMessage
       },
       rightButtons: [
         {
@@ -67,8 +69,12 @@ class ListTracking extends Component {
         ]
       })
     } else {
-      Alert.alert('Message', 'No tracking report')
+      this.refs.dropdown.alertWithType('warn', 'Warning', 'No tracking report')
     }
+  }
+
+  alertMessage = () => {
+    this.refs.dropdown.alertWithType('success', 'Success', 'Tracking has been successfully created.')
   }
 
   render() {
@@ -115,6 +121,7 @@ class ListTracking extends Component {
             })}
           </ScrollView>
         </View>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }

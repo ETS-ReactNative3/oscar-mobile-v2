@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js'
 import { AUTH_TYPES, LOGOUT_TYPES } from '../types'
 import endpoint from '../../constants/endpoint'
 import i18n from '../../i18n'
+import _ from 'lodash'
 import { pushScreen, startScreen, startTabScreen, startNgoScreen } from '../../navigation/config'
 import { Navigation } from 'react-native-navigation'
 
@@ -111,7 +112,7 @@ export function login(credentail, currentComponentId) {
   }
 }
 
-export function updateUser(userParam) {
+export function updateUser(userParam, alertMessage) {
   return (dispatch, getState) => {
     const org = getState().ngo.name
     const headers = getState().auth.headers
@@ -122,16 +123,17 @@ export function updateUser(userParam) {
       .put(endpoint.baseURL(org) + endpoint.updateTokenPath, userParam, config)
       .then(response => {
         dispatch(requestLoginSuccess(response))
-        Alert.alert(
-          'User',
-          'You has been successfully updated user.',
-          [{ text: 'Ok', onPress: () => Navigation.popTo('USERS_TAB_BAR_BUTTON') }],
-          { cancelable: false }
-        )
+        Navigation.popTo('USERS_TAB_BAR_BUTTON')
+        alertMessage()
       })
-      .catch(err => {
-        dispatch(requestUpdateUserFailed(err.response.data.errors.full_messages[0]))
-        Alert.alert('User', err.response.data.errors.full_messages[0])
+      .catch(error => {
+        let errors = []
+        _.forEach(error.response.data.errors, (value, key) => {
+          if (key != 'full_messages') {
+            errors.push(_.capitalize(key) + ' ' + value[0])
+          }
+        })
+        dispatch(requestUpdateUserFailed(errors))
       })
   }
 }
@@ -153,7 +155,7 @@ export function verifyUser(goToPin) {
         startNgoScreen()
         dispatch(clearAppData())
         dispatch(requestLoginFailed(error.response.data.errors.full_messages[0]))
-        Alert.alert('Session', 'User session has been expired.')
+        alert('Session', 'User session has been expired.')
       })
   }
 }

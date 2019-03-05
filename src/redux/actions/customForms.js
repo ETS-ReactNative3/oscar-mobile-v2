@@ -132,12 +132,8 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
           entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
         }
         dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        Alert.alert(
-          'Message',
-          'You have create new additional form successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.entityDetailComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.entityDetailComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         alert(JSON.stringify(error))
@@ -155,12 +151,8 @@ export function editAdditionalForm(properties, entityProfile, custom_field, addi
       .then(response => {
         const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
         dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        Alert.alert(
-          'Message',
-          'You have update additional form successfully.',
-          [{ text: 'OK', onPress: () => Navigation.popTo(actions.currentComponentId) }],
-          { cancelable: false }
-        )
+        Navigation.popTo(actions.currentComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         alert(JSON.stringify(error))
@@ -168,7 +160,7 @@ export function editAdditionalForm(properties, entityProfile, custom_field, addi
   }
 }
 
-export function deleteAdditionalForm(customFieldProperty, entityProfile, actions) {
+export function deleteAdditionalForm(customFieldProperty, entityProfile, actions, alertMessage) {
   return dispatch => {
     const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
     let deleteEntityAdditonalFormPath = _.template(customFieldPropertyPath)
@@ -179,7 +171,7 @@ export function deleteAdditionalForm(customFieldProperty, entityProfile, actions
       .then(response => {
         const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
         dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        Alert.alert('Message', 'You have delete additional form successfully.')
+        alertMessage()
       })
       .catch(error => {
         alert(JSON.stringify(error))
@@ -199,10 +191,7 @@ export function handleEntityAdditonalForm(type, properties, additionalForm, EndP
             const uniqIndex = Math.floor(Math.random() * 1000000)
             properties[field.label].map(attachment => {
               if (attachment.uri != undefined) {
-                formData.append(
-                  `custom_field_property[form_builder_attachments_attributes[${uniqIndex}][name]]`,
-                  field.name
-                )
+                formData.append(`custom_field_property[form_builder_attachments_attributes[${uniqIndex}][name]]`, field.name)
                 formData.append(`custom_field_property[form_builder_attachments_attributes[${uniqIndex}][file]][]`, {
                   uri: attachment.path,
                   name: attachment.name,

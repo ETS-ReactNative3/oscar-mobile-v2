@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { StyleSheet, View, Text, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import DropdownAlert from 'react-native-dropdownalert'
 import { Divider } from 'react-native-elements'
 import { programStreamStyles } from '../../../styles'
 import { pushScreen } from '../../../navigation/config.js'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import appIcon from '../../../utils/Icon'
+import i18n from '../../../i18n'
 
 class ProgramStreams extends Component {
   _viewEnrollmentReport(programStream) {
@@ -31,7 +33,8 @@ class ProgramStreams extends Component {
         programStream: programStream,
         client: this.props.client,
         programStreams: this.props.programStreams,
-        clientDetailComponentId: this.props.clientDetailComponentId
+        clientDetailComponentId: this.props.clientDetailComponentId,
+        alertMessage: this.props.alertMessage
       },
       rightButtons: [
         {
@@ -59,6 +62,15 @@ class ProgramStreams extends Component {
 
   render() {
     const { programStreams } = this.props
+    if (programStreams == 0) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>{i18n.t('no_data')}</Text>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+        </View>
+      )
+    }
+
     return (
       <ScrollView style={programStreamStyles.mainContainer}>
         {_.map(programStreams, programStream => {

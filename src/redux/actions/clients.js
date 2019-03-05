@@ -4,6 +4,7 @@ import endpoint from '../../constants/endpoint'
 import _ from 'lodash'
 import { Alert } from 'react-native'
 import { Navigation } from 'react-native-navigation'
+import i18n from '../../i18n'
 requestClients = () => ({
   type: CLIENT_TYPES.CLIENTS_REQUESTING
 })
@@ -18,9 +19,10 @@ requestClientsFailed = error => ({
   error
 })
 
-export const updateClient = client => ({
+export const updateClient = (client, message = '') => ({
   type: CLIENT_TYPES.UPDATE_CLIENT,
-  client
+  client,
+  message
 })
 
 export function updateClientProperty(clientParams, actions) {
@@ -28,16 +30,16 @@ export function updateClientProperty(clientParams, actions) {
     dispatch(requestClients())
     dispatch(handleUpdateClientParams(clientParams, clientParams.id))
       .then(response => {
-        dispatch(updateClient(response.data.client))
-        Alert.alert('Message', 'You have update successfully.', [{ text: 'Ok', onPress: () => Navigation.popTo(actions.clientDetailComponentId) }], {
-          cancelable: false
-        })
+        const message = 'You have update successfully.'
+        dispatch(updateClient(response.data.client, message))
+        Navigation.popTo(actions.clientDetailComponentId)
+        actions.alertMessage()
       })
       .catch(error => {
         let errors = _.map(error.response.data, (value, key) => {
-          return _.capitalize(key) + ' ' + value[0]
+          return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
         })
-        alert(errors)
+        dispatch(requestClientsFailed(errors))
       })
   }
 }

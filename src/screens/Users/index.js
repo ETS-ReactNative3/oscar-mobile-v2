@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { View, Text, ScrollView } from 'react-native'
 import Button from 'apsl-react-native-button'
+import DropdownAlert from 'react-native-dropdownalert'
 import { Navigation } from 'react-native-navigation'
 import _ from 'lodash'
 import Field from '../../components/Field'
@@ -23,6 +24,10 @@ class User extends Component {
     Navigation.events().bindComponent(this)
   }
 
+  alertMessage = () => {
+    this.refs.dropdown.alertWithType('success', 'Success', 'User has been successfully updated.')
+  }
+
   async navigationButtonPressed({ buttonId }) {
     if (buttonId === 'TRANSLATION') {
       pushScreen(this.props.componentId, {
@@ -36,30 +41,21 @@ class User extends Component {
       pushScreen(this.props.componentId, {
         screen: 'oscar.editUser',
         title: i18n.t('user.edit_title'),
-        props: { departments, provinces, user },
-        rightButtons: [{
-          id: 'SAVE_USER',
-          icon: icons.save,
-          color: '#fff'
-        }]
+        props: { departments, provinces, user, alertMessage: this.alertMessage },
+        rightButtons: [
+          {
+            id: 'SAVE_USER',
+            icon: icons.save,
+            color: '#fff'
+          }
+        ]
       })
     }
   }
 
   render() {
     const { provinces, departments, user, loading } = this.props
-    const {
-      first_name,
-      last_name,
-      gender,
-      job_title,
-      department_id,
-      mobile,
-      email,
-      date_of_birth,
-      start_date,
-      province_id
-    } = user
+    const { first_name, last_name, gender, job_title, department_id, mobile, email, date_of_birth, start_date, province_id } = user
     const department = _.find(departments, { id: user.department_id })
     const province = _.find(provinces, { id: province_id })
 
@@ -88,6 +84,7 @@ class User extends Component {
         >
           {i18n.t('user.log_out')}
         </Button>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }
@@ -97,7 +94,8 @@ const mapState = state => ({
   user: state.auth.data,
   loading: state.auth.loading,
   departments: state.departments.data,
-  provinces: state.provinces.data
+  provinces: state.provinces.data,
+  message: state.auth.message
 })
 
 const mapDispatch = {

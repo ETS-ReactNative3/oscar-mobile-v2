@@ -5,6 +5,7 @@ import Menu from '../../Clients/Detail/Menu'
 import Card from '../../../components/Card'
 import Field from '../../../components/Field'
 import Button from 'apsl-react-native-button'
+import DropdownAlert from 'react-native-dropdownalert'
 import { Navigation } from 'react-native-navigation'
 import { pushScreen } from '../../../navigation/config'
 import i18n from '../../../i18n'
@@ -27,7 +28,8 @@ class FamilyDetail extends Component {
         title: 'EDIT FAMILY',
         props: {
           family,
-          familyDetailComponentId: this.props.componentId
+          familyDetailComponentId: this.props.componentId,
+          alertMessage: () => this.alertMessage('Family has been successfully updated.')
         },
         rightButtons: [
           {
@@ -38,6 +40,10 @@ class FamilyDetail extends Component {
         ]
       })
     }
+  }
+
+  alertMessage = message => {
+    this.refs.dropdown.alertWithType('success', 'Success', message)
   }
 
   navigateToAdditionalForms = family => {
@@ -58,7 +64,8 @@ class FamilyDetail extends Component {
       props: {
         entityId: family.id,
         entityDetailComponentId: this.props.componentId,
-        type: 'family'
+        type: 'family',
+        alertMessage: () => this.alertMessage('Custom Field Properties has been successfully created.')
       }
     })
   }
@@ -109,13 +116,15 @@ class FamilyDetail extends Component {
             <Field name={i18n.t('family.village')} value={family.village != null ? `${family.village.name_kh} / ${family.village.name_en}` : ''} />
           </Card>
         </ScrollView>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }
 }
 
 const mapState = (state, ownProps) => ({
-  family: state.families.data[ownProps.familyId]
+  family: state.families.data[ownProps.familyId],
+  message: state.families.message
 })
 
 export default connect(mapState)(FamilyDetail)

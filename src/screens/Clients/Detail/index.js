@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
 import Swiper from 'react-native-swiper'
+import DropdownAlert from 'react-native-dropdownalert'
 import _ from 'lodash'
 import { pushScreen } from '../../../navigation/config'
 import appIcons from '../../../utils/Icon'
@@ -17,6 +18,10 @@ class ClientDetail extends Component {
     Navigation.events().bindComponent(this)
   }
 
+  alertMessage = message => {
+    this.refs.dropdown.alertWithType('success', 'Success', message)
+  }
+
   async navigationButtonPressed({ buttonId }) {
     if (buttonId === 'EDIT_CLIENT') {
       const { client } = this.props
@@ -26,7 +31,8 @@ class ClientDetail extends Component {
         title: 'EDIT CLIENT',
         props: {
           client,
-          clientDetailComponentId: this.props.componentId
+          clientDetailComponentId: this.props.componentId,
+          alertMessage: () => this.alertMessage('Client has been successfully updated.')
         },
         rightButtons: [
           {
@@ -52,7 +58,6 @@ class ClientDetail extends Component {
 
   navigateToCaseNotes = async client => {
     const icons = await appIcons()
-
     pushScreen(this.props.componentId, {
       screen: 'oscar.caseNotes',
       title: i18n.t('client.case_notes'),
@@ -74,26 +79,31 @@ class ClientDetail extends Component {
       props: { clientId: client.id }
     })
   }
+
   navigateToEnrollProgramStreams = client => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.enrolledProgramStreams',
       title: 'Active Program Streams',
       props: {
         clientId: client.id,
-        clientDetailComponentId: this.props.componentId
+        clientDetailComponentId: this.props.componentId,
+        alertMessage: () => this.alertMessage('Leave Program has been successfully created.')
       }
     })
   }
+
   navigateToActiveProgramStreams = client => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.activeProgramStreams',
       title: 'Active Program Streams',
       props: {
         client: client,
-        clientDetailComponentId: this.props.componentId
+        clientDetailComponentId: this.props.componentId,
+        alertMessage: () => this.alertMessage('Enrollment has been successfully created.')
       }
     })
   }
+
   navigateToAdditionalForms = client => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.additionalForms',
@@ -112,7 +122,8 @@ class ClientDetail extends Component {
       props: {
         entityId: client.id,
         entityDetailComponentId: this.props.componentId,
-        type: 'client'
+        type: 'client',
+        alertMessage: () => this.alertMessage('Custom Field Properties has been successfully created.')
       }
     })
   }
@@ -206,6 +217,7 @@ class ClientDetail extends Component {
 
           <ClientInformation client={client} />
         </ScrollView>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }
@@ -214,7 +226,8 @@ class ClientDetail extends Component {
 const mapState = (state, ownProps) => ({
   programStreams: state.programStreams.data,
   programStreamsLoading: state.programStreams.loading,
-  client: state.clients.data[ownProps.clientId]
+  client: state.clients.data[ownProps.clientId],
+  message: state.clients.message
 })
 
 export default connect(mapState)(ClientDetail)

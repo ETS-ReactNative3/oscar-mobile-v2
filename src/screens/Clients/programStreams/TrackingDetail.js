@@ -14,6 +14,7 @@ const { height } = Dimensions.get('window')
 import { deleteTrackingForm } from '../../../redux/actions/programStreams'
 import { Navigation } from 'react-native-navigation'
 import i18n from '../../../i18n'
+import DropdownAlert from 'react-native-dropdownalert'
 class ListTrackingReport extends Component {
   constructor(props) {
     super(props)
@@ -34,7 +35,8 @@ class ListTrackingReport extends Component {
           client: client,
           listTrackingComponentId: this.props.componentId,
           action: 'create',
-          type: 'create'
+          type: 'create',
+          alertMessage: () => this.alertMessage('Tracking has been successfully created.')
         },
         rightButtons: [
           {
@@ -60,7 +62,8 @@ class ListTrackingReport extends Component {
         type: 'Tracking',
         action: 'edit',
         clickForm: this.props.clickForm,
-        enrollmentDetailComponentId: this.props.componentId
+        enrollmentDetailComponentId: this.props.componentId,
+        alertMessage: () => this.alertMessage('Tracking has been successfully updated.')
       },
       rightButtons: [
         {
@@ -78,10 +81,17 @@ class ListTrackingReport extends Component {
     Alert.alert('Warning', 'Are you sure you want to delete?', [
       {
         text: 'OK',
-        onPress: () => deleteTrackingForm(params, client.id, tracking.client_enrollment_id, tracking.id, this.props)
+        onPress: () =>
+          deleteTrackingForm(params, client.id, tracking.client_enrollment_id, tracking.id, this.props, () =>
+            this.alertMessage('Tracking has been successfully deleted.')
+          )
       },
       { text: 'Cancel' }
     ])
+  }
+
+  alertMessage = message => {
+    this.refs.dropdown.alertWithType('success', 'Success', message)
   }
 
   _renderField(Key, Value) {
@@ -169,29 +179,35 @@ class ListTrackingReport extends Component {
     const { visible } = this.state
     const { enrollment } = this.props
     const { mainContainer, container } = additionalFormDetailList
-    if (enrollment.trackings.length == 0) {
+    const trackings = _.filter(enrollment.trackings, { tracking_id: this.props.tracking.id })
+
+    if (trackings.length == 0) {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>{i18n.t('no_data')}</Text>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
         </View>
       )
     }
 
     return (
-      <Swiper height={visible ? height - 82 : height - 81} showsButtons={false} loop={false} style={mainContainer} paginationStyle={{ bottom: 10 }}>
-        {enrollment.trackings.map((tracking, index) => {
-          const createdAt = moment(tracking.created_at).format('DD MMMM, YYYY')
-          return (
-            <View key={index}>
-              <Card style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }} title={createdAt} rightButton={this.renderActions(tracking)}>
-                <View key={tracking.id.toString()} style={{ height: '85%' }}>
-                  <ScrollView ref="caseNoteCard">{this.renderFormField(tracking)}</ScrollView>
-                </View>
-              </Card>
-            </View>
-          )
-        })}
-      </Swiper>
+      <View style={{ flex: 1 }}>
+        <Swiper height={visible ? height - 82 : height - 81} showsButtons={false} loop={false} style={mainContainer} paginationStyle={{ bottom: 10 }}>
+          {trackings.map((tracking, index) => {
+            const createdAt = moment(tracking.created_at).format('DD MMMM, YYYY')
+            return (
+              <View key={index}>
+                <Card style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }} title={createdAt} rightButton={this.renderActions(tracking)}>
+                  <View key={tracking.id.toString()} style={{ height: '85%' }}>
+                    <ScrollView ref="caseNoteCard">{this.renderFormField(tracking)}</ScrollView>
+                  </View>
+                </Card>
+              </View>
+            )
+          })}
+        </Swiper>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+      </View>
     )
   }
 }

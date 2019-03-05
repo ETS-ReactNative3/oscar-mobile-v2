@@ -7,6 +7,7 @@ import { pushScreen } from '../../../navigation/config'
 import { connect } from 'react-redux'
 import i18n from '../../../i18n'
 import Icon from 'react-native-vector-icons/Ionicons'
+import DropdownAlert from 'react-native-dropdownalert'
 class ProgramStreamDetail extends Component {
   _updateProgramStreamReportState = (data, type) => {
     let { programStream } = this.props
@@ -71,8 +72,16 @@ class ProgramStreamDetail extends Component {
     })
   }
 
+  alertMessage = message => {
+    this.refs.dropdown.alertWithType('success', 'Success', message)
+  }
+
   _renderEnrollmentDetail = (enrollment, deleteAble, formType, editAble, enrollment_id) => {
     const headerTitle = `${formType == 'Tracking' ? 'Tracking Detail' : formType == 'Enroll' ? 'Enrollment Detail' : 'Leave Program Detail'}`
+    const enrollmentMessage = 'Enrollment has been successfully created.'
+    const trackingMessage = 'Tracking has been successfully created.'
+    const leaveProgramMessage = 'Leave Program has been successfully created.'
+    const message = formType == 'Tracking' ? trackingMessage : formType == 'Enroll' ? enrollmentMessage : leaveProgramMessage
     pushScreen(this.props.componentId, {
       screen: 'oscar.enrollmentDetail',
       title: headerTitle,
@@ -86,7 +95,9 @@ class ProgramStreamDetail extends Component {
         clientId: this.props.client.id,
         clickForm: this.props.clickForm,
         programStreamDetailComponentId: this.props.componentId,
-        clientDetailComponentId: this.props.clientDetailComponentId
+        clientDetailComponentId: this.props.clientDetailComponentId,
+        alertMessage: () => this.alertMessage(message),
+        alertEnrollmentMessage: () => this.alertMessage('Enrollment has been successfully deleted.')
       }
     })
   }
@@ -135,15 +146,18 @@ class ProgramStreamDetail extends Component {
       </View>
     )
   }
+
   render() {
     const { programStream } = this.props
     if (programStream == undefined) {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>{i18n.t('no_data')}</Text>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
         </View>
       )
     }
+
     return (
       <View style={programStreamDetail.container}>
         <View style={programStreamDetail.tableWrapper}>
@@ -166,6 +180,7 @@ class ProgramStreamDetail extends Component {
             })}
           </ScrollView>
         </View>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }

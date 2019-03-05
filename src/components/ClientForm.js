@@ -4,6 +4,7 @@ import { Button, CheckBox, Icon } from 'react-native-elements'
 import DatePicker from 'react-native-datepicker'
 import Profile from './Profile'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select'
+import DropdownAlert from 'react-native-dropdownalert'
 import { Navigation } from 'react-native-navigation'
 import { connect } from 'react-redux'
 import { MAIN_COLOR } from '../constants/colors'
@@ -74,6 +75,13 @@ export default class ClientForm extends Component {
         village_id: client.village != null ? client.village.id : ''
       })
     }))
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.error) {
+      errors = nextProps.error.join(', ')
+      this.refs.dropdown.alertWithType('error', 'Error', errors)
+    }
   }
 
   updateClientState = (key, value) => {
@@ -778,6 +786,7 @@ export default class ClientForm extends Component {
             {this.renderQuantitativeTypes()}
           </KeyboardAvoidingView>
         </ScrollView>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }

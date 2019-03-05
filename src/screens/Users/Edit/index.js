@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { CheckBox } from 'react-native-elements'
 import { Navigation } from 'react-native-navigation'
 import DatePicker from 'react-native-datepicker'
+import DropdownAlert from 'react-native-dropdownalert'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select'
 import { connect } from 'react-redux'
 import _ from 'lodash'
@@ -21,7 +22,13 @@ class UserEdit extends Component {
 
   navigationButtonPressed({ buttonId }) {
     if (buttonId === 'SAVE_USER') {
-      this.props.updateUser(this.state.user)
+      this.props.updateUser(this.state.user, this.props.alertMessage)
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.error) {
+      this.refs.dropdown.alertWithType('error', 'Error', nextProps.error)
     }
   }
 
@@ -322,13 +329,15 @@ class UserEdit extends Component {
             </View>
           </KeyboardAvoidingView>
         </ScrollView>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }
 }
 
 const mapState = state => ({
-  loading: state.auth.loading
+  loading: state.auth.loading,
+  error: state.auth.error
 })
 
 const mapDispatch = {

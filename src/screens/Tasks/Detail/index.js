@@ -7,6 +7,7 @@ import { Navigation } from 'react-native-navigation'
 import i18n from '../../../i18n'
 import { deleteTask, updateTask } from '../../../redux/actions/tasks'
 import Card from '../../../components/Card'
+import DropdownAlert from 'react-native-dropdownalert'
 import styles from './styles'
 
 import { View, Text, TouchableWithoutFeedback, ScrollView, Alert } from 'react-native'
@@ -24,27 +25,27 @@ class TaskDetail extends Component {
 
   state = {
     user: this.props.user,
-    client: this.props.client
+    client: this.props.client,
+    message: ''
   }
 
   componentWillReceiveProps(nextProps) {
     const { users, clients } = nextProps
     const { user, client } = this.state
 
-    if (user)
-      this.setState({ user: users[user.id] })
+    if (user) this.setState({ user: users[user.id] })
 
-    if (client)
-      this.setState({ client: clients[client.id] })
+    if (client) this.setState({ client: clients[client.id] })
   }
 
   onDelete(task, client) {
     Alert.alert(i18n.t('task.delete_title'), i18n.t('task.delete_detail'), [
-      { text: i18n.t('button.cancel'), style: 'cancel' },
       {
-        text: i18n.t('button.save'),
-        onPress: () => this.props.deleteTask(task, client.id)
-      }
+        text: 'OK',
+        onPress: () =>
+          this.props.deleteTask(task, client.id, () => this.refs.dropdown.alertWithType('success', 'Success', 'Task has successfully been deleted.'))
+      },
+      { text: 'Cancel', style: 'cancel' }
     ])
   }
 
@@ -56,7 +57,10 @@ class TaskDetail extends Component {
           task,
           client,
           domains: this.props.domains,
-          onUpdateTask: params => this.props.updateTask(params, task, client.id, this.props.type)
+          onUpdateTask: params =>
+            this.props.updateTask(params, task, client.id, this.props.type, () =>
+              this.refs.dropdown.alertWithType('success', 'Success', 'Task has successfully been updated.')
+            )
         }
       }
     })
@@ -72,9 +76,7 @@ class TaskDetail extends Component {
 
     return (
       <Card key={client.id} title={this.clientName(client)} color={this.props.color}>
-        <View style={styles.content}>
-          {sortBy(tasks, task => task.domain.name).map(task => this.renderTask(task, client))}
-        </View>
+        <View style={styles.content}>{sortBy(tasks, task => task.domain.name).map(task => this.renderTask(task, client))}</View>
       </Card>
     )
   }
@@ -111,23 +113,25 @@ class TaskDetail extends Component {
     const { type, isClientTasksPage } = this.props
 
     return (
-      <ScrollView style={styles.container}>
-        {isClientTasksPage
-          ? this.renderClient(client, client.tasks[type])
-          : user.clients.map(client => this.renderClient(client, client[type]))}
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView>
+          {isClientTasksPage ? this.renderClient(client, client.tasks[type]) : user.clients.map(client => this.renderClient(client, client[type]))}
+        </ScrollView>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+      </View>
     )
   }
 }
 
-const mapState = (state) => ({
+const mapState = state => ({
   users: state.users.data,
-  clients: state.clients.data
+  clients: state.clients.data,
+  message: state.clients.message
 })
 
 const mapDispatch = {
   updateTask,
-  deleteTask,
+  deleteTask
 }
 
 export default connect(
