@@ -15,8 +15,7 @@ class ActiveProgramStreams extends Component {
     this.state = {
       original_program_streams: [],
       program_streams: [],
-      isLoading: true,
-      client: this.props.client
+      isLoading: true
     }
   }
 
@@ -54,7 +53,7 @@ class ActiveProgramStreams extends Component {
   }
 
   _enrollClient(program_stream, client_program_stream) {
-    const { client } = this.state
+    const { client } = this.props
     const clientsEnrollAble = program_stream.enrollable_client_ids
     const activeProgram = _.filter(client.inactive_program_streams, clientProgram => {
       return clientProgram.id == program_stream.id
@@ -114,7 +113,7 @@ class ActiveProgramStreams extends Component {
   }
 
   _checkProgramStream(program_stream, status) {
-    const { client } = this.state
+    const { client } = this.props
     if (status == 'Exited') {
       let findProgramStream = _.filter(client.inactive_program_streams, { id: program_stream.id })
       findProgramStream = findProgramStream[0]
@@ -152,7 +151,7 @@ class ActiveProgramStreams extends Component {
       title: program_stream.name,
       props: {
         programStreamId: program_stream.id,
-        clientId: this.state.client.id,
+        clientId: this.props.client.id,
         clientDetailComponentId: this.props.clientDetailComponentId
       }
     })
@@ -185,7 +184,8 @@ class ActiveProgramStreams extends Component {
   }
 
   render() {
-    const { program_streams, isLoading, isFiltering, client } = this.state
+    const { program_streams, isLoading, isFiltering } = this.state
+    const { client } = this.props
     if (isLoading) {
       return (
         <View
@@ -281,7 +281,8 @@ class ActiveProgramStreams extends Component {
   }
 }
 
-const mapState = state => ({
+const mapState = (state, ownProps) => ({
+  client: state.clients.data[ownProps.clientId],
   programStreams: state.programStreams.data
 })
 

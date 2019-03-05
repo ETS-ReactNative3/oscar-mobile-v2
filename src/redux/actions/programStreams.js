@@ -133,32 +133,22 @@ updateDeleteEnrollment = (enrollmentDeleted, programStream, client, clickForm) =
   })
 
   let updatedProgramStreams = []
-  let inactiveProgramStreams = []
   let enrollmentIsEmpty = false
   let updatedInactiveProgramStream = []
   let clientUpdated = {}
-  const exitedEnrollments = _.filter(updateEnrollments, enrollment => {
-    return enrollment.status == 'Active'
-  })
+
   if (clickForm == 'EnrolledProgram') {
     _.forEach(client.program_streams, program_stream => {
       if (programStream.id == program_stream.id) {
-        if (exitedEnrollments.length == 0) {
-          updatedProgramStream = { ...program_stream, enrollments: updateEnrollments }
-          enrollmentIsEmpty = true
-          inactiveProgramStreams.push(updatedProgramStream)
-        } else if (updateEnrollments.length > 0) {
+        if (updateEnrollments.length > 0) {
           updatedProgramStream = { ...program_stream, enrollments: updateEnrollments }
           updatedProgramStreams.push(updatedProgramStream)
-        } else {
-          enrollmentIsEmpty = true
         }
       } else {
         updatedProgramStreams.push(program_stream)
       }
     })
-    updatedInactiveProgramStream = [...inactiveProgramStreams, ...client.inactive_program_streams]
-    clientUpdated = { ...client, program_streams: updatedProgramStreams, inactive_program_streams: updatedInactiveProgramStream }
+    clientUpdated = { ...client, program_streams: updatedProgramStreams }
   } else {
     _.forEach(client.inactive_program_streams, program_stream => {
       if (programStream.id == program_stream.id) {
@@ -178,9 +168,11 @@ updateDeleteEnrollment = (enrollmentDeleted, programStream, client, clickForm) =
   return { clientUpdated, enrollmentIsEmpty }
 }
 
-updateDeleteTracking = (enrollmentId, trackingId, programStreamId, client) => {
+updateDeleteTracking = (enrollmentId, trackingId, programStreamId, client, clickForm) => {
   let trackingIsEmpty = false
-  const updatedProgramStreams = _.map(client.program_streams, programStream => {
+  const programStreams = clickForm == 'EnrolledProgram' ? client.program_streams : client.inactive_program_streams
+
+  const updatedProgramStreams = _.map(programStreams, programStream => {
     if (programStreamId == programStream.id) {
       const updatedEnrollments = _.map(programStream.enrollments, enrollment => {
         if (enrollmentId == enrollment.id) {
@@ -196,7 +188,11 @@ updateDeleteTracking = (enrollmentId, trackingId, programStreamId, client) => {
     }
     return programStream
   })
-  const clientUpdated = { ...client, program_streams: updatedProgramStreams }
+  const clientUpdated =
+    clickForm == 'EnrolledProgram'
+      ? { ...client, program_streams: updatedProgramStreams }
+      : { ...client, inactive_program_streams: updatedProgramStreams }
+
   return { clientUpdated, trackingIsEmpty }
 }
 
@@ -366,7 +362,7 @@ export function deleteTrackingForm(enrollment, client_id, client_enrolled_progra
     axios
       .delete(trackingProgramPath)
       .then(response => {
-        const clientDeletedTracking = updateDeleteTracking(enrollment.id, tracking_id, actions.programStreamId, actions.client)
+        const clientDeletedTracking = updateDeleteTracking(enrollment.id, tracking_id, actions.programStreamId, actions.client, actions.clickForm)
         dispatch(requestUpdateclient(clientDeletedTracking.clientUpdated))
         Alert.alert('Message', 'You have successfully delete a tracking report.', [{ text: 'OK', onPress: () => console.log('1') }], {
           cancelable: false

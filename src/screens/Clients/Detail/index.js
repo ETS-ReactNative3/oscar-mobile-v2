@@ -89,7 +89,7 @@ class ClientDetail extends Component {
       screen: 'oscar.activeProgramStreams',
       title: 'Active Program Streams',
       props: {
-        client: client,
+        clientId: client.id,
         clientDetailComponentId: this.props.componentId
       }
     })
