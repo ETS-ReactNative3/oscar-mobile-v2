@@ -3,6 +3,7 @@ import { Alert } from 'react-native'
 import { FAMILY_TYPES } from '../types'
 import endpoint from '../../constants/endpoint'
 import { formTypes } from '../../utils/validation'
+import { loadingScreen } from '../../navigation/config'
 import _ from 'lodash'
 import i18n from '../../i18n'
 import { Navigation } from 'react-native-navigation'
@@ -45,12 +46,14 @@ export function fetchFamilies() {
 }
 
 export function updateFamily(familyParams, actions) {
+  loadingScreen()
   return dispatch => {
     dispatch(requestFamilies())
     axios
       .put(endpoint.familiesPath + '/' + familyParams.id, familyParams)
       .then(response => {
         dispatch(updateFamilySuccess(response.data.family))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         Navigation.popTo(actions.familyDetailComponentId)
         actions.alertMessage()
       })
@@ -58,6 +61,7 @@ export function updateFamily(familyParams, actions) {
         let errors = _.map(error.response.data, (value, key) => {
           return i18n.t('family' + key, { locale: 'en' }) + ' ' + value[0]
         })
+        Navigation.dismissOverlay('LOADING_SCREEN')
         dispatch(requestFamiliesFailed(errors))
       })
   }

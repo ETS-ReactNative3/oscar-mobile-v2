@@ -3,6 +3,7 @@ import { Alert } from 'react-native'
 import { FAMILY_TYPES, CLIENT_TYPES } from '../types'
 import endpoint from '../../constants/endpoint'
 import { formTypes } from '../../utils/validation'
+import { loadingScreen } from '../../navigation/config'
 import _ from 'lodash'
 import { Navigation } from 'react-native-navigation'
 
@@ -118,6 +119,7 @@ customFormPropertyPathAndType = type => {
 }
 
 export function createAdditionalForm(properties, entityProfile, additionalForm, actions) {
+  loadingScreen()
   return dispatch => {
     const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
 
@@ -132,16 +134,19 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
           entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
         }
         dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         Navigation.popTo(actions.entityDetailComponentId)
         actions.alertMessage()
       })
       .catch(error => {
+        Navigation.dismissOverlay('LOADING_SCREEN')
         alert(JSON.stringify(error))
       })
   }
 }
 
 export function editAdditionalForm(properties, entityProfile, custom_field, additionalForm, actions) {
+  loadingScreen()
   return dispatch => {
     const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
     let updateEntityAdditonalFormPath = _.template(customFieldPropertyPath)
@@ -151,16 +156,19 @@ export function editAdditionalForm(properties, entityProfile, custom_field, addi
       .then(response => {
         const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
         dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         Navigation.popTo(actions.currentComponentId)
         actions.alertMessage()
       })
       .catch(error => {
+        Navigation.dismissOverlay('LOADING_SCREEN')
         alert(JSON.stringify(error))
       })
   }
 }
 
 export function deleteAdditionalForm(customFieldProperty, entityProfile, actions, alertMessage) {
+  loadingScreen()
   return dispatch => {
     const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
     let deleteEntityAdditonalFormPath = _.template(customFieldPropertyPath)
@@ -171,9 +179,11 @@ export function deleteAdditionalForm(customFieldProperty, entityProfile, actions
       .then(response => {
         const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
         dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         alertMessage()
       })
       .catch(error => {
+        Navigation.dismissOverlay('LOADING_SCREEN')
         alert(JSON.stringify(error))
       })
   }

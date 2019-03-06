@@ -5,8 +5,10 @@ import moment from 'moment'
 import endpoint from '../../constants/endpoint'
 import { updateUser } from './users'
 import { updateClient } from './clients'
+import { loadingScreen } from '../../navigation/config'
 
 export function deleteTask(task, clientId, onDeleteSuccess, updateStateMessage) {
+  loadingScreen()
   return (dispatch, getState) => {
     const hasInternet = getState().internet.hasInternet
     const path = `${endpoint.clientsPath}/${clientId}${endpoint.deleteTaskPath}/${task.id}`
@@ -18,13 +20,17 @@ export function deleteTask(task, clientId, onDeleteSuccess, updateStateMessage) 
           dispatch(updateClientTask(task, null, clientId, 'delete'))
           dispatch(updateUserTasks(task, null, clientId, 'delete'))
           onDeleteSuccess && onDeleteSuccess(task)
+          Navigation.dismissOverlay('LOADING_SCREEN')
         })
-        .catch(handleError)
+        .catch(handleError => {
+          Navigation.dismissOverlay('LOADING_SCREEN')
+        })
     }
   }
 }
 
 export function updateTask(params, task, clientId, taskType, onUpdateSuccess) {
+  loadingScreen()
   return (dispatch, getState) => {
     const hasInternet = getState().internet.hasInternet
     const path = `${endpoint.clientsPath}/${clientId}${endpoint.editTaskPath}/${task.id}`
@@ -36,14 +42,18 @@ export function updateTask(params, task, clientId, taskType, onUpdateSuccess) {
           dispatch(updateClientTask(updatedTask, taskType, clientId, 'update'))
           dispatch(updateUserTasks(updatedTask, taskType, clientId, 'update'))
           onUpdateSuccess && onUpdateSuccess(updatedTask)
+          Navigation.dismissOverlay('LOADING_SCREEN')
           Navigation.dismissAllModals()
         })
-        .catch(handleError)
+        .catch(handleError => {
+          Navigation.dismissOverlay('LOADING_SCREEN')
+        })
     }
   }
 }
 
 export function createTask(params, clientId, onCreateSuccess, updateStateMessage) {
+  loadingScreen()
   return (dispatch, getState) => {
     const hasInternet = getState().internet.hasInternet
     const path = `${endpoint.clientsPath}/${clientId}${endpoint.createTaskPath}`
@@ -56,10 +66,13 @@ export function createTask(params, clientId, onCreateSuccess, updateStateMessage
           dispatch(updateClientTask(task, null, clientId, 'create'))
           dispatch(updateUserTasks(task, null, clientId, 'create'))
           onCreateSuccess && onCreateSuccess(task)
+          Navigation.dismissOverlay('LOADING_SCREEN')
           Navigation.dismissAllModals()
           updateStateMessage('Task has successfully been created.')
         })
-        .catch(handleError)
+        .catch(handleError => {
+          Navigation.dismissOverlay('LOADING_SCREEN')
+        })
     }
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Text, StatusBar } from 'react-native'
+import { View, Text, ActivityIndicator } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import { Navigation } from 'react-native-navigation'
 import { pickBy, size } from 'lodash'
@@ -120,8 +120,17 @@ class Clients extends Component {
 
     if (loading)
       return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Loading...</Text>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            flexDirection: 'row'
+          }}
+        >
+          <ActivityIndicator color="#009999" size="large" />
+          <Text style={{ fontSize: 16, marginLeft: 8 }}>Loading...</Text>
         </View>
       )
     return (

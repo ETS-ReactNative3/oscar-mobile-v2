@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { Alert } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import i18n from '../../i18n'
+import { loadingScreen } from '../../navigation/config'
 requestClients = () => ({
   type: CLIENT_TYPES.CLIENTS_REQUESTING
 })
@@ -26,12 +27,14 @@ export const updateClient = (client, message = '') => ({
 })
 
 export function updateClientProperty(clientParams, actions) {
+  loadingScreen()
   return dispatch => {
     dispatch(requestClients())
     dispatch(handleUpdateClientParams(clientParams, clientParams.id))
       .then(response => {
         const message = 'You have update successfully.'
         dispatch(updateClient(response.data.client, message))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         Navigation.popTo(actions.clientDetailComponentId)
         actions.alertMessage()
       })
@@ -39,6 +42,7 @@ export function updateClientProperty(clientParams, actions) {
         let errors = _.map(error.response.data, (value, key) => {
           return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
         })
+        Navigation.dismissOverlay('LOADING_SCREEN')
         dispatch(requestClientsFailed(errors))
       })
   }

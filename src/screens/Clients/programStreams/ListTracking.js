@@ -69,7 +69,7 @@ class ListTracking extends Component {
         ]
       })
     } else {
-      this.refs.dropdown.alertWithType('warn', 'Warning', 'No tracking report')
+      this.refs.dropdown.alertWithType('info', 'Info', 'No tracking report')
     }
   }
 

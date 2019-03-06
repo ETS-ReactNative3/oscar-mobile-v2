@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import FlatList from '../../components/FlatList'
 import { Navigation } from 'react-native-navigation'
-import { View, Text } from 'react-native'
+import { View, Text, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux'
 import { pushScreen } from '../../navigation/config'
 import { fetchFamilies, requestFamiliesSuccess } from '../../redux/actions/families'
@@ -42,8 +42,17 @@ class Families extends Component {
   render() {
     if (this.props.loading)
       return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Loading...</Text>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            flexDirection: 'row'
+          }}
+        >
+          <ActivityIndicator color="#009999" size="large" />
+          <Text style={{ fontSize: 16, marginLeft: 8 }}>Loading...</Text>
         </View>
       )
     return (

@@ -14,6 +14,15 @@ export const startScreen = (screen, props = {}) => {
   })
 }
 
+export const loadingScreen = () => {
+  Navigation.showOverlay({
+    component: {
+      id: 'LOADING_SCREEN',
+      name: 'oscar.loading'
+    }
+  })
+}
+
 export const pushScreen = (componentId, options = {}) => {
   Navigation.push(componentId, {
     component: {

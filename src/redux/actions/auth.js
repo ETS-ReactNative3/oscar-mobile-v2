@@ -5,7 +5,7 @@ import { AUTH_TYPES, LOGOUT_TYPES } from '../types'
 import endpoint from '../../constants/endpoint'
 import i18n from '../../i18n'
 import _ from 'lodash'
-import { pushScreen, startScreen, startTabScreen, startNgoScreen } from '../../navigation/config'
+import { pushScreen, startScreen, startTabScreen, startNgoScreen, loadingScreen } from '../../navigation/config'
 import { Navigation } from 'react-native-navigation'
 
 requestLogin = () => ({
@@ -113,6 +113,7 @@ export function login(credentail, currentComponentId) {
 }
 
 export function updateUser(userParam, alertMessage) {
+  loadingScreen()
   return (dispatch, getState) => {
     const org = getState().ngo.name
     const headers = getState().auth.headers
@@ -123,6 +124,7 @@ export function updateUser(userParam, alertMessage) {
       .put(endpoint.baseURL(org) + endpoint.updateTokenPath, userParam, config)
       .then(response => {
         dispatch(requestLoginSuccess(response))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         Navigation.popTo('USERS_TAB_BAR_BUTTON')
         alertMessage()
       })
@@ -133,6 +135,7 @@ export function updateUser(userParam, alertMessage) {
             errors.push(_.capitalize(key) + ' ' + value[0])
           }
         })
+        Navigation.dismissOverlay('LOADING_SCREEN')
         dispatch(requestUpdateUserFailed(errors))
       })
   }
@@ -161,16 +164,19 @@ export function verifyUser(goToPin) {
 }
 
 export function logoutUser(acc, navigator) {
+  loadingScreen()
   return dispatch => {
     dispatch(requestLogout())
     axios
       .delete(endpoint.logoutPath)
       .then(response => {
         dispatch(requestLogoutSuccess(response))
+        Navigation.dismissOverlay('LOADING_SCREEN')
         startNgoScreen()
         dispatch(clearAppData())
       })
       .catch(error => {
+        Navigation.dismissOverlay('LOADING_SCREEN')
         dispatch(requestLogoutFailed(error))
       })
   }
