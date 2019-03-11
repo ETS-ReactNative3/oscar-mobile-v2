@@ -282,7 +282,7 @@ class UserEdit extends Component {
               </View>
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>{i18n.t('user.staff_report')}</Text>
+              <Text style={styles.label}>{i18n.t('user.referral_notification')}</Text>
               <View style={styles.row}>
                 <CheckBox
                   title="Yes"
@@ -290,8 +290,8 @@ class UserEdit extends Component {
                   uncheckedIcon="circle-o"
                   checkedColor="#009999"
                   containerStyle={styles.checkbox}
-                  checked={user.staff_performance_notification == true ? true : false}
-                  onPress={() => this.setUpdateUser('staff_performance_notification', true)}
+                  checked={user.referral_notification == true ? true : false}
+                  onPress={() => this.setUpdateUser('referral_notification', true)}
                 />
                 <CheckBox
                   title="No"
@@ -299,8 +299,8 @@ class UserEdit extends Component {
                   uncheckedIcon="circle-o"
                   checkedColor="#009999"
                   containerStyle={styles.checkbox}
-                  checked={user.staff_performance_notification == false ? true : false}
-                  onPress={() => this.setUpdateUser('staff_performance_notification', false)}
+                  checked={user.referral_notification == false ? true : false}
+                  onPress={() => this.setUpdateUser('referral_notification', false)}
                 />
               </View>
             </View>

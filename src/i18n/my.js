@@ -230,7 +230,7 @@ export default {
     set_pin: 'Set PIN'
   },
   user: {
-    about_user: 'ഉപയോക്താവിനെക്കുറിച്ച്',
+    about_user: 'About User',
     title: 'User',
     first_name: 'First Name',
     last_name: 'Last Name',
@@ -254,10 +254,11 @@ export default {
     current_password_label: 'We need your current password to confirm your changes',
     password_label: 'Leave this blank if you do not want to change',
     confirm_password_label: 'Leave this blank if you do not want to change',
-    overdue_summary: 'Send me overdue task summary',
+    overdue_summary: 'Notification Email',
     staff_report: 'Send me staff performance report',
     calendar: 'Calendar Integration',
     edit_title: 'Edit Profile',
-    gender: 'ലിംഗഭേദം'
+    gender: 'Gender',
+    referral_notification: 'Referral Notification'
   }
 }
