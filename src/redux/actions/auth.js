@@ -155,10 +155,13 @@ export function verifyUser(goToPin) {
         goToPin(CryptoJS.SHA3(pin_code))
       })
       .catch(error => {
-        startNgoScreen()
+        Alert.alert('Info', 'User session has been expired.', [
+          {
+            text: 'OK',
+            onPress: () => startNgoScreen()
+          }
+        ])
         dispatch(clearAppData())
-        dispatch(requestLoginFailed(error.response.data.errors.full_messages[0]))
-        alert('Session', 'User session has been expired.')
       })
   }
 }

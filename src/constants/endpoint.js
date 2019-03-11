@@ -1,7 +1,7 @@
 export default {
   baseURL: function(subDomain) {
-    return 'https://' + subDomain + '.oscarhq.com/api/v1'
-    // return 'http://' + subDomain + '.oscarhq-staging.com/api/v1'
+    // return 'https://' + subDomain + '.oscarhq.com/api/v1'
+    return 'http://' + subDomain + '.oscarhq-staging.com/api/v1'
   },
   login: '/auth/sign_in',
   updateTokenPath: '/auth',
