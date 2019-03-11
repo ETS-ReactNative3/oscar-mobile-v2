@@ -1,45 +1,78 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native'
+import { Navigation } from 'react-native-navigation'
+import DropdownAlert from 'react-native-dropdownalert'
+import { Text, View, FlatList, TouchableOpacity, Alert } from 'react-native'
 import moment from 'moment'
 import appIcons from '../../utils/Icon'
 import { pushScreen } from '../../navigation/config'
+import i18n from '../../i18n'
 import styles from './styles'
 
 class CaseNotes extends Component {
-  onCaseNotePress = async caseNote => {
+  state = {
+    client: this.props.client,
+  }
+
+  componentDidMount() {
+    Navigation.events().bindComponent(this)
+  }
+
+
+  navigationButtonPressed = () => {
+    Alert.alert('Case Note', 'Please choose case note type.', [
+      { text: this.props.setting.default_assessment, onPress: () => this.navigateToCaseNoteForm('default') },
+      { text: this.props.setting.custom_assessment, onPress: () => this.navigateToCaseNoteForm('custom') },
+    ])
+  }
+
+  navigateToCaseNoteForm = async type => {
     const icons = await appIcons()
 
-    const todayDate = moment(new Date()).format("YYYY-MM-DD").toString()
-    const createdAt = moment(caseNote.created_at).format("YYYY-MM-DD").toString()
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.caseNoteForm',
+      title: i18n.t('client.case_note_form.create_title'),
+      props: {
+        custom: type === 'custom',
+        client: this.state.client,
+        action: 'create',
+        previousComponentId: this.props.componentId,
+        onSaveSuccess: this.onCreateSuccess
+      },
+      rightButtons: [{
+        id: 'SAVE_CASE_NOTE',
+        icon: icons.save,
+        color: '#fff'
+      }]
+    })
+  }
 
-    const rightButtons = createdAt === todayDate
-                          ? [{ id: 'EDIT_CASE_NOTE', icon: icons.edit, color: '#fff' }]
-                          : []
+  onCreateSuccess = client => {
+    this.refs.dropdown.alertWithType('success', 'Success', 'Client has been successfully created.')
+    this.setState({ client })
+  }
+
+  onCaseNotePress = async caseNote => {
+    const icons = await appIcons()
 
     pushScreen(this.props.componentId, {
       screen: 'oscar.caseNoteDetail',
       title: caseNote.attendee || '(No Name)',
       props: {
-        caseNoteId: caseNote.id,
-        clientId: this.props.clientId
+        caseNote,
+        client: this.state.client
       },
-      rightButtons
+      rightButtons: [{
+        id: 'EDIT_CASE_NOTE',
+        icon: icons.edit,
+        color: '#fff'
+      }]
     })
   }
 
-  keyExtractor = (item, _) => item.id.toString()
 
-  renderIcon = () => {
-    if (this.props.isClientList) return <Icon name={'account-circle'} color="#dedede" size={55} />
-    else
-      return (
-        <View style={styles.iconWrapper}>
-          <Icon name="group" color="#fff" size={46} style={{ padding: 2 }} />
-        </View>
-      )
-  }
+  keyExtractor = (item, _) => item.id.toString()
 
   renderItem = ({ item }) => (
     <TouchableOpacity
@@ -59,21 +92,25 @@ class CaseNotes extends Component {
   )
 
   render() {
-    const { client } = this.props
+    const { client } = this.state
 
     return (
-      <ScrollView style={styles.container}>
-        <FlatList
-          data={client.case_notes}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-        />
-      </ScrollView>
+      <View style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <FlatList
+            data={client.case_notes}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+      </View>
     )
   }
 }
 
 const mapState = (state, ownProps) => ({
+  setting: state.setting.data,
   client: state.clients.data[ownProps.clientId]
 })
 

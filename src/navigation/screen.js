@@ -40,6 +40,7 @@ import TrackingForm from '../screens/Clients/programStreams/TrackingForm'
 import TrackingDetail from '../screens/Clients/programStreams/TrackingDetail'
 import CaseNotes from '../screens/CaseNotes'
 import CaseNoteDetail from '../screens/CaseNotes/Detail'
+import CaseNoteForm from '../screens/CaseNotes/Form'
 import Loading from '../screens/Loading'
 
 const store = configureStore()
@@ -83,5 +84,6 @@ export default () => {
   Navigation.registerComponentWithRedux('oscar.trackingDetail', () => TrackingDetail, Provider, store)
   Navigation.registerComponentWithRedux('oscar.caseNotes', () => CaseNotes, Provider, store)
   Navigation.registerComponentWithRedux('oscar.caseNoteDetail', () => CaseNoteDetail, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.caseNoteForm', () => CaseNoteForm, Provider, store)
   Navigation.registerComponentWithRedux('oscar.loading', () => Loading, Provider, store)
 }

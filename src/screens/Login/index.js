@@ -16,7 +16,7 @@ class LoginContainer extends Component {
     password: '',
     secureTextEntry: true
   }
-
+  
   componentWillReceiveProps(nextProps) {
     if (nextProps.error) {
       this.displayError(nextProps.error)
@@ -76,7 +76,7 @@ class LoginContainer extends Component {
             style={styles.showPassword}
           />
         </View>
-        <Button isLoading={loading} isDisabled={loading} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
+        <Button isLoading={false} isDisabled={false} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
           {i18n.t('auth.login')}
         </Button>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
