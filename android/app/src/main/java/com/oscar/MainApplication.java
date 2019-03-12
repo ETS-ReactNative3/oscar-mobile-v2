@@ -1,4 +1,4 @@
-package com.oscar;
+package com.rotati.oscarhq;
 
 import android.app.Application;
 

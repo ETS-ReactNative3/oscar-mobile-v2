@@ -1,4 +1,4 @@
-package com.oscar;
+package com.rotati.oscarhq;
 
 import com.reactnativenavigation.NavigationActivity;
 
