@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
-import { View, Text, ScrollView } from 'react-native'
-import { connect } from 'react-redux'
-import Swiper from 'react-native-swiper'
-import DropdownAlert from 'react-native-dropdownalert'
-import _ from 'lodash'
-import { pushScreen } from '../../../navigation/config'
-import appIcons from '../../../utils/Icon'
-import i18n from '../../../i18n'
-import ClientInformation from './Information'
-import Menu from './Menu'
-import styles from './styles'
-import appIcon from '../../../utils/Icon'
-import { Navigation } from 'react-native-navigation'
+import React, { Component }                 from 'react'
+import { View, Text, ScrollView }           from 'react-native'
+import { connect }                          from 'react-redux'
+import { pushScreen }                       from '../../../navigation/config'
+import { Navigation }                       from 'react-native-navigation'
+import Swiper                               from 'react-native-swiper'
+import DropdownAlert                        from 'react-native-dropdownalert'
+import appIcons                             from '../../../utils/Icon'
+import i18n                                 from '../../../i18n'
+import ClientInformation                    from './Information'
+import Menu                                 from './Menu'
+import styles                               from './styles'
+import appIcon                              from '../../../utils/Icon'
+import _                                    from 'lodash'
 class ClientDetail extends Component {
   constructor(props) {
     super(props)
@@ -215,7 +215,7 @@ class ClientDetail extends Component {
             </View>
           </View>
 
-          <ClientInformation client={client} />
+          <ClientInformation client={client} setting={setting} />
         </ScrollView>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>

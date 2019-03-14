@@ -1,22 +1,26 @@
-import React, { Component } from 'react'
-import DatePicker from 'react-native-datepicker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import DropdownAlert from 'react-native-dropdownalert'
-import { CheckBox } from 'react-native-elements'
-import { Navigation } from 'react-native-navigation'
-import { connect } from 'react-redux'
-import { MAIN_COLOR } from '../../../constants/colors'
-import { updateFamily } from '../../../redux/actions/families'
-import styles from './styles'
-import i18n from '../../../i18n'
-import _ from 'lodash'
-import { View, Text, KeyboardAvoidingView, ScrollView, TextInput, Alert, Platform, ActivityIndicator, Modal } from 'react-native'
-
+import React, { Component }     from 'react'
+import DatePicker               from 'react-native-datepicker'
+import SectionedMultiSelect     from 'react-native-sectioned-multi-select'
+import DropdownAlert            from 'react-native-dropdownalert'
+import { CheckBox }             from 'react-native-elements'
+import { Navigation }           from 'react-native-navigation'
+import { connect }              from 'react-redux'
+import { MAIN_COLOR }           from '../../../constants/colors'
+import { updateFamily }         from '../../../redux/actions/families'
+import _                        from 'lodash'
+import styles                   from './styles'
+import i18n                     from '../../../i18n'
+import { 
+  View,
+  Text,
+  KeyboardAvoidingView,
+  ScrollView,
+  TextInput
+} from 'react-native'
 class UserEdit extends Component {
-  state = { family: this.props.family }
-
   constructor(props) {
     super(props)
+    this.state = { family: this.props.family }
     Navigation.events().bindComponent(this)
   }
 
@@ -381,15 +385,6 @@ class UserEdit extends Component {
               <Text style={styles.label}>{i18n.t('family.dependable_income')}</Text>
               <View style={styles.row}>
                 <CheckBox
-                  title="No"
-                  checkedIcon="dot-circle-o"
-                  uncheckedIcon="circle-o"
-                  checkedColor="#009999"
-                  style={{ backgroundColor: 'transparent' }}
-                  checked={!family.dependable_income}
-                  onPress={() => this.setUpdateFamily('dependable_income', false)}
-                />
-                <CheckBox
                   title="Yes"
                   checkedIcon="dot-circle-o"
                   uncheckedIcon="circle-o"
@@ -397,6 +392,15 @@ class UserEdit extends Component {
                   style={{ backgroundColor: 'transparent' }}
                   checked={family.dependable_income}
                   onPress={() => this.setUpdateFamily('dependable_income', true)}
+                />
+                <CheckBox
+                  title="No"
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checkedColor="#009999"
+                  style={{ backgroundColor: 'transparent' }}
+                  checked={!family.dependable_income}
+                  onPress={() => this.setUpdateFamily('dependable_income', false)}
                 />
               </View>
             </View>
