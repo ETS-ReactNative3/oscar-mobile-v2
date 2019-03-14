@@ -173,7 +173,7 @@ export default {
     male_adult_count: 'Male Adult Count',
     male_children_count: 'Male Children Count',
     manage: 'Manage',
-    member_count: 'Family Members',
+    member_count: 'Member Count',
     name: 'Name',
     no: 'No',
     province: 'Province',

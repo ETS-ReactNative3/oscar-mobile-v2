@@ -1,38 +1,31 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, Text, ActivityIndicator } from 'react-native'
-import { SearchBar } from 'react-native-elements'
-import { Navigation } from 'react-native-navigation'
-import { pickBy, size } from 'lodash'
-import { fetchClients } from '../../redux/actions/clients'
-import { fetchProvinces } from '../../redux/actions/provinces'
-import { fetchDistricts } from '../../redux/actions/districts'
-import { fetchCommunes } from '../../redux/actions/communes'
-import { fetchVillages } from '../../redux/actions/villages'
-import { fetchSetting } from '../../redux/actions/setting'
-import { fetchProgramStreams } from '../../redux/actions/programStreams'
-import { fetchReferralSources } from '../../redux/actions/referralSources'
-import { fetchQuantitativeTypes } from '../../redux/actions/quantitativeTypes'
-import { fetchAgencies } from '../../redux/actions/agencies'
-import { fetchDonors } from '../../redux/actions/donors'
-import { fetchUsers } from '../../redux/actions/users'
-import { pushScreen } from '../../navigation/config'
-import FlatList from '../../components/FlatList'
-import NoRecord from './NoRecord'
-import i18n from '../../i18n'
-import styles from './styles'
-import appIcon from '../../utils/Icon'
-
+import React, { Component }               from 'react'
+import { connect }                        from 'react-redux'
+import { View, Text, ActivityIndicator }  from 'react-native'
+import { SearchBar }                      from 'react-native-elements'
+import { Navigation }                     from 'react-native-navigation'
+import { pickBy, size }                   from 'lodash'
+import { fetchClients }                   from '../../redux/actions/clients'
+import { fetchProvinces }                 from '../../redux/actions/provinces'
+import { fetchDistricts }                 from '../../redux/actions/districts'
+import { fetchCommunes }                  from '../../redux/actions/communes'
+import { fetchVillages }                  from '../../redux/actions/villages'
+import { fetchSetting }                   from '../../redux/actions/setting'
+import { fetchProgramStreams }            from '../../redux/actions/programStreams'
+import { fetchReferralSources }           from '../../redux/actions/referralSources'
+import { fetchQuantitativeTypes }         from '../../redux/actions/quantitativeTypes'
+import { fetchAgencies }                  from '../../redux/actions/agencies'
+import { fetchDonors }                    from '../../redux/actions/donors'
+import { fetchUsers }                     from '../../redux/actions/users'
+import { pushScreen }                     from '../../navigation/config'
+import FlatList                           from '../../components/FlatList'
+import NoRecord                           from './NoRecord'
+import i18n                               from '../../i18n'
+import styles                             from './styles'
+import appIcon                            from '../../utils/Icon'
 class Clients extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      clients: props.clients,
-      showSearch: false,
-      searching: false,
-      search: ''
-    }
-
+    this.state = { clients: props.clients, showSearch: false, searching: false, search: '' }
     Navigation.events().bindComponent(this)
   }
 

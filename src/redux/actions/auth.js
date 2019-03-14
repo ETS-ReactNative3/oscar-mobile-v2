@@ -1,12 +1,17 @@
-import axios from 'axios'
-import { Alert, AsyncStorage } from 'react-native'
-import CryptoJS from 'crypto-js'
-import { AUTH_TYPES, LOGOUT_TYPES } from '../types'
-import endpoint from '../../constants/endpoint'
-import i18n from '../../i18n'
-import _ from 'lodash'
-import { pushScreen, startScreen, startTabScreen, startNgoScreen, loadingScreen } from '../../navigation/config'
-import { Navigation } from 'react-native-navigation'
+import axios                              from 'axios'
+import { Alert, AsyncStorage }            from 'react-native'
+import { AUTH_TYPES, LOGOUT_TYPES }       from '../types'
+import { Navigation }                     from 'react-native-navigation'
+import endpoint                           from '../../constants/endpoint'
+import i18n                               from '../../i18n'
+import CryptoJS                           from 'crypto-js'
+import _                                  from 'lodash'
+import {
+  pushScreen,
+  startTabScreen,
+  startNgoScreen,
+  loadingScreen
+} from '../../navigation/config'
 
 requestLogin = () => ({
   type: AUTH_TYPES.LOGIN_REQUEST
@@ -167,19 +172,16 @@ export function verifyUser(goToPin) {
 }
 
 export function logoutUser(acc, navigator) {
-  loadingScreen()
   return dispatch => {
     dispatch(requestLogout())
     axios
       .delete(endpoint.logoutPath)
       .then(response => {
         dispatch(requestLogoutSuccess(response))
-        Navigation.dismissOverlay('LOADING_SCREEN')
         startNgoScreen()
         dispatch(clearAppData())
       })
       .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
         dispatch(requestLogoutFailed(error))
       })
   }

@@ -1,21 +1,16 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { Navigation } from 'react-native-navigation'
-import Icon from 'react-native-vector-icons/Ionicons'
-import Button from 'apsl-react-native-button'
-import DropdownAlert from 'react-native-dropdownalert'
-import { login } from '../../redux/actions/auth'
-import styles from './style'
-import i18n from '../../i18n'
+import React, { Component }   from 'react'
+import { connect }            from 'react-redux'
+import { login }              from '../../redux/actions/auth'
+import { Navigation }         from 'react-native-navigation'
+import Icon                   from 'react-native-vector-icons/Ionicons'
+import Button                 from 'apsl-react-native-button'
+import DropdownAlert          from 'react-native-dropdownalert'
+import styles                 from './style'
+import i18n                   from '../../i18n'
 
-import { View, Text, Image, TextInput, KeyboardAvoidingView, Vibration } from 'react-native'
-
+import { View, Image, TextInput, KeyboardAvoidingView, Vibration } from 'react-native'
 class LoginContainer extends Component {
-  state = {
-    email: '',
-    password: '',
-    secureTextEntry: true
-  }
+  state = { email: '', password: '', secureTextEntry: true }
   
   componentWillReceiveProps(nextProps) {
     if (nextProps.error) {
@@ -35,7 +30,7 @@ class LoginContainer extends Component {
   }
 
   render() {
-    const { user, error, loading } = this.props
+    const { loading } = this.props
     const { email, password, secureTextEntry } = this.state
 
     return (
@@ -76,7 +71,7 @@ class LoginContainer extends Component {
             style={styles.showPassword}
           />
         </View>
-        <Button isLoading={false} isDisabled={false} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
+        <Button isLoading={loading} isDisabled={loading} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
           {i18n.t('auth.login')}
         </Button>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
