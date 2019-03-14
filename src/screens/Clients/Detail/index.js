@@ -215,7 +215,7 @@ class ClientDetail extends Component {
             </View>
           </View>
 
-          <ClientInformation client={client} />
+          <ClientInformation client={client} setting={setting} />
         </ScrollView>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>

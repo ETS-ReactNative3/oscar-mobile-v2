@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import moment from 'moment'
 import _ from 'lodash'
 import Field from '../../../components/Field'
 import Card from '../../../components/Card'
 import i18n from '../../../i18n'
-import { pushScreen } from '../../../navigation/config'
 import FastImage from 'react-native-fast-image'
 export default class ClientInformation extends Component {
   calculateAge = () => {
@@ -29,18 +28,17 @@ export default class ClientInformation extends Component {
   }
 
   address = () => {
-    const { client } = this.props
-    const communeName = client.commune && `${client.commune.name_en}/${client.commune.name_kh}`
+    const { client, setting } = this.props
+    const villageName = client.village && `${client.village.name_en} / ${client.village.name_kh}`
+    const communeName = client.commune && `${client.commune.name_en} / ${client.commune.name_kh}`
     const districtName = client.district && client.district.name
     const provinceName = client.current_province && client.current_province.name
+    const countryName = setting && _.upperCase(setting.country_name)
 
-    const house = this.serializeAddress('House', client.house_number)
-    const street = this.serializeAddress('Street', client.street_number)
-    const commune = this.serializeAddress('Commune/Sangkat', communeName)
-    const district = this.serializeAddress('District/Khan', districtName)
-    const province = this.serializeAddress('', provinceName)
+    const house = this.serializeAddress(i18n.t('client.form.house_number'), client.house_number)
+    const street = this.serializeAddress(i18n.t('client.form.street_number'), client.street_number)
 
-    return [house, street, commune, district, province, 'Cambodia'].filter(Boolean).join(', ')
+    return [house, street, villageName, communeName, districtName, provinceName, countryName].filter(Boolean).join(', ')
   }
 
   render() {

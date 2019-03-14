@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import FlatList from '../../components/FlatList'
-import { Navigation } from 'react-native-navigation'
 import { View, Text, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux'
 import { pushScreen } from '../../navigation/config'
@@ -10,9 +9,19 @@ import styles from './styles'
 import appIcon from '../../utils/Icon'
 
 class Families extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { families: props.families }
+  }
+
   componentDidMount() {
     this.props.fetchFamilies()
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ families: nextProps.families })
+  }
+
 
   subItems = family => {
     const clientsCount = family.clients.length
@@ -40,7 +49,10 @@ class Families extends Component {
   }
 
   render() {
-    if (this.props.loading)
+    const { families } = this.state
+    const { loading } = this.props
+
+    if (loading)
       return (
         <View
           style={{
@@ -58,12 +70,12 @@ class Families extends Component {
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.props.families}
+          data={families}
           title={({ name }) => name || '(No Name)'}
           subItems={this.subItems}
           onPress={this.onPress}
-          refreshing={this.props.loading}
-          onRefresh={() => this.props.hasInternet && this.props.fetchFamilies()}
+          refreshing={loading}
+          onRefresh={() => this.props.fetchFamilies()}
         />
       </View>
     )
