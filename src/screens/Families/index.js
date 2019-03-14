@@ -1,13 +1,16 @@
-import React, { Component } from 'react'
-import FlatList from '../../components/FlatList'
-import { Navigation } from 'react-native-navigation'
-import { View, Text, ActivityIndicator } from 'react-native'
-import { connect } from 'react-redux'
-import { pushScreen } from '../../navigation/config'
-import { fetchFamilies, requestFamiliesSuccess } from '../../redux/actions/families'
-import i18n from '../../i18n'
-import styles from './styles'
-import appIcon from '../../utils/Icon'
+import React, { Component }                 from 'react'
+import FlatList                             from '../../components/FlatList'
+import { View, Text, ActivityIndicator }    from 'react-native'
+import { connect }                          from 'react-redux'
+import { pushScreen }                       from '../../navigation/config'
+import { isEmpty }                          from 'lodash'
+import i18n                                 from '../../i18n'
+import styles                               from './styles'
+import appIcon                              from '../../utils/Icon'
+import {
+  fetchFamilies,
+  requestFamiliesSuccess
+} from '../../redux/actions/families'
 
 class Families extends Component {
   componentDidMount() {
@@ -40,7 +43,9 @@ class Families extends Component {
   }
 
   render() {
-    if (this.props.loading)
+    const { families, loading, hasInternet } = this.props
+
+    if (loading) {
       return (
         <View
           style={{
@@ -55,15 +60,25 @@ class Families extends Component {
           <Text style={{ fontSize: 16, marginLeft: 8 }}>Loading...</Text>
         </View>
       )
+    }
+
+    if (isEmpty(families)) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>{i18n.t('no_data')}</Text>
+        </View>
+      )
+    }
+
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.props.families}
+          data={families}
           title={({ name }) => name || '(No Name)'}
           subItems={this.subItems}
           onPress={this.onPress}
-          refreshing={this.props.loading}
-          onRefresh={() => this.props.hasInternet && this.props.fetchFamilies()}
+          refreshing={loading}
+          onRefresh={() => hasInternet && this.props.fetchFamilies()}
         />
       </View>
     )

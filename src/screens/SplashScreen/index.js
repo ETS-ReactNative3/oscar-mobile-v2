@@ -10,7 +10,6 @@ import { LANGUAGE_TYPES } from '../../redux/types'
 import { checkConnection } from '../../redux/actions/internet'
 import { startNgoScreen, startScreen } from '../../navigation/config'
 import { setDefaultHeader, verifyUser } from '../../redux/actions/auth'
-
 class SplashScreen extends Component {
   static options(passProps) {
     return {
