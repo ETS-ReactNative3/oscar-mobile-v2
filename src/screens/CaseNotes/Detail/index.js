@@ -26,7 +26,7 @@ class CaseNoteDetail extends Component {
 
     pushScreen(this.props.componentId, {
       screen: 'oscar.caseNoteForm',
-      title: i18n.t('client.case_note_form.create_title'),
+      title: i18n.t('client.case_note_form.edit_title'),
       props: {
         client,
         caseNote,

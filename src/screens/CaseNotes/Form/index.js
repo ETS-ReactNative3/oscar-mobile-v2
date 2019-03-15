@@ -394,7 +394,7 @@ class CaseNoteForm extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : null}>
         <ScrollView showsVerticalScrollIndicator={false} ref={ref => this.scrollView = ref}>
           <Card title={i18n.t('client.case_note_form.meeting_detail')}>
             <View style={styles.inputWrapper}>
