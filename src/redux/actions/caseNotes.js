@@ -24,9 +24,9 @@ export function saveCaseNote(params, client, action, previousComponentId, onSucc
           else
             client.case_notes.unshift(case_note)
 
+          dispatch(removeCompletedTasks(params, client, onSuccess))
           Navigation.dismissOverlay('LOADING_SCREEN')
           Navigation.popTo(previousComponentId)
-          dispatch(removeCompletedTasks(params, client, onSuccess))
         })
         .catch(err => {
           console.log(err)

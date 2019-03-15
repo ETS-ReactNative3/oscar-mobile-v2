@@ -168,7 +168,7 @@ class CaseNoteDetail extends Component {
             })
           }
         </ScrollView>
-        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} zIndex={1000}/>
       </View>
     )
   }
