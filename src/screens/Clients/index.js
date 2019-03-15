@@ -3,7 +3,7 @@ import { connect }                        from 'react-redux'
 import { View, Text, ActivityIndicator }  from 'react-native'
 import { SearchBar }                      from 'react-native-elements'
 import { Navigation }                     from 'react-native-navigation'
-import { pickBy, size }                   from 'lodash'
+import { pickBy, isEmpty }                from 'lodash'
 import { fetchClients }                   from '../../redux/actions/clients'
 import { fetchProvinces }                 from '../../redux/actions/provinces'
 import { fetchDistricts }                 from '../../redux/actions/districts'
@@ -44,7 +44,7 @@ class Clients extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchClients()
+    // this.props.fetchClients()
     this.props.fetchDistricts()
     this.props.fetchProvinces()
     this.props.fetchCommunes()
@@ -126,6 +126,15 @@ class Clients extends Component {
           <Text style={{ fontSize: 16, marginLeft: 8 }}>Loading...</Text>
         </View>
       )
+
+    if (!showSearch && !search && isEmpty(clients)) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>{i18n.t('no_data')}</Text>
+        </View>
+      )
+    }
+
     return (
       <View style={styles.container}>
         {showSearch ? (
@@ -141,7 +150,7 @@ class Clients extends Component {
             showLoadingIcon={searching}
           />
         ) : null}
-        {showSearch && search && size(clients) == 0 ? (
+        {showSearch && search && isEmpty(clients) ? (
           <NoRecord onShowAllRecords={() => this.setState({ clients: this.props.clients })} />
         ) : (
           <FlatList
