@@ -19,6 +19,9 @@ class CaseNotes extends Component {
     Navigation.events().bindComponent(this)
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ client: nextProps.client })
+  }
 
   navigationButtonPressed = () => {
     Alert.alert('Case Note', 'Please choose case note type.', [
