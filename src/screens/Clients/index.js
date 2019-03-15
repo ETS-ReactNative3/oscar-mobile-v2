@@ -44,7 +44,7 @@ class Clients extends Component {
   }
 
   componentDidMount() {
-    // this.props.fetchClients()
+    this.props.fetchClients()
     this.props.fetchDistricts()
     this.props.fetchProvinces()
     this.props.fetchCommunes()
