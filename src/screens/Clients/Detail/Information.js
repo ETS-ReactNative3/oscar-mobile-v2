@@ -1,11 +1,17 @@
 import React, { Component }         from 'react'
-import { View, Text, StyleSheet }   from 'react-native'
 import moment                       from 'moment'
 import _                            from 'lodash'
 import Field                        from '../../../components/Field'
 import Card                         from '../../../components/Card'
 import i18n                         from '../../../i18n'
 import FastImage                    from 'react-native-fast-image'
+import call                         from 'react-native-phone-call'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback
+} from 'react-native'
 export default class ClientInformation extends Component {
   calculateAge = () => {
     const { client } = this.props
@@ -66,9 +72,29 @@ export default class ClientInformation extends Component {
           />
           <Field name={i18n.t('client.form.follow_up_date')} value={client.follow_up_date} />
           <Field name={i18n.t('client.form.referral_source')} value={client.referral_source == undefined ? '' : client.referral_source.name} />
-          <Field name={i18n.t('client.form.referral_phone')} value={client.referral_phone} />
+          <Field name={i18n.t('client.form.referral_phone')}>
+            {
+              client.referral_phone && (
+                <TouchableWithoutFeedback onPress={() => call({ number: client.referral_phone, prompt: false }) }>
+                  <Text style={{fontSize: 18, textDecorationLine: 'underline'}}>
+                    {client.referral_phone}
+                  </Text>
+                </TouchableWithoutFeedback>
+              )
+            }
+          </Field>
           <Field name={i18n.t('client.form.who_live_with')} value={client.live_with} />
-          <Field name={i18n.t('client.form.telephone_number')} value={client.telephone_number} />
+          <Field name={i18n.t('client.form.telephone_number')}>
+            {
+              client.telephone_number && (
+                <TouchableWithoutFeedback onPress={() => call({ number: client.telephone_number, prompt: false }) }>
+                  <Text style={{fontSize: 18, textDecorationLine: 'underline'}}>
+                    {client.telephone_number}
+                  </Text>
+                </TouchableWithoutFeedback>
+              )
+            }
+          </Field>
           <Field name={i18n.t('client.form.rated_for_id_poor')} value={client.rated_for_id_poor} />
           <Field
             name={i18n.t('client.form.received_by')}

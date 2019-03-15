@@ -1,20 +1,25 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, Text, ScrollView } from 'react-native'
-import Button from 'apsl-react-native-button'
-import DropdownAlert from 'react-native-dropdownalert'
-import { Navigation } from 'react-native-navigation'
-import _ from 'lodash'
-import Field from '../../components/Field'
-import Card from '../../components/Card'
-import { pushScreen } from '../../navigation/config'
-import { fetchProvinces } from '../../redux/actions/provinces'
-import { fetchDepartments } from '../../redux/actions/departments'
-import { fetchUser } from '../../redux/actions/users'
-import { logoutUser } from '../../redux/actions/auth'
-import i18n from '../../i18n'
-import appIcon from '../../utils/Icon'
-import { styles } from './styles'
+import React, { Component }                   from 'react'
+import { connect }                            from 'react-redux'
+import { pushScreen }                         from '../../navigation/config'
+import { fetchProvinces }                     from '../../redux/actions/provinces'
+import { fetchDepartments }                   from '../../redux/actions/departments'
+import { logoutUser }                         from '../../redux/actions/auth'
+import { Navigation }                         from 'react-native-navigation'
+import { styles }                             from './styles'
+import DropdownAlert                          from 'react-native-dropdownalert'
+import call                                   from 'react-native-phone-call'
+import Button                                 from 'apsl-react-native-button'
+import Field                                  from '../../components/Field'
+import Card                                   from '../../components/Card'
+import appIcon                                from '../../utils/Icon'
+import i18n                                   from '../../i18n'
+import _                                      from 'lodash'
+import {
+  View,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Text
+} from 'react-native'
 
 class User extends Component {
   constructor(props) {
@@ -56,19 +61,28 @@ class User extends Component {
   render() {
     const { provinces, departments, user, loading } = this.props
     const { first_name, last_name, gender, job_title, department_id, mobile, email, date_of_birth, start_date, province_id } = user
-    const department = _.find(departments, { id: user.department_id })
+    const department = _.find(departments, { id: department_id })
     const province = _.find(provinces, { id: province_id })
-
     return (
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Card title={i18n.t('user.about_user')}>
             <Field name={i18n.t('user.first_name')} value={first_name} />
             <Field name={i18n.t('user.last_name')} value={last_name} />
-            <Field name={i18n.t('user.gender')} value={_.capitalize(user.gender)} />
+            <Field name={i18n.t('user.gender')} value={_.capitalize(gender)} />
             <Field name={i18n.t('user.job_title')} value={job_title} />
             <Field name={i18n.t('user.department')} value={department && department.name} />
-            <Field name={i18n.t('user.mobile')} value={mobile} />
+            <Field name={i18n.t('user.mobile')}>
+              {
+                mobile && (
+                  <TouchableWithoutFeedback onPress={() => call({ number: mobile, prompt: false }) }>
+                    <Text style={{fontSize: 18, textDecorationLine: 'underline'}}>
+                      {mobile}
+                    </Text>
+                  </TouchableWithoutFeedback>
+                )
+              }
+            </Field>
             <Field name={i18n.t('user.email')} value={email} />
             <Field name={i18n.t('user.dob')} value={date_of_birth} />
             <Field name={i18n.t('user.start_date')} value={start_date} />
