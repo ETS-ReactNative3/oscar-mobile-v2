@@ -12,6 +12,7 @@ import i18n from '../../../i18n'
 import { createTask, deleteTask } from '../../../redux/actions/tasks'
 import { createAssessment, updateAssessment } from '../../../redux/actions/assessments'
 import { SCORE_COLOR } from '../../../constants/colors'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import {
   View,
@@ -515,18 +516,18 @@ class AssessmentForm extends Component {
     assessmentPages = [...assessmentPages, this.renderTasksPage()]
 
     return (
-      <KeyboardAvoidingView style={styles.mainContainer}>
+      <KeyboardAwareScrollView contentContainerStyle={styles.mainContainer}>
         <Swiper
           ref={swiper => {
             this._swiper = swiper
           }}
           loop={false}
-          style={styles.container}
+          containerStyle={styles.container}
           onMomentumScrollEnd={this.handleValidation}
         >
           {assessmentPages}
         </Swiper>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     )
   }
 }
