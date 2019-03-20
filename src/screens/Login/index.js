@@ -1,17 +1,21 @@
-import React, { Component }   from 'react'
-import { connect }            from 'react-redux'
-import { login }              from '../../redux/actions/auth'
-import { Navigation }         from 'react-native-navigation'
-import Icon                   from 'react-native-vector-icons/Ionicons'
-import Button                 from 'apsl-react-native-button'
-import DropdownAlert          from 'react-native-dropdownalert'
-import styles                 from './style'
-import i18n                   from '../../i18n'
-
-import { View, Image, TextInput, KeyboardAvoidingView, Vibration } from 'react-native'
+import React, { Component }             from 'react'
+import { connect }                      from 'react-redux'
+import { login }                        from '../../redux/actions/auth'
+import { Navigation }                   from 'react-native-navigation'
+import Icon                             from 'react-native-vector-icons/Ionicons'
+import Button                           from 'apsl-react-native-button'
+import DropdownAlert                    from 'react-native-dropdownalert'
+import styles                           from './style'
+import i18n                             from '../../i18n'
+import {
+  View,
+  Image,
+  TextInput,
+  Vibration
+} from 'react-native'
 class LoginContainer extends Component {
   state = { email: '', password: '', secureTextEntry: true }
-  
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.error) {
       this.displayError(nextProps.error)
@@ -34,48 +38,50 @@ class LoginContainer extends Component {
     const { email, password, secureTextEntry } = this.state
 
     return (
-      <KeyboardAvoidingView style={styles.container}>
-        <View style={styles.imageWrapper}>
-          <Navigation.Element elementId={this.props.sharedImageId}>
-            <Image resizeMode="contain" style={styles.image} source={{ uri: this.props.logo }} />
-          </Navigation.Element>
-        </View>
-        <TextInput
-          value={email}
-          autoCapitalize="none"
-          style={styles.input}
-          keyboardType="email-address"
-          placeholderTextColor="#ccc"
-          placeholder={i18n.t('auth.email')}
-          onSubmitEditing={() => this.refs.password.focus()}
-          returnKeyType="next"
-          onChangeText={email => this.setState({ email })}
-        />
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{flex: 1}}>
+        <KeyboardAwareScrollView style={styles.container}>
+          <View style={styles.imageWrapper}>
+            <Navigation.Element elementId={this.props.sharedImageId}>
+              <Image resizeMode="contain" style={styles.image} source={{ uri: this.props.logo }} />
+            </Navigation.Element>
+          </View>
           <TextInput
-            value={password}
+            value={email}
             autoCapitalize="none"
-            ref="password"
-            style={[styles.input, { flex: 1 }]}
+            style={styles.input}
+            keyboardType="email-address"
             placeholderTextColor="#ccc"
-            secureTextEntry={secureTextEntry}
-            placeholder={i18n.t('auth.password')}
-            returnKeyType="done"
-            onSubmitEditing={() => this.loginHandler()}
-            onChangeText={password => this.setState({ password })}
+            placeholder={i18n.t('auth.email')}
+            onSubmitEditing={() => this.refs.password.focus()}
+            returnKeyType="next"
+            onChangeText={email => this.setState({ email })}
           />
-          <Icon
-            onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
-            name={secureTextEntry ? 'ios-eye' : 'ios-eye-off'}
-            size={30}
-            style={styles.showPassword}
-          />
-        </View>
-        <Button isLoading={loading} isDisabled={loading} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
-          {i18n.t('auth.login')}
-        </Button>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput
+              value={password}
+              autoCapitalize="none"
+              ref="password"
+              style={[styles.input, { flex: 1 }]}
+              placeholderTextColor="#ccc"
+              secureTextEntry={secureTextEntry}
+              placeholder={i18n.t('auth.password')}
+              returnKeyType="done"
+              onSubmitEditing={() => this.loginHandler()}
+              onChangeText={password => this.setState({ password })}
+            />
+            <Icon
+              onPress={() => this.setState({ secureTextEntry: !secureTextEntry })}
+              name={secureTextEntry ? 'ios-eye' : 'ios-eye-off'}
+              size={30}
+              style={styles.showPassword}
+            />
+          </View>
+          <Button isLoading={loading} isDisabled={loading} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
+            {i18n.t('auth.login')}
+          </Button>
+        </KeyboardAwareScrollView>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
-      </KeyboardAvoidingView>
+      </View>
     )
   }
 }

@@ -1,11 +1,11 @@
-import axios from 'axios'
-import { PROGRAM_STREAM_TYPES, CLIENT_TYPES } from '../types'
-import endpoint from '../../constants/endpoint'
-import { formTypes } from '../../utils/validation'
-import { loadingScreen } from '../../navigation/config'
-import _ from 'lodash'
-import { Navigation } from 'react-native-navigation'
-import { Alert } from 'react-native'
+import axios                                    from 'axios'
+import { PROGRAM_STREAM_TYPES, CLIENT_TYPES }   from '../types'
+import { Alert, NetInfo }                       from 'react-native'
+import { formTypes }                            from '../../utils/validation'
+import { loadingScreen }                        from '../../navigation/config'
+import { Navigation }                           from 'react-native-navigation'
+import endpoint                                 from '../../constants/endpoint'
+import _                                        from 'lodash'
 
 requestProgramStreams = () => ({
   type: PROGRAM_STREAM_TYPES.PROGRAM_STREAMS_REQUESTING
@@ -135,7 +135,6 @@ updateDeleteEnrollment = (enrollmentDeleted, programStream, client, clickForm) =
 
   let updatedProgramStreams = []
   let enrollmentIsEmpty = false
-  let updatedInactiveProgramStream = []
   let clientUpdated = {}
 
   if (clickForm == 'EnrolledProgram') {
@@ -212,79 +211,103 @@ export function fetchProgramStreams() {
 }
 
 export function createEnrollmentForm(field_properties, enrollment, client_id, enrollment_date, actions) {
-  loadingScreen()
   return dispatch => {
-    dispatch(handleEnrollmentForm('create', field_properties, enrollment, null, client_id, enrollment_date))
-      .then(response => {
-        const clientUpdated = createEnrollment(response.data, enrollment, actions.programStreams, actions.client)
-        dispatch(requestUpdateclient(clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.clientDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(error))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        dispatch(handleEnrollmentForm('create', field_properties, enrollment, null, client_id, enrollment_date))
+          .then(response => {
+            const clientUpdated = createEnrollment(response.data, enrollment, actions.programStreams, actions.client)
+            dispatch(requestUpdateclient(clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.clientDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function updateEnrollmentForm(type, field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date, actions) {
-  loadingScreen()
   return dispatch => {
-    dispatch(handleEnrollmentForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date))
-      .then(response => {
-        const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
-        dispatch(requestUpdateclient(clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.enrollmentDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(err => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(err))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        dispatch(handleEnrollmentForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date))
+          .then(response => {
+            const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
+            dispatch(requestUpdateclient(clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.enrollmentDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(err => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(err))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function deleteEnrollmentForm(enrollment, client_enrolled_programs_id, client_id, actions) {
-  loadingScreen()
   return dispatch => {
-    let enrolledProgramPath = _.template(endpoint.editEnrollmentProgramPath)
-    enrolledProgramPath = enrolledProgramPath({ client_id: client_id, program_id: client_enrolled_programs_id })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        let enrolledProgramPath = _.template(endpoint.editEnrollmentProgramPath)
+        enrolledProgramPath = enrolledProgramPath({ client_id: client_id, program_id: client_enrolled_programs_id })
 
-    axios
-      .delete(enrolledProgramPath)
-      .then(response => {
-        const clientDeletedEnrollment = updateDeleteEnrollment(enrollment, actions.programStream, actions.client, actions.clickForm)
-        dispatch(requestUpdateclient(clientDeletedEnrollment.clientUpdated))
-        const popToComponentId = clientDeletedEnrollment.enrollmentIsEmpty ? actions.clientDetailComponentId : actions.programStreamDetailComponentId
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(popToComponentId)
-        actions.alertEnrollmentMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert('Error delete Enrollment => ' + JSON.stringify(error))
-      })
+        axios
+          .delete(enrolledProgramPath)
+          .then(response => {
+            const clientDeletedEnrollment = updateDeleteEnrollment(enrollment, actions.programStream, actions.client, actions.clickForm)
+            dispatch(requestUpdateclient(clientDeletedEnrollment.clientUpdated))
+            const popToComponentId = clientDeletedEnrollment.enrollmentIsEmpty ? actions.clientDetailComponentId : actions.programStreamDetailComponentId
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(popToComponentId)
+            actions.alertEnrollmentMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert('Error delete Enrollment => ' + JSON.stringify(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function createLeaveProgramForm(field_properties, enrollment, client_enrolled_program_id, client_id, exit_date, actions) {
-  loadingScreen()
   return dispatch => {
-    dispatch(handleExitForm('create', field_properties, enrollment, client_enrolled_program_id, client_id, null, exit_date))
-      .then(response => {
-        const clientUpdated = createLeaveProgram(response.data, enrollment, enrollment.program_stream_id, actions.programStreams, actions.client)
-        dispatch(requestUpdateclient(clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.clientDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(error))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        dispatch(handleExitForm('create', field_properties, enrollment, client_enrolled_program_id, client_id, null, exit_date))
+        .then(response => {
+          const clientUpdated = createLeaveProgram(response.data, enrollment, enrollment.program_stream_id, actions.programStreams, actions.client)
+          dispatch(requestUpdateclient(clientUpdated))
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          Navigation.popTo(actions.clientDetailComponentId)
+          actions.alertMessage()
+        })
+        .catch(error => {
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          alert(JSON.stringify(error))
+        })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
@@ -298,77 +321,101 @@ export function updateLeaveProgramForm(
   exit_date,
   actions
 ) {
-  loadingScreen()
   return dispatch => {
-    dispatch(handleExitForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, leaveEnrollId, exit_date))
-      .then(response => {
-        const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
-        dispatch(requestUpdateclient(clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.enrollmentDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(err => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(err))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        dispatch(handleExitForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, leaveEnrollId, exit_date))
+        .then(response => {
+          const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
+          dispatch(requestUpdateclient(clientUpdated))
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          Navigation.popTo(actions.enrollmentDetailComponentId)
+          actions.alertMessage()
+        })
+        .catch(err => {
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          alert(JSON.stringify(err))
+        })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function createTrackingForm(field_properties, enrollment, client_enrolled_program_id, client_id, tracking_id, actions) {
-  loadingScreen()
   return dispatch => {
-    dispatch(handleTrackingForm('create', field_properties, enrollment, client_id, client_enrolled_program_id, tracking_id))
-      .then(response => {
-        const clientUpdated = createTracking(response.data, enrollment, actions.programStream, actions.client)
-        dispatch(requestUpdateclient(clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.listTrackingComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(error))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        dispatch(handleTrackingForm('create', field_properties, enrollment, client_id, client_enrolled_program_id, tracking_id))
+        .then(response => {
+          const clientUpdated = createTracking(response.data, enrollment, actions.programStream, actions.client)
+          dispatch(requestUpdateclient(clientUpdated))
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          Navigation.popTo(actions.listTrackingComponentId)
+          actions.alertMessage()
+        })
+        .catch(error => {
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          alert(JSON.stringify(error))
+        })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function updateTrackingForm(type, field_properties, enrollment, client_id, client_enrolled_programs_id, tracking_id, actions) {
-  loadingScreen()
   return dispatch => {
-    dispatch(handleTrackingForm('update', field_properties, enrollment, client_id, client_enrolled_programs_id, tracking_id))
-      .then(response => {
-        const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
-        dispatch(requestUpdateclient(clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.enrollmentDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(err => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(err))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        dispatch(handleTrackingForm('update', field_properties, enrollment, client_id, client_enrolled_programs_id, tracking_id))
+          .then(response => {
+            const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
+            dispatch(requestUpdateclient(clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.enrollmentDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(err => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(err))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function deleteTrackingForm(enrollment, client_id, client_enrolled_programs_id, tracking_id, actions, alertMessage) {
-  loadingScreen()
   return dispatch => {
-    let trackingProgramPath = _.template(endpoint.editTrackingProgramPath)
-    trackingProgramPath = trackingProgramPath({ client_id: client_id, client_enrollment_id: client_enrolled_programs_id, id: tracking_id })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        let trackingProgramPath = _.template(endpoint.editTrackingProgramPath)
+        trackingProgramPath = trackingProgramPath({ client_id: client_id, client_enrollment_id: client_enrolled_programs_id, id: tracking_id })
 
-    axios
-      .delete(trackingProgramPath)
-      .then(response => {
-        const clientDeletedTracking = updateDeleteTracking(enrollment.id, tracking_id, actions.programStreamId, actions.client, actions.clickForm)
-        dispatch(requestUpdateclient(clientDeletedTracking.clientUpdated))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert('Error delete Tracking => ' + JSON.stringify(error))
-      })
+        axios
+          .delete(trackingProgramPath)
+          .then(response => {
+            const clientDeletedTracking = updateDeleteTracking(enrollment.id, tracking_id, actions.programStreamId, actions.client, actions.clickForm)
+            dispatch(requestUpdateclient(clientDeletedTracking.clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert('Error delete Tracking => ' + JSON.stringify(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 

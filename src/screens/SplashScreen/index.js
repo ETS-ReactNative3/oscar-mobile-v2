@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import CryptoJS from 'crypto-js'
-import { View, Image, Platform } from 'react-native'
+import { View, Image, Platform, NetInfo } from 'react-native'
 import { connect } from 'react-redux'
+import KeyboardManager from 'react-native-keyboard-manager'
 import Database from '../../config/Database'
 import logo from '../../assets/oscar-logo.png'
 import styles from './styles'
 import i18n from '../../i18n'
 import { LANGUAGE_TYPES } from '../../redux/types'
-import { checkConnection } from '../../redux/actions/internet'
 import { startNgoScreen, startScreen } from '../../navigation/config'
 import { setDefaultHeader, verifyUser } from '../../redux/actions/auth'
 class SplashScreen extends Component {
@@ -18,8 +18,13 @@ class SplashScreen extends Component {
       }
     }
   }
+
+  constructor(props) {
+    super(props)
+    Platform.OS == 'ios' && KeyboardManager.setEnableAutoToolbar(false)
+  }
+
   componentDidMount() {
-    this.props.checkConnection()
     this.setLanguage()
     setTimeout(() => this.authenticateUser(), 1500)
   }
@@ -40,16 +45,18 @@ class SplashScreen extends Component {
   }
 
   authenticateUser = () => {
-    const { user, hasInternet, verifyUser } = this.props
+    const { user, verifyUser } = this.props
     if (user == null) {
       startNgoScreen()
     } else {
-      if (hasInternet) {
-        verifyUser(this.goToPinScreen)
-      } else {
-        const pinCode = CryptoJS.SHA3(user.pin_code)
-        this.goToPinScreen(pinCode)
-      }
+      NetInfo.isConnected.fetch().then(isConnected => {
+        if (isConnected) {
+          verifyUser(this.goToPinScreen)
+        } else {
+          const pinCode = CryptoJS.SHA3(user.pin_code)
+          this.goToPinScreen(pinCode)
+        }
+      })
     }
   }
 
@@ -64,11 +71,9 @@ class SplashScreen extends Component {
 
 const mapState = state => ({
   user: state.auth.data,
-  hasInternet: state.internet.hasInternet
 })
 
 const mapDispatch = dispatch => ({
-  checkConnection: () => dispatch(checkConnection()),
   setLanguage: language =>
     dispatch({
       type: LANGUAGE_TYPES.SET_LANGUAGE,

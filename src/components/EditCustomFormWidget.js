@@ -73,8 +73,7 @@ export default class EditAdditionalFormWidget extends Component {
 
   navigationButtonPressed({ buttonId }) {
     if (buttonId === 'SAVE_CUSTOM_FORM') {
-      const { entity, fields, customForm, custom_field_property, custom_field } = this.state
-      const { type } = this.props
+      const { entity, fields, customForm, custom_field } = this.state
 
       const validated = validateCustomForm(fields, customForm.fields)
       if (validated) {
@@ -407,7 +406,7 @@ export default class EditAdditionalFormWidget extends Component {
           {fieldType == 'date' && this.datePickerType(label, fields[label])}
           {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, fields[label])}
           {fieldType == 'radio-group' && this.radioType(label, formField, fields[label])}
-          {fieldType == 'select' && formField.multiple && this._checkBoxType(label, formField, fields[label])}
+          {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, fields[label])}
           {fieldType == 'select' && !formField.multiple && this.selectType(label, formField, fields[label])}
           {fieldType == 'file' && this.fileUploader(label, formField, fields[label])}
           {fieldType == 'paragraph' && this.renderParagraph(label)}

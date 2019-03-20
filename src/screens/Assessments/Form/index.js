@@ -12,8 +12,6 @@ import i18n from '../../../i18n'
 import { createTask, deleteTask } from '../../../redux/actions/tasks'
 import { createAssessment, updateAssessment } from '../../../redux/actions/assessments'
 import { SCORE_COLOR } from '../../../constants/colors'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
 import {
   View,
   Text,
@@ -30,7 +28,6 @@ import {
 import styles from './styles'
 
 const MAX_UPLOAD_SIZE = 30000
-
 class AssessmentForm extends Component {
   state = {
     attachmentsSize: 0,
@@ -499,7 +496,7 @@ class AssessmentForm extends Component {
               backgroundColor="#000"
               icon={{ name: 'cloud-upload' }}
               title={i18n.t('button.upload')}
-              onPress={() => this.uploadAttachment(ad)}
+              onPress={() => this.uploadAttachmentq(ad)}
             />
           </View>
           {!ad.required_task_last && this.renderButtonAddTask(ad)}
@@ -516,7 +513,7 @@ class AssessmentForm extends Component {
     assessmentPages = [...assessmentPages, this.renderTasksPage()]
 
     return (
-      <KeyboardAwareScrollView contentContainerStyle={styles.mainContainer}>
+      <KeyboardAvoidingView style={styles.mainContainer}>
         <Swiper
           ref={swiper => {
             this._swiper = swiper
@@ -527,7 +524,7 @@ class AssessmentForm extends Component {
         >
           {assessmentPages}
         </Swiper>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
     )
   }
 }

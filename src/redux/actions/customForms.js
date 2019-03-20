@@ -1,29 +1,16 @@
-import axios from 'axios'
-import { Alert } from 'react-native'
+import axios                          from 'axios'
+import { Alert, NetInfo }             from 'react-native'
 import { FAMILY_TYPES, CLIENT_TYPES } from '../types'
-import endpoint from '../../constants/endpoint'
-import { formTypes } from '../../utils/validation'
-import { loadingScreen } from '../../navigation/config'
-import _ from 'lodash'
-import { Navigation } from 'react-native-navigation'
+import { formTypes }                  from '../../utils/validation'
+import { loadingScreen }              from '../../navigation/config'
+import { Navigation }                 from 'react-native-navigation'
+import endpoint                       from '../../constants/endpoint'
+import _                              from 'lodash'
 
 createEntityCustomFormSuccess = (entityUpdated, customFormType) => ({
   type: customFormType,
   entityUpdated
 })
-
-customFieldPropertyPath = type => {
-  let customFieldPropertyPath = ''
-  let types = {}
-  if (actions.type == 'client') {
-    customFieldPropertyPath = endpoint.createClientAdditonalFormPath
-    customFormType = CLIENT_TYPES.CLIENT_CUSTOM_FORM
-  } else {
-    customFieldPropertyPath = endpoint.createFamilyAdditonalFormPath
-    customFormType = FAMILY_TYPES.FAMILY_CUSTOM_FORM
-  }
-  let deleteEntityAdditonalFormPath = _.template(customFieldPropertyPath)
-}
 
 addEntityCustomFormState = (entity, newCustomFieldProperty, form) => {
   form['custom_field_properties'] = [newCustomFieldProperty]
@@ -119,73 +106,93 @@ customFormPropertyPathAndType = type => {
 }
 
 export function createAdditionalForm(properties, entityProfile, additionalForm, actions) {
-  loadingScreen()
   return dispatch => {
-    const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        let entityUpdated = {}
+        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
+        let createEntityAdditonalFormPath = _.template(customFieldPropertyPath)
+        createEntityAdditonalFormPath = createEntityAdditonalFormPath({ entity_id: entityProfile.id })
 
-    let entityUpdated = {}
-    let createEntityAdditonalFormPath = _.template(customFieldPropertyPath)
-    createEntityAdditonalFormPath = createEntityAdditonalFormPath({ entity_id: entityProfile.id })
-    dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
-      .then(response => {
-        if (actions.clickForm == 'additionalForm') {
-          entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
-        } else {
-          entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
-        }
-        dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.entityDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(error))
-      })
+        loadingScreen()
+        dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
+          .then(response => {
+            if (actions.clickForm == 'additionalForm') {
+              entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
+            } else {
+              entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
+            }
+            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.entityDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function editAdditionalForm(properties, entityProfile, custom_field, additionalForm, actions) {
-  loadingScreen()
   return dispatch => {
-    const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
-    let updateEntityAdditonalFormPath = _.template(customFieldPropertyPath)
-    updateEntityAdditonalFormPath = updateEntityAdditonalFormPath({ entity_id: entityProfile.id })
-    updateEntityAdditonalFormPath = updateEntityAdditonalFormPath + '/' + custom_field.id
-    dispatch(handleEntityAdditonalForm('update', properties, additionalForm, updateEntityAdditonalFormPath))
-      .then(response => {
-        const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
-        dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.currentComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(error))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
+        let updateEntityAdditonalFormPath = _.template(customFieldPropertyPath)
+        updateEntityAdditonalFormPath = updateEntityAdditonalFormPath({ entity_id: entityProfile.id })
+        updateEntityAdditonalFormPath = updateEntityAdditonalFormPath + '/' + custom_field.id
+
+        loadingScreen()
+        dispatch(handleEntityAdditonalForm('update', properties, additionalForm, updateEntityAdditonalFormPath))
+          .then(response => {
+            const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
+            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.currentComponentId)
+            actions.alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function deleteAdditionalForm(customFieldProperty, entityProfile, actions, alertMessage) {
-  loadingScreen()
   return dispatch => {
-    const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
-    let deleteEntityAdditonalFormPath = _.template(customFieldPropertyPath)
-    deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath({ entity_id: entityProfile.id })
-    deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath + '/' + customFieldProperty.id
-    axios
-      .delete(deleteEntityAdditonalFormPath)
-      .then(response => {
-        const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
-        dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alertMessage()
-      })
-      .catch(error => {
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        alert(JSON.stringify(error))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
+        let deleteEntityAdditonalFormPath = _.template(customFieldPropertyPath)
+        deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath({ entity_id: entityProfile.id })
+        deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath + '/' + customFieldProperty.id
+
+        loadingScreen()
+        axios
+          .delete(deleteEntityAdditonalFormPath)
+          .then(response => {
+            const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
+            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
