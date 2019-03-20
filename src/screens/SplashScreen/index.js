@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import CryptoJS from 'crypto-js'
-import { View, Image, Platform } from 'react-native'
+import { View, Image, Platform, NetInfo } from 'react-native'
 import { connect } from 'react-redux'
+import KeyboardManager from 'react-native-keyboard-manager'
 import Database from '../../config/Database'
 import logo from '../../assets/oscar-logo.png'
 import styles from './styles'
@@ -18,9 +19,16 @@ class SplashScreen extends Component {
       }
     }
   }
+
+  constructor(props) {
+    super(props)
+    props.checkConnection()
+  }
+
   componentDidMount() {
-    this.props.checkConnection()
     this.setLanguage()
+    Platform.OS == 'ios' && KeyboardManager.setEnableAutoToolbar(false)
+    NetInfo.addEventListener('connectionChange', this.props.checkConnection)
     setTimeout(() => this.authenticateUser(), 1500)
   }
 
@@ -40,7 +48,7 @@ class SplashScreen extends Component {
   }
 
   authenticateUser = () => {
-    const { user, hasInternet, verifyUser } = this.props
+    const { user, verifyUser, hasInternet } = this.props
     if (user == null) {
       startNgoScreen()
     } else {
@@ -68,14 +76,14 @@ const mapState = state => ({
 })
 
 const mapDispatch = dispatch => ({
-  checkConnection: () => dispatch(checkConnection()),
   setLanguage: language =>
     dispatch({
       type: LANGUAGE_TYPES.SET_LANGUAGE,
       language
     }),
   verifyUser: action => dispatch(verifyUser(action)),
-  setDefaultHeader: () => dispatch(setDefaultHeader())
+  setDefaultHeader: () => dispatch(setDefaultHeader()),
+  checkConnection: () => dispatch(checkConnection())
 })
 
 export default connect(

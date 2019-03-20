@@ -47,6 +47,12 @@ class UserEdit extends Component {
   render() {
     const { departments, provinces } = this.props
     const { user } = this.state
+    const genders = [
+      { id: 'male', name: 'Male' },
+      { id: 'female', name: 'Female' },
+      { id: 'other', name: 'Other' },
+      { id: 'prefer not to say', name: 'Prefer not to say' }
+    ]
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <ScrollView style={styles.mainContainer}>
@@ -75,26 +81,22 @@ class UserEdit extends Component {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>{i18n.t('user.gender')}</Text>
-              <View style={styles.row}>
-                <CheckBox
-                  title="Male"
-                  checkedIcon="dot-circle-o"
-                  uncheckedIcon="circle-o"
-                  checkedColor="#009999"
-                  containerStyle={styles.checkbox}
-                  checked={user.gender == 'male' ? true : false}
-                  onPress={() => this.setUpdateUser('gender', 'male')}
-                />
-                <CheckBox
-                  title="Female"
-                  checkedIcon="dot-circle-o"
-                  uncheckedIcon="circle-o"
-                  checkedColor="#009999"
-                  containerStyle={styles.checkbox}
-                  checked={user.gender == 'female' ? true : false}
-                  onPress={() => this.setUpdateUser('gender', 'female')}
-                />
-              </View>
+              <SectionedMultiSelect
+                items={this.listItems(genders)}
+                uniqueKey="id"
+                selectText={i18n.t('user.select_gender')}
+                searchPlaceholderText={i18n.t('user.search')}
+                confirmText={i18n.t('user.confirm')}
+                showDropDowns={true}
+                single={true}
+                hideSearch={false}
+                showCancelButton={true}
+                styles={{
+                  button: { backgroundColor: MAIN_COLOR }
+                }}
+                onSelectedItemsChange={gender => this.setUpdateUser('gender', gender[0])}
+                selectedItems={[user.gender]}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>{i18n.t('user.dob')}</Text>

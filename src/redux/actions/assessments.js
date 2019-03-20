@@ -1,17 +1,18 @@
-import axios from 'axios'
-import { Navigation } from 'react-native-navigation'
-import endpoint from '../../constants/endpoint'
-import { updateClient } from './clients'
-import { loadingScreen } from '../../navigation/config'
+import axios                        from 'axios'
+import { Alert }                    from 'react-native'
+import { updateClient }             from './clients'
+import { loadingScreen }            from '../../navigation/config'
+import { Navigation }               from 'react-native-navigation'
+import endpoint                     from '../../constants/endpoint'
 
 export function updateAssessment(params, assessmentId, client, previousComponentId, onSuccess) {
-  loadingScreen()
   return (dispatch, getState) => {
     const hasInternet = getState().internet.hasInternet
-    const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath + '/' + assessmentId
-    const assessmentParams = handleAssessmentParams(params, 'update')
-
     if (hasInternet) {
+      const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath + '/' + assessmentId
+      const assessmentParams = handleAssessmentParams(params, 'update')
+
+      loadingScreen()
       axios
         .put(path, assessmentParams)
         .then(response => {
@@ -26,31 +27,35 @@ export function updateAssessment(params, assessmentId, client, previousComponent
         .catch(err => {
           console.log(err)
         })
+    } else {
+      Alert.alert('No internet connection')
     }
   }
 }
 
 export function createAssessment(params, client, previousComponentId, onSuccess) {
-  loadingScreen()
   return (dispatch, getState) => {
     const hasInternet = getState().internet.hasInternet
-    const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath
-    const assessmentParams = handleAssessmentParams(params, 'create')
-
     if (hasInternet) {
-      axios
-        .post(path, assessmentParams)
-        .then(response => {
-          client.assessments.push(response.data.assessment)
-          updateClient(client)
-          onSuccess(client)
+      const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath
+      const assessmentParams = handleAssessmentParams(params, 'create')
 
-          Navigation.dismissOverlay('LOADING_SCREEN')
-          Navigation.popTo(previousComponentId)
-        })
-        .catch(err => {
-          console.log(err.response)
-        })
+      loadingScreen()
+      axios
+      .post(path, assessmentParams)
+      .then(response => {
+        client.assessments.push(response.data.assessment)
+        updateClient(client)
+        onSuccess(client)
+
+        Navigation.dismissOverlay('LOADING_SCREEN')
+        Navigation.popTo(previousComponentId)
+      })
+      .catch(err => {
+        console.log(err.response)
+      })
+    } else {
+      Alert.alert('No internet connection')
     }
   }
 }

@@ -1,11 +1,11 @@
 import axios                              from 'axios'
-import { Alert, AsyncStorage }            from 'react-native'
+import { forEach, capitalize }            from 'lodash'
 import { AUTH_TYPES, LOGOUT_TYPES }       from '../types'
+import { Alert, AsyncStorage, NetInfo }   from 'react-native'
 import { Navigation }                     from 'react-native-navigation'
 import endpoint                           from '../../constants/endpoint'
 import i18n                               from '../../i18n'
 import CryptoJS                           from 'crypto-js'
-import _                                  from 'lodash'
 import {
   pushScreen,
   startTabScreen,
@@ -73,76 +73,91 @@ export function setDefaultHeader(accHeaders) {
 
 export function updatePin(pinCode) {
   return (dispatch, getState) => {
-    const org = getState().ngo.name
-    const headers = getState().auth.headers
-    dispatch(requestLogin())
-    axios
-      .put(endpoint.baseURL(org) + endpoint.updateTokenPath, { pin_code: pinCode }, { headers: formatHeaders(headers) })
-      .then(response => {
-        dispatch(requestLoginSuccess(response))
-        dispatch(setDefaultHeader(response.headers))
-        startTabScreen()
-      })
-      .catch(err => {
-        dispatch(requestLoginFailed(err.response.data.errors[0]))
-      })
+    const hasInternet = getState().internet.hasInternet
+    if (hasInternet) {
+      const org = getState().ngo.name
+      const headers = getState().auth.headers
+      dispatch(requestLogin())
+      axios
+        .put(endpoint.baseURL(org) + endpoint.updateTokenPath, { pin_code: pinCode }, { headers: formatHeaders(headers) })
+        .then(response => {
+          dispatch(requestLoginSuccess(response))
+          dispatch(setDefaultHeader(response.headers))
+          startTabScreen()
+        })
+        .catch(err => {
+          dispatch(requestLoginFailed(err.response.data.errors[0]))
+        })
+    } else {
+      Alert.alert('No internet connection')
+    }
   }
 }
 
 export function login(credentail, currentComponentId) {
   return (dispatch, getState) => {
-    const org = getState().ngo.name
-    dispatch(requestLogin())
-    axios
-      .post(endpoint.baseURL(org) + endpoint.login, credentail)
-      .then(response => {
-        const { pin_code } = response.data.data
-        pin_code && dispatch(setDefaultHeader(response.headers))
+    const hasInternet = getState().internet.hasInternet
+    if (hasInternet) {
+      const org = getState().ngo.name
+      dispatch(requestLogin())
+      axios
+        .post(endpoint.baseURL(org) + endpoint.login, credentail)
+        .then(response => {
+          const { pin_code } = response.data.data
+          pin_code && dispatch(setDefaultHeader(response.headers))
 
-        dispatch(requestLoginSuccess(response))
-        pushScreen(currentComponentId, {
-          screen: 'oscar.pin',
-          topBar: false,
-          drawBehind: true,
-          props: {
-            pinTitle: pin_code ? i18n.t('auth.enter_pin') : i18n.t('auth.set_pin'),
-            pinMode: pin_code ? 'compare' : 'set',
-            pinCode: pin_code && CryptoJS.SHA3(pin_code)
-          }
+          dispatch(requestLoginSuccess(response))
+          pushScreen(currentComponentId, {
+            screen: 'oscar.pin',
+            topBar: false,
+            drawBehind: true,
+            props: {
+              pinTitle: pin_code ? i18n.t('auth.enter_pin') : i18n.t('auth.set_pin'),
+              pinMode: pin_code ? 'compare' : 'set',
+              pinCode: pin_code && CryptoJS.SHA3(pin_code)
+            }
+          })
         })
-      })
-      .catch(err => {
-        dispatch(requestLoginFailed(err.response.data.errors[0]))
-      })
+        .catch(err => {
+          dispatch(requestLoginFailed(err.response.data.errors[0]))
+        })
+    } else {
+      Alert.alert('No internet connection')
+    }
   }
 }
 
 export function updateUser(userParam, alertMessage) {
-  loadingScreen()
   return (dispatch, getState) => {
-    const org = getState().ngo.name
-    const headers = getState().auth.headers
-    const config = { headers: formatHeaders(headers) }
-
-    dispatch(requestUpdateUser())
-    return axios
-      .put(endpoint.baseURL(org) + endpoint.updateTokenPath, userParam, config)
-      .then(response => {
-        dispatch(requestLoginSuccess(response))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo('USERS_TAB_BAR_BUTTON')
-        alertMessage()
-      })
-      .catch(error => {
-        let errors = []
-        _.forEach(error.response.data.errors, (value, key) => {
-          if (key != 'full_messages') {
-            errors.push(_.capitalize(key) + ' ' + value[0])
-          }
+    const hasInternet = getState().internet.hasInternet
+    if (hasInternet) {
+      loadingScreen()
+      const org = getState().ngo.name
+      const headers = getState().auth.headers
+      const config = { headers: formatHeaders(headers) }
+      dispatch(requestUpdateUser())
+      return axios
+        .put(endpoint.baseURL(org) + endpoint.updateTokenPath, userParam, config)
+        .then(response => {
+          dispatch(requestLoginSuccess(response))
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          Navigation.popTo('USERS_TAB_BAR_BUTTON')
+          alertMessage()
         })
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        dispatch(requestUpdateUserFailed(errors))
-      })
+        .catch(error => {
+          let errors = []
+
+          forEach(error.response.data.errors, (value, key) => {
+            if (key != 'full_messages') {
+              errors.push(capitalize(key) + ' ' + value[0])
+            }
+          })
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          dispatch(requestUpdateUserFailed(errors))
+        })
+    } else {
+      Alert.alert('No internet connection')
+    }
   }
 }
 
@@ -173,17 +188,23 @@ export function verifyUser(goToPin) {
 
 export function logoutUser(acc, navigator) {
   return dispatch => {
-    dispatch(requestLogout())
-    axios
-      .delete(endpoint.logoutPath)
-      .then(response => {
-        dispatch(requestLogoutSuccess(response))
-        startNgoScreen()
-        dispatch(clearAppData())
-      })
-      .catch(error => {
-        dispatch(requestLogoutFailed(error))
-      })
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        dispatch(requestLogout())
+        axios
+          .delete(endpoint.logoutPath)
+          .then(response => {
+            dispatch(requestLogoutSuccess(response))
+            startNgoScreen()
+            dispatch(clearAppData())
+          })
+          .catch(error => {
+            dispatch(requestLogoutFailed(error))
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 

@@ -1,11 +1,12 @@
-import axios from 'axios'
-import { CLIENT_TYPES } from '../types'
-import endpoint from '../../constants/endpoint'
-import _ from 'lodash'
-import { Alert } from 'react-native'
-import { Navigation } from 'react-native-navigation'
-import i18n from '../../i18n'
-import { loadingScreen } from '../../navigation/config'
+import axios                      from 'axios'
+import { CLIENT_TYPES }           from '../types'
+import { map, size }              from 'lodash'
+import { Alert }                  from 'react-native'
+import { Navigation }             from 'react-native-navigation'
+import { loadingScreen }          from '../../navigation/config'
+import endpoint                   from '../../constants/endpoint'
+import i18n                       from '../../i18n'
+
 requestClients = () => ({
   type: CLIENT_TYPES.CLIENTS_REQUESTING
 })
@@ -27,24 +28,29 @@ export const updateClient = (client, message = '') => ({
 })
 
 export function updateClientProperty(clientParams, actions) {
-  loadingScreen()
-  return dispatch => {
-    dispatch(requestClients())
-    dispatch(handleUpdateClientParams(clientParams, clientParams.id))
-      .then(response => {
-        const message = 'You have update successfully.'
-        dispatch(updateClient(response.data.client, message))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.clientDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        let errors = _.map(error.response.data, (value, key) => {
-          return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
+  return (dispatch, getState) => {
+    const hasInternet = getState().internet.hasInternet
+    if (hasInternet) {
+      loadingScreen()
+      dispatch(requestClients())
+      dispatch(handleUpdateClientParams(clientParams, clientParams.id))
+        .then(response => {
+          const message = 'You have update successfully.'
+          dispatch(updateClient(response.data.client, message))
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          Navigation.popTo(actions.clientDetailComponentId)
+          actions.alertMessage()
         })
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        dispatch(requestClientsFailed(errors))
-      })
+        .catch(error => {
+          let errors = map(error.response.data, (value, key) => {
+            return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
+          })
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          dispatch(requestClientsFailed(errors))
+        })
+    } else {
+      Alert.alert('No internet connection')
+    }
   }
 }
 
@@ -116,7 +122,7 @@ export function handleUpdateClientParams(client, client_id) {
       formData.append(`client[${key}]`, client[key] || '')
     })
 
-    _.size(profile) > 1 && formData.append('client[profile]', profile)
+    size(profile) > 1 && formData.append('client[profile]', profile)
 
     if (client.agency_ids.length > 0) {
       client.agency_ids.map(value => {

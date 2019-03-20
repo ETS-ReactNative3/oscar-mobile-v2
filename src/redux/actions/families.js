@@ -1,12 +1,11 @@
-import axios from 'axios'
-import { Alert } from 'react-native'
-import { FAMILY_TYPES } from '../types'
-import endpoint from '../../constants/endpoint'
-import { formTypes } from '../../utils/validation'
-import { loadingScreen } from '../../navigation/config'
-import _ from 'lodash'
-import i18n from '../../i18n'
-import { Navigation } from 'react-native-navigation'
+import axios                  from 'axios'
+import { map }                from 'lodash'
+import { Alert }              from 'react-native'
+import { FAMILY_TYPES }       from '../types'
+import { loadingScreen }      from '../../navigation/config'
+import { Navigation }         from 'react-native-navigation'
+import endpoint               from '../../constants/endpoint'
+import i18n                   from '../../i18n'
 
 requestFamilies = () => ({
   type: FAMILY_TYPES.FAMILIES_REQUESTING
@@ -46,23 +45,28 @@ export function fetchFamilies() {
 }
 
 export function updateFamily(familyParams, actions) {
-  loadingScreen()
-  return dispatch => {
-    dispatch(requestFamilies())
-    axios
-      .put(endpoint.familiesPath + '/' + familyParams.id, familyParams)
-      .then(response => {
-        dispatch(updateFamilySuccess(response.data.family))
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        Navigation.popTo(actions.familyDetailComponentId)
-        actions.alertMessage()
-      })
-      .catch(error => {
-        let errors = _.map(error.response.data, (value, key) => {
-          return i18n.t('family' + key, { locale: 'en' }) + ' ' + value[0]
+  return (dispatch, getState) => {
+    const hasInternet = getState().internet.hasInternet
+    if (hasInternet) {
+      loadingScreen()
+      dispatch(requestFamilies())
+      axios
+        .put(endpoint.familiesPath + '/' + familyParams.id, familyParams)
+        .then(response => {
+          dispatch(updateFamilySuccess(response.data.family))
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          Navigation.popTo(actions.familyDetailComponentId)
+          actions.alertMessage()
         })
-        Navigation.dismissOverlay('LOADING_SCREEN')
-        dispatch(requestFamiliesFailed(errors))
-      })
+        .catch(error => {
+          let errors = map(error.response.data, (value, key) => {
+            return i18n.t('family' + key, { locale: 'en' }) + ' ' + value[0]
+          })
+          Navigation.dismissOverlay('LOADING_SCREEN')
+          dispatch(requestFamiliesFailed(errors))
+        })
+    } else {
+      Alert.alert('No internet connection')
+    }
   }
 }

@@ -45,19 +45,21 @@ class Clients extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchClients()
-    this.props.fetchDistricts()
-    this.props.fetchProvinces()
-    this.props.fetchCommunes()
-    this.props.fetchVillages()
-    this.props.fetchSetting()
-    this.props.fetchBirthProvinces()
-    this.props.fetchProgramStreams()
-    this.props.fetchReferralSources()
-    this.props.fetchQuantitativeTypes()
-    this.props.fetchAgencies()
-    this.props.fetchDonors()
-    this.props.fetchUsers()
+    if (this.props.hasInternet) {
+      this.props.fetchClients()
+      this.props.fetchDistricts()
+      this.props.fetchProvinces()
+      this.props.fetchCommunes()
+      this.props.fetchVillages()
+      this.props.fetchSetting()
+      this.props.fetchBirthProvinces()
+      this.props.fetchProgramStreams()
+      this.props.fetchReferralSources()
+      this.props.fetchQuantitativeTypes()
+      this.props.fetchAgencies()
+      this.props.fetchDonors()
+      this.props.fetchUsers()
+    }
   }
 
   onClientPress = async client => {

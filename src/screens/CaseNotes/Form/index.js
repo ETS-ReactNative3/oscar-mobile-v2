@@ -58,7 +58,7 @@ class CaseNoteForm extends Component {
       this.attendeeInput.focus()
       return
     }
-      
+
     if (interactionType === 'default_type') {
       Alert.alert(
         i18n.t('client.case_note_form.validation_title'),

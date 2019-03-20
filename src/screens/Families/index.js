@@ -14,7 +14,7 @@ import {
 
 class Families extends Component {
   componentDidMount() {
-    this.props.fetchFamilies()
+    this.props.hasInternet && this.props.fetchFamilies()
   }
 
   subItems = family => {
