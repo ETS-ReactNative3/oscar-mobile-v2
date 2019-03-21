@@ -1,11 +1,18 @@
 import axios                                    from 'axios'
-import { PROGRAM_STREAM_TYPES, CLIENT_TYPES }   from '../types'
-import { Alert, NetInfo }                       from 'react-native'
-import { formTypes }                            from '../../utils/validation'
-import { loadingScreen }                        from '../../navigation/config'
-import { Navigation }                           from 'react-native-navigation'
 import endpoint                                 from '../../constants/endpoint'
-import _                                        from 'lodash'
+import { formTypes }                            from '../../utils/validation'
+import { Navigation }                           from 'react-native-navigation'
+import { loadingScreen }                        from '../../navigation/config'
+import { Alert, NetInfo }                       from 'react-native'
+import { PROGRAM_STREAM_TYPES, CLIENT_TYPES }   from '../types'
+import {
+  map,
+  find,
+  filter,
+  forEach,
+  template,
+  isUndefined
+} from 'lodash'
 
 requestProgramStreams = () => ({
   type: PROGRAM_STREAM_TYPES.PROGRAM_STREAMS_REQUESTING
@@ -31,12 +38,12 @@ createEnrollment = (enrollment, programStream, programStreams, client) => {
   enrollment.status = 'Active'
   enrollment.trackings = []
 
-  programStream.tracking_fields = _.isUndefined(programStream.tracking_fields) ? programStream.trackings : programStream.tracking_fields
-  programStream.enrollments = _.isUndefined(programStream.enrollments) ? [enrollment] : programStream.enrollments.concat(enrollment)
+  programStream.tracking_fields = isUndefined(programStream.tracking_fields) ? programStream.trackings : programStream.tracking_fields
+  programStream.enrollments = isUndefined(programStream.enrollments) ? [enrollment] : programStream.enrollments.concat(enrollment)
   programStream.tracking_required = programStream.tracking_fields.length > 0 ? false : true
 
   client.program_streams = [programStream, ...client.program_streams]
-  client.inactive_program_streams = _.filter(client.inactive_program_streams, program => {
+  client.inactive_program_streams = filter(client.inactive_program_streams, program => {
     return program.id != programStream.id
   })
   return client
@@ -46,9 +53,9 @@ createLeaveProgram = (updateData, fields, programStreamId, programStreams, clien
   updateData['leave_program_field'] = fields.leave_program_field
   let inactiveProgramStreams = []
   let updatedProgramStreams = []
-  _.forEach(programStreams, programStream => {
+  forEach(programStreams, programStream => {
     if (programStream.id == programStreamId) {
-      const updateEnrollments = _.map(programStream.enrollments, enrollment => {
+      const updateEnrollments = map(programStream.enrollments, enrollment => {
         if (enrollment.status == 'Active') {
           enrollment['leave_program'] = updateData
           enrollment.status = 'Exited'
@@ -69,7 +76,7 @@ createLeaveProgram = (updateData, fields, programStreamId, programStreams, clien
 
 createTracking = (data, tracking, programStream, client) => {
   data['tracking_field'] = tracking.fields
-  const updateEnrollmentTrackings = _.map(programStream.enrollments, enrollment => {
+  const updateEnrollmentTrackings = map(programStream.enrollments, enrollment => {
     if (enrollment.status == 'Active') {
       enrollment.trackings = [data, ...enrollment.trackings]
       return enrollment
@@ -77,7 +84,7 @@ createTracking = (data, tracking, programStream, client) => {
     return enrollment
   })
 
-  updatedProgramStreams = _.map(client.program_streams, program_stream => {
+  updatedProgramStreams = map(client.program_streams, program_stream => {
     if (program_stream.id == programStream.id) {
       program_stream.enrollments = updateEnrollmentTrackings
     }
@@ -88,7 +95,7 @@ createTracking = (data, tracking, programStream, client) => {
 }
 
 updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickForm) => {
-  const updateEnrollments = _.map(originalProgramStream.enrollments, enrollment => {
+  const updateEnrollments = map(originalProgramStream.enrollments, enrollment => {
     if (type == 'Enroll') {
       if (enrollment.id == updatedProperty.id) {
         enrollment.properties = updatedProperty.properties
@@ -96,7 +103,7 @@ updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickF
       }
     } else if (type == 'Tracking') {
       if (enrollment.id == updatedProperty.client_enrollment_id) {
-        let tracking = _.find(enrollment.trackings, { id: updatedProperty.id })
+        let tracking = find(enrollment.trackings, { id: updatedProperty.id })
         tracking.properties = updatedProperty.properties
       }
     } else {
@@ -108,7 +115,7 @@ updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickF
     return enrollment
   })
   if (clickForm == 'EnrolledProgram') {
-    updatedProgramStreams = _.map(client.program_streams, programStream => {
+    updatedProgramStreams = map(client.program_streams, programStream => {
       if (programStream.id == programStream.id) {
         programStream.enrollments = updateEnrollments
       }
@@ -116,7 +123,7 @@ updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickF
     })
     client.program_streams = updatedProgramStreams
   } else {
-    updatedProgramStreams = _.map(client.inactive_program_streams, programStream => {
+    updatedProgramStreams = map(client.inactive_program_streams, programStream => {
       if (programStream.id == programStream.id) {
         programStream.enrollments = updateEnrollments
       }
@@ -129,7 +136,7 @@ updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickF
 }
 
 updateDeleteEnrollment = (enrollmentDeleted, programStream, client, clickForm) => {
-  const updateEnrollments = _.filter(programStream.enrollments, enrollment => {
+  const updateEnrollments = filter(programStream.enrollments, enrollment => {
     return enrollment.id != enrollmentDeleted.id
   })
 
@@ -138,7 +145,7 @@ updateDeleteEnrollment = (enrollmentDeleted, programStream, client, clickForm) =
   let clientUpdated = {}
 
   if (clickForm == 'EnrolledProgram') {
-    _.forEach(client.program_streams, program_stream => {
+    forEach(client.program_streams, program_stream => {
       if (programStream.id == program_stream.id) {
         if (updateEnrollments.length > 0) {
           updatedProgramStream = { ...program_stream, enrollments: updateEnrollments }
@@ -150,7 +157,7 @@ updateDeleteEnrollment = (enrollmentDeleted, programStream, client, clickForm) =
     })
     clientUpdated = { ...client, program_streams: updatedProgramStreams }
   } else {
-    _.forEach(client.inactive_program_streams, program_stream => {
+    forEach(client.inactive_program_streams, program_stream => {
       if (programStream.id == program_stream.id) {
         if (updateEnrollments.length > 0) {
           updatedProgramStream = { ...program_stream, enrollments: updateEnrollments }
@@ -172,11 +179,11 @@ updateDeleteTracking = (enrollmentId, trackingId, programStreamId, client, click
   let trackingIsEmpty = false
   const programStreams = clickForm == 'EnrolledProgram' ? client.program_streams : client.inactive_program_streams
 
-  const updatedProgramStreams = _.map(programStreams, programStream => {
+  const updatedProgramStreams = map(programStreams, programStream => {
     if (programStreamId == programStream.id) {
-      const updatedEnrollments = _.map(programStream.enrollments, enrollment => {
+      const updatedEnrollments = map(programStream.enrollments, enrollment => {
         if (enrollmentId == enrollment.id) {
-          const updateTrackings = _.filter(enrollment.trackings, tracking => {
+          const updateTrackings = filter(enrollment.trackings, tracking => {
             return tracking.id != trackingId
           })
           trackingIsEmpty = updateTrackings.length == 0
@@ -263,7 +270,7 @@ export function deleteEnrollmentForm(enrollment, client_enrolled_programs_id, cl
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
         loadingScreen()
-        let enrolledProgramPath = _.template(endpoint.editEnrollmentProgramPath)
+        let enrolledProgramPath = template(endpoint.editEnrollmentProgramPath)
         enrolledProgramPath = enrolledProgramPath({ client_id: client_id, program_id: client_enrolled_programs_id })
 
         axios
@@ -397,7 +404,7 @@ export function deleteTrackingForm(enrollment, client_id, client_enrolled_progra
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
         loadingScreen()
-        let trackingProgramPath = _.template(endpoint.editTrackingProgramPath)
+        let trackingProgramPath = template(endpoint.editTrackingProgramPath)
         trackingProgramPath = trackingProgramPath({ client_id: client_id, client_enrollment_id: client_enrolled_programs_id, id: tracking_id })
 
         axios
@@ -423,10 +430,10 @@ export function handleEnrollmentForm(type, field_properties, enrollment, client_
   return dispatch => {
     let enrolledProgramPath = ''
     if (type == 'create') {
-      enrolledProgramPath = _.template(endpoint.createEnrollmentProgramPath)
+      enrolledProgramPath = template(endpoint.createEnrollmentProgramPath)
       enrolledProgramPath = enrolledProgramPath({ client_id: client_id })
     } else {
-      enrolledProgramPath = _.template(endpoint.editEnrollmentProgramPath)
+      enrolledProgramPath = template(endpoint.editEnrollmentProgramPath)
       enrolledProgramPath = enrolledProgramPath({
         client_id: client_id,
         program_id: client_enrolled_program_id
@@ -458,8 +465,8 @@ export function handleEnrollmentForm(type, field_properties, enrollment, client_
             }
           }
         } else {
-          let appendString = _.template('client_enrollment[properties[${label}]]')
-          let appendObject = _.template('client_enrollment[properties[${label}]][]')
+          let appendString = template('client_enrollment[properties[${label}]]')
+          let appendObject = template('client_enrollment[properties[${label}]][]')
           if (typeof field_properties[field.label] === 'string') {
             formdata.append(appendString({ label: field.name }), field_properties[field.label])
           } else if (typeof field_properties[field.label] === 'object') {
@@ -488,13 +495,13 @@ export function handleTrackingForm(type, field_properties, enrollment, client_id
   return dispatch => {
     let trackingProgramPath = ''
     if (type == 'create') {
-      trackingProgramPath = _.template(endpoint.createTrackingPath)
+      trackingProgramPath = template(endpoint.createTrackingPath)
       trackingProgramPath = trackingProgramPath({
         client_id: client_id,
         client_enrollment_id: client_enrolled_program_id
       })
     } else {
-      trackingProgramPath = _.template(endpoint.editTrackingProgramPath)
+      trackingProgramPath = template(endpoint.editTrackingProgramPath)
       trackingProgramPath = trackingProgramPath({
         client_id: client_id,
         client_enrollment_id: client_enrolled_program_id,
@@ -557,13 +564,13 @@ export function handleExitForm(status, field_properties, enrollment, client_enro
   return dispatch => {
     let leaveProgramPath = ''
     if (status == 'create') {
-      leaveProgramPath = _.template(endpoint.createLeaveProgramPath)
+      leaveProgramPath = template(endpoint.createLeaveProgramPath)
       leaveProgramPath = leaveProgramPath({
         client_id: client_id,
         program_id: client_enrolled_program_id
       })
     } else {
-      leaveProgramPath = _.template(endpoint.editLeaveProgramPath)
+      leaveProgramPath = template(endpoint.editLeaveProgramPath)
       leaveProgramPath = leaveProgramPath({
         client_id: client_id,
         program_id: client_enrolled_program_id,

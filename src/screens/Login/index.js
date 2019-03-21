@@ -11,7 +11,8 @@ import {
   View,
   Image,
   TextInput,
-  Vibration
+  Vibration,
+  KeyboardAvoidingView
 } from 'react-native'
 class LoginContainer extends Component {
   state = { email: '', password: '', secureTextEntry: true }
@@ -38,8 +39,8 @@ class LoginContainer extends Component {
     const { email, password, secureTextEntry } = this.state
 
     return (
-      <View style={{flex: 1}}>
-        <KeyboardAwareScrollView style={styles.container}>
+      <View style={styles.container}>
+        <KeyboardAvoidingView>
           <View style={styles.imageWrapper}>
             <Navigation.Element elementId={this.props.sharedImageId}>
               <Image resizeMode="contain" style={styles.image} source={{ uri: this.props.logo }} />
@@ -79,7 +80,7 @@ class LoginContainer extends Component {
           <Button isLoading={loading} isDisabled={loading} style={styles.loginButton} textStyle={{ color: '#fff' }} onPress={() => this.loginHandler()}>
             {i18n.t('auth.login')}
           </Button>
-        </KeyboardAwareScrollView>
+        </KeyboardAvoidingView>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )

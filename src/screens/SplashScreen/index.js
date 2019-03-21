@@ -1,15 +1,15 @@
-import React, { Component } from 'react'
-import CryptoJS from 'crypto-js'
-import { View, Image, Platform, NetInfo } from 'react-native'
-import { connect } from 'react-redux'
-import KeyboardManager from 'react-native-keyboard-manager'
-import Database from '../../config/Database'
-import logo from '../../assets/oscar-logo.png'
-import styles from './styles'
-import i18n from '../../i18n'
-import { LANGUAGE_TYPES } from '../../redux/types'
-import { startNgoScreen, startScreen } from '../../navigation/config'
-import { setDefaultHeader, verifyUser } from '../../redux/actions/auth'
+import React, { Component }                 from 'react'
+import { connect }                          from 'react-redux'
+import i18n                                 from '../../i18n'
+import logo                                 from '../../assets/oscar-logo.png'
+import styles                               from './styles'
+import CryptoJS                             from 'crypto-js'
+import Database                             from '../../config/Database'
+import KeyboardManager                      from 'react-native-keyboard-manager'
+import { LANGUAGE_TYPES }                   from '../../redux/types'
+import { startNgoScreen, startScreen }      from '../../navigation/config'
+import { setDefaultHeader, verifyUser }     from '../../redux/actions/auth'
+import { View, Image, Platform, NetInfo }   from 'react-native'
 class SplashScreen extends Component {
   static options(passProps) {
     return {
@@ -21,7 +21,9 @@ class SplashScreen extends Component {
 
   constructor(props) {
     super(props)
-    Platform.OS == 'ios' && KeyboardManager.setEnableAutoToolbar(false)
+    if (Platform.OS == 'ios') {
+      KeyboardManager.setEnableAutoToolbar(false)
+    }
   }
 
   componentDidMount() {

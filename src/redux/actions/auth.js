@@ -1,11 +1,11 @@
 import axios                              from 'axios'
-import { Alert, AsyncStorage, NetInfo }   from 'react-native'
+import { forEach, capitalize }            from 'lodash'
 import { AUTH_TYPES, LOGOUT_TYPES }       from '../types'
+import { Alert, AsyncStorage, NetInfo }   from 'react-native'
 import { Navigation }                     from 'react-native-navigation'
 import endpoint                           from '../../constants/endpoint'
 import i18n                               from '../../i18n'
 import CryptoJS                           from 'crypto-js'
-import _                                  from 'lodash'
 import {
   pushScreen,
   startTabScreen,
@@ -143,9 +143,9 @@ export function updateUser(userParam, alertMessage) {
           })
           .catch(error => {
             let errors = []
-            _.forEach(error.response.data.errors, (value, key) => {
+            forEach(error.response.data.errors, (value, key) => {
               if (key != 'full_messages') {
-                errors.push(_.capitalize(key) + ' ' + value[0])
+                errors.push(capitalize(key) + ' ' + value[0])
               }
             })
             Navigation.dismissOverlay('LOADING_SCREEN')

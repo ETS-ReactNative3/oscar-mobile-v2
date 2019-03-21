@@ -1,13 +1,18 @@
-import React, { Component } from 'react'
-import { View, Text, ScrollView, TouchableWithoutFeedback } from 'react-native'
-import _ from 'lodash'
-import moment from 'moment'
-import { programStreamDetail } from '../../../styles'
-import { pushScreen } from '../../../navigation/config'
-import { connect } from 'react-redux'
-import i18n from '../../../i18n'
-import Icon from 'react-native-vector-icons/Ionicons'
-import DropdownAlert from 'react-native-dropdownalert'
+import React, { Component }           from 'react'
+import i18n                           from '../../../i18n'
+import Icon                           from 'react-native-vector-icons/Ionicons'
+import moment                         from 'moment'
+import DropdownAlert                  from 'react-native-dropdownalert'
+import { connect }                    from 'react-redux'
+import { pushScreen }                 from '../../../navigation/config'
+import { map, isEmpty, find }         from 'lodash'
+import { programStreamDetail }        from '../../../styles'
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 class ProgramStreamDetail extends Component {
   _updateProgramStreamReportState = (data, type) => {
     let { programStream } = this.props
@@ -15,7 +20,7 @@ class ProgramStreamDetail extends Component {
     let updatedProgramStream = []
 
     if (type === 'Enroll') {
-      updatedEnrollments = _.map(updatedEnrollments, (enrollment, index) => {
+      updatedEnrollments = map(updatedEnrollments, (enrollment, index) => {
         if (enrollment.id == data.id) {
           let updatedEnrollProgram = Object.assign({}, enrollment, {
             properties: data.properties,
@@ -27,7 +32,7 @@ class ProgramStreamDetail extends Component {
         }
       })
     } else if (type === 'Exit') {
-      updatedEnrollments = _.map(updatedEnrollments, (enrollment, index) => {
+      updatedEnrollments = map(updatedEnrollments, (enrollment, index) => {
         if (enrollment.leave_program != null && enrollment.leave_program.id == data.id) {
           let updatedLeaveProgram = Object.assign({}, enrollment.leave_program, {
             properties: data.properties,
@@ -42,9 +47,9 @@ class ProgramStreamDetail extends Component {
         return enrollment
       })
     } else if (type === 'Tracking') {
-      updatedEnrollments = _.map(updatedEnrollments, (enrollment, index) => {
+      updatedEnrollments = map(updatedEnrollments, (enrollment, index) => {
         if (enrollment.trackings.length > 0) {
-          const updatedTracking = _.map(enrollment.trackings, tracking => {
+          const updatedTracking = map(enrollment.trackings, tracking => {
             if (tracking.id == data.id) {
               const updatedTracking = Object.assign({}, tracking, {
                 properties: data.properties
@@ -103,7 +108,7 @@ class ProgramStreamDetail extends Component {
   }
 
   _renderEnrollment(date, formTitle, enrollment, deleteAble, type, editAble, enrollment_id) {
-    const newDate = !_.isEmpty(date) ? moment(date).format('D MMM, YYYY') : ''
+    const newDate = !isEmpty(date) ? moment(date).format('D MMM, YYYY') : ''
     const title = `on ${newDate}`
     return (
       <View key={`${Math.random()}-${title}`} style={[programStreamDetail.tableDetailRow, programStreamDetail.tableRow]}>
@@ -123,7 +128,7 @@ class ProgramStreamDetail extends Component {
   }
 
   _renderTracking(trackings, enrollment, editAble, deleteAble) {
-    return _.map(trackings, (tracking, index) => {
+    return map(trackings, (tracking, index) => {
       return this._renderEnrollment(tracking.created_at, 'Tracking', tracking, deleteAble, 'Tracking', editAble, enrollment.id)
     })
   }
@@ -175,7 +180,7 @@ class ProgramStreamDetail extends Component {
             </View>
           )}
           <ScrollView>
-            {_.map(programStream.enrollments, (enrollment, index) => {
+            {map(programStream.enrollments, (enrollment, index) => {
               return enrollment.leave_program != null ? this._renderExit(enrollment) : this._renderEnrolledForm(enrollment)
             })}
           </ScrollView>
@@ -190,8 +195,8 @@ const mapState = (state, ownProps) => {
   const client = state.clients.data[ownProps.clientId]
   const programStream =
     ownProps.clickForm == 'EnrolledProgram'
-      ? _.find(client.program_streams, { id: ownProps.programStreamId })
-      : _.find(client.inactive_program_streams, { id: ownProps.programStreamId })
+      ? find(client.program_streams, { id: ownProps.programStreamId })
+      : find(client.inactive_program_streams, { id: ownProps.programStreamId })
   return { client, programStream }
 }
 export default connect(mapState)(ProgramStreamDetail)

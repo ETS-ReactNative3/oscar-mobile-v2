@@ -1,11 +1,11 @@
 import axios                  from 'axios'
-import { FAMILY_TYPES }       from '../types'
-import { Alert, NetInfo }     from 'react-native'
-import { loadingScreen }      from '../../navigation/config'
+import { map }                from 'lodash'
 import { Navigation }         from 'react-native-navigation'
+import { FAMILY_TYPES }       from '../types'
+import { loadingScreen }      from '../../navigation/config'
+import { Alert, NetInfo }     from 'react-native'
 import endpoint               from '../../constants/endpoint'
 import i18n                   from '../../i18n'
-import _                      from 'lodash'
 
 requestFamilies = () => ({
   type: FAMILY_TYPES.FAMILIES_REQUESTING
@@ -59,7 +59,7 @@ export function updateFamily(familyParams, actions) {
             actions.alertMessage()
           })
           .catch(error => {
-            let errors = _.map(error.response.data, (value, key) => {
+            let errors = map(error.response.data, (value, key) => {
               return i18n.t('family' + key, { locale: 'en' }) + ' ' + value[0]
             })
             Navigation.dismissOverlay('LOADING_SCREEN')

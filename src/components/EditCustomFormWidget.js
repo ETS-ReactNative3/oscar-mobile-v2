@@ -1,21 +1,27 @@
-import React, { Component } from 'react'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import ImagePicker from 'react-native-image-picker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import DatePicker from 'react-native-datepicker'
-import _ from 'lodash'
-import i18n from '../i18n'
-import { CheckBox, Divider } from 'react-native-elements'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import { options, MAX_SIZE } from '../constants/option.js'
-import { MAIN_COLOR } from '../constants/colors'
-import { Navigation } from 'react-native-navigation'
-import { customFormStyles } from '../styles/customForm'
-import { View, Text, StyleSheet, TextInput, ScrollView, Picker, Alert, AppState, Image, TouchableWithoutFeedback } from 'react-native'
-import { validateCustomForm, validateAdditonalForm, formTypes, disabledUpload } from '../utils/validation'
-
-var moment = require('moment')
-
+import React, { Component }                               from 'react'
+import i18n                                               from '../i18n'
+import Icon                                               from 'react-native-vector-icons/MaterialIcons'
+import DatePicker                                         from 'react-native-datepicker'
+import ImagePicker                                        from 'react-native-image-picker'
+import SectionedMultiSelect                               from 'react-native-sectioned-multi-select'
+import { MAIN_COLOR }                                     from '../constants/colors'
+import { Navigation }                                     from 'react-native-navigation'
+import { customFormStyles }                               from '../styles/customForm'
+import { CheckBox, Divider }                              from 'react-native-elements'
+import { options, MAX_SIZE }                              from '../constants/option'
+import { map, isEmpty, filter }                           from 'lodash'
+import { DocumentPicker, DocumentPickerUtil }             from 'react-native-document-picker'
+import { validateCustomForm, formTypes, disabledUpload }  from '../utils/validation'
+import {
+  View,
+  Text,
+  Alert,
+  Image,
+  AppState,
+  TextInput,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 export default class EditAdditionalFormWidget extends Component {
   constructor(props) {
     super(props)
@@ -36,14 +42,14 @@ export default class EditAdditionalFormWidget extends Component {
     const { customForm, custom_field } = this.state
     let { fields } = this.state
 
-    const values = _.map(customForm.fields, 'values')
-    const fieldsKey = _.map(customForm.fields, 'label')
-    const fieldsType = _.map(customForm.fields, 'type')
+    const values = map(customForm.fields, 'values')
+    const fieldsKey = map(customForm.fields, 'label')
+    const fieldsType = map(customForm.fields, 'type')
     const filedProperties = custom_field.properties
-    _.map(fieldsKey, (field, index) => {
+    map(fieldsKey, (field, index) => {
       if (formTypes.includes(fieldsType[index])) {
         let value = filedProperties[field]
-        if (value != undefined && !_.isEmpty(value)) {
+        if (value != undefined && !isEmpty(value)) {
           fields[fieldsKey[index]] = filedProperties[field]
         } else {
           if (values[index] != undefined) {
@@ -91,13 +97,13 @@ export default class EditAdditionalFormWidget extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
+    return map(options, option => ({ name: option.label, id: option.label }))
   }
 
   updateMultipleSelect(label, value) {
     const { fields } = this.state
     if (fields[label].includes(value)) {
-      fields[label] = _.filter(fields[label], selected_value => {
+      fields[label] = filter(fields[label], selected_value => {
         return selected_value != value
       })
     } else {
@@ -199,7 +205,7 @@ export default class EditAdditionalFormWidget extends Component {
     return (
       <View style={[customFormStyles.fieldContainer]}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -222,7 +228,7 @@ export default class EditAdditionalFormWidget extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -284,7 +290,7 @@ export default class EditAdditionalFormWidget extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this.uploader(label, formField, data)} />
         </View>
-        {_.map(data, (attachment, index) => {
+        {map(data, (attachment, index) => {
           if (attachment.name != undefined) {
             const name = attachment.name.substring(0, 16)
             return (
@@ -306,7 +312,7 @@ export default class EditAdditionalFormWidget extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fields } = this.state
-    const updatedAttachment = _.filter(data, (file, index) => {
+    const updatedAttachment = filter(data, (file, index) => {
       return index != attachment
     })
 
@@ -370,11 +376,11 @@ export default class EditAdditionalFormWidget extends Component {
       } else {
         let updateLocalfile = []
 
-        const isLocalExited = _.filter(fields[label], attachment => {
+        const isLocalExited = filter(fields[label], attachment => {
           return attachment.uri != undefined
         })
 
-        _.map(fields[label], attachment => {
+        map(fields[label], attachment => {
           if (attachment.uri != undefined) {
             updateLocalfile = [...updateLocalfile, source]
           } else {
@@ -395,7 +401,7 @@ export default class EditAdditionalFormWidget extends Component {
   renderFormField = () => {
     const self = this
     const { customForm, fields } = this.state
-    return _.map(customForm.fields, (formField, index) => {
+    return map(customForm.fields, (formField, index) => {
       const fieldType = formField.type
       const label = formField.label
       return (

@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
-import { Navigation } from 'react-native-navigation'
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native'
-import DropdownAlert from 'react-native-dropdownalert'
-import moment from 'moment'
-import _ from 'lodash'
-import { pushScreen } from '../../../navigation/config'
-import appIcons from '../../../utils/Icon'
-import styles from './styles'
-import i18n from '../../../i18n'
-import Card from '../../../components/Card'
+import React, { Component }         from 'react'
+import { Navigation }               from 'react-native-navigation'
+import { pushScreen }               from '../../../navigation/config'
+import { View, Text, ScrollView }   from 'react-native'
+import _                            from 'lodash'
+import i18n                         from '../../../i18n'
+import styles                       from './styles'
+import moment                       from 'moment'
+import appIcons                     from '../../../utils/Icon'
+import DropdownAlert                from 'react-native-dropdownalert'
 
 class CaseNoteDetail extends Component {
   state = {
@@ -64,6 +63,9 @@ class CaseNoteDetail extends Component {
     if (assessments.length === 0) return
 
     const assessment = assessments.find(assessment => assessment.id === this.props.caseNote.assessment_id)
+
+    if (_.isUndefined(assessment)) return
+
     const assessmentDomainsWithGoal = assessment.assessment_domain.filter(ad => Boolean(ad.goal))
     const caseNoteDomainIds = case_note.domain_scores.map(ds => ds.domain_id)
     const availableAssessmentDomains = assessmentDomainsWithGoal.filter(ad => caseNoteDomainIds.includes(ad.domain_id))
@@ -132,43 +134,45 @@ class CaseNoteDetail extends Component {
     const { caseNote } = this.state
 
     return (
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.attendeeTitle}>
-              {caseNote.attendee}{' '}
-              {caseNote.interaction_type != '' && `( ${caseNote.interaction_type} )`}
-          </Text>
-          <Text style={styles.meetingDate}>
-            {moment(caseNote.meeting_date).format('MMMM Do YYYY')}
-          </Text>
+      <View style={{flex: 1}}>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.attendeeTitle}>
+                {caseNote.attendee}{' '}
+                {caseNote.interaction_type != '' && `( ${caseNote.interaction_type} )`}
+            </Text>
+            <Text style={styles.meetingDate}>
+              {moment(caseNote.meeting_date).format('MMMM Do YYYY')}
+            </Text>
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false} style={{ paddingLeft: 20, paddingRight: 20 }}>
+            {
+              caseNote.case_note_domain_group.filter(cndg => !!cndg.note).map((case_note, index) => {
+                const tasks = case_note.tasks || case_note.completed_tasks
+                const attachments = case_note.attachments || []
+
+                return (
+                  <View key={index} style={styles.fieldContainer}>
+                    <View style={styles.field}>
+                      <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+                        {case_note.domain_group_identities}
+                      </Text>
+                    </View>
+
+                    <View style={styles.contentWrapper}>
+                      { this.renderNotes(case_note) }
+                      { this.renderGoals(case_note) }
+                      { tasks.length > 0 && this.renderTasks(case_note) }
+                      { attachments.length > 0 && this.renderAttachments(case_note) }
+                    </View>
+                  </View>
+                )
+              })
+            }
+          </ScrollView>
         </View>
-
-        <ScrollView showsVerticalScrollIndicator={false} style={{ padding: 20 }}>
-          {
-            caseNote.case_note_domain_group.filter(cndg => !!cndg.note).map((case_note, index) => {
-              const tasks = case_note.tasks || case_note.completed_tasks
-              const attachments = case_note.attachments || []
-
-              return (
-                <View key={index} style={styles.fieldContainer}>
-                  <View style={styles.field}>
-                    <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-                      {case_note.domain_group_identities}
-                    </Text>
-                  </View>
-
-                  <View style={styles.contentWrapper}>
-                    { this.renderNotes(case_note) }
-                    { this.renderGoals(case_note) }
-                    { tasks.length > 0 && this.renderTasks(case_note) }
-                    { attachments.length > 0 && this.renderAttachments(case_note) }
-                  </View>
-                </View>
-              )
-            })
-          }
-        </ScrollView>
-        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} zIndex={1000}/>
+        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
     )
   }

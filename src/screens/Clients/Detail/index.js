@@ -1,17 +1,16 @@
 import React, { Component }                 from 'react'
-import { View, Text, ScrollView }           from 'react-native'
+import i18n                                 from '../../../i18n'
+import Menu                                 from './Menu'
+import styles                               from './styles'
+import Swiper                               from 'react-native-swiper'
+import appIcons                             from '../../../utils/Icon'
+import DropdownAlert                        from 'react-native-dropdownalert'
+import ClientInformation                    from './Information'
+import { some }                             from 'lodash'
 import { connect }                          from 'react-redux'
 import { pushScreen }                       from '../../../navigation/config'
 import { Navigation }                       from 'react-native-navigation'
-import Swiper                               from 'react-native-swiper'
-import DropdownAlert                        from 'react-native-dropdownalert'
-import appIcons                             from '../../../utils/Icon'
-import i18n                                 from '../../../i18n'
-import ClientInformation                    from './Information'
-import Menu                                 from './Menu'
-import styles                               from './styles'
-import appIcon                              from '../../../utils/Icon'
-import _                                    from 'lodash'
+import { View, Text, ScrollView }           from 'react-native'
 class ClientDetail extends Component {
   constructor(props) {
     super(props)
@@ -25,7 +24,7 @@ class ClientDetail extends Component {
   async navigationButtonPressed({ buttonId }) {
     if (buttonId === 'EDIT_CLIENT') {
       const { client } = this.props
-      const icons = await appIcon()
+      const icons = await appIcons()
       pushScreen(this.props.componentId, {
         screen: 'oscar.editClient',
         title: 'EDIT CLIENT',
@@ -132,7 +131,7 @@ class ClientDetail extends Component {
     const { client, setting } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
 
-    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => _.some(program_stream.enrollments, { status: 'Active' }))
+    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' }))
       .length
 
     const inactiveProgramStreams = client.inactive_program_streams.length

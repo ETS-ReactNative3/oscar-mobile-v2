@@ -1,21 +1,29 @@
-import React, { Component } from 'react'
-import { View, Text, TextInput, ScrollView, Dimensions, Alert, Image, TouchableWithoutFeedback } from 'react-native'
-import { CheckBox, Button, Divider } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import ImagePicker from 'react-native-image-picker'
-import { Navigation } from 'react-native-navigation'
-import moment from 'moment'
-import i18n from '../../../i18n'
-import { connect } from 'react-redux'
-import { customFormStyles } from '../../../styles'
-import { options, MAX_SIZE } from '../../../constants/option'
-import { MAIN_COLOR } from '../../../constants/colors'
-import { validateCustomForm, formTypes, disabledUpload } from '../../../utils/validation'
-import { createLeaveProgramForm } from '../../../redux/actions/programStreams'
+import React, { Component }                               from 'react'
+import i18n                                               from '../../../i18n'
+import Icon                                               from 'react-native-vector-icons/MaterialIcons'
+import moment                                             from 'moment'
+import DatePicker                                         from 'react-native-datepicker'
+import ImagePicker                                        from 'react-native-image-picker'
+import SectionedMultiSelect                               from 'react-native-sectioned-multi-select'
+import { connect }                                        from 'react-redux'
+import { Navigation }                                     from 'react-native-navigation'
+import { MAIN_COLOR }                                     from '../../../constants/colors'
+import { filter, map }                                    from 'lodash'
+import { customFormStyles }                               from '../../../styles'
+import { CheckBox, Divider }                              from 'react-native-elements'
+import { options, MAX_SIZE }                              from '../../../constants/option'
+import { DocumentPicker, DocumentPickerUtil }             from 'react-native-document-picker'
+import { validateCustomForm, formTypes, disabledUpload }  from '../../../utils/validation'
+import { createLeaveProgramForm }                         from '../../../redux/actions/programStreams'
+import {
+  View,
+  Text,
+  Alert,
+  Image,
+  TextInput,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 
 class ExitForm extends Component {
   constructor(props) {
@@ -29,7 +37,7 @@ class ExitForm extends Component {
       const { programStream, client } = this.props
       const { field_properties, exit_date } = this.state
 
-      let lastActives = _.filter(programStream.enrollments, enrollment => {
+      let lastActives = filter(programStream.enrollments, enrollment => {
         return enrollment.status == 'Active'
       })
 
@@ -50,13 +58,13 @@ class ExitForm extends Component {
   componentWillMount() {
     const { programStream } = this.props
     let { field_properties } = this.state
-    let lastActives = _.filter(programStream.enrollments, enrollment => {
+    let lastActives = filter(programStream.enrollments, enrollment => {
       return enrollment.status == 'Active'
     })
 
     let lastActiveEnrollment = JSON.parse(JSON.stringify(lastActives[0]))
 
-    _.map(programStream.exit_program, field => {
+    map(programStream.exit_program, field => {
       if (formTypes.includes(field.type)) {
         if (['checkbox-group', 'multiple', 'select'].includes(field.type)) {
           field_properties[field.label] = []
@@ -85,7 +93,7 @@ class ExitForm extends Component {
   _updateMultipleSelect(label, value) {
     let { field_properties } = this.state
     if (field_properties[label].includes(value)) {
-      field_properties[label] = _.filter(field_properties[label], selected_value => {
+      field_properties[label] = filter(field_properties[label], selected_value => {
         return selected_value != value
       })
     } else {
@@ -95,7 +103,7 @@ class ExitForm extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
+    return map(options, option => ({ name: option.label, id: option.label }))
   }
 
   _datePickerType(label, data) {
@@ -184,7 +192,7 @@ class ExitForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -207,7 +215,7 @@ class ExitForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -277,7 +285,7 @@ class ExitForm extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
-        {_.map(data, (attachment, index) => {
+        {map(data, (attachment, index) => {
           const name = attachment.name.substring(0, 16)
           return (
             <View key={index} style={customFormStyles.attachmentWrapper}>
@@ -297,7 +305,7 @@ class ExitForm extends Component {
 
   _removeAttactment(data, attachment, label) {
     let { field_properties } = this.state
-    const updatedAttachment = _.filter(data, (file, index) => {
+    const updatedAttachment = filter(data, (file, index) => {
       return index != attachment
     })
 
@@ -384,7 +392,7 @@ class ExitForm extends Component {
       <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
         <View style={customFormStyles.aboutClientContainer}>
           {this._datePickerType('Exit Date', exit_date)}
-          {_.map(programStream.exit_program, (formField, index) => {
+          {map(programStream.exit_program, (formField, index) => {
             const fieldType = formField.type
             const label = formField.label
             return (

@@ -1,22 +1,34 @@
-import React, { Component } from 'react'
-import { View, Text, TextInput, ScrollView, Dimensions, Alert, Image, TouchableWithoutFeedback } from 'react-native'
-import { CheckBox, Button, Divider } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import ImagePicker from 'react-native-image-picker'
-import { Navigation } from 'react-native-navigation'
-import moment from 'moment'
-import i18n from '../../../i18n'
-import { connect } from 'react-redux'
-import { customFormStyles } from '../../../styles'
-import { options, MAX_SIZE } from '../../../constants/option'
-import { MAIN_COLOR } from '../../../constants/colors'
+import React, { Component }                                     from 'react'
+import i18n                                                     from '../../../i18n'
+import Icon                                                     from 'react-native-vector-icons/MaterialIcons'
+import moment                                                   from 'moment'
+import DatePicker                                               from 'react-native-datepicker'
+import ImagePicker                                              from 'react-native-image-picker'
+import SectionedMultiSelect                                     from 'react-native-sectioned-multi-select'
+import { connect }                                              from 'react-redux'
+import { Navigation }                                           from 'react-native-navigation'
+import { MAIN_COLOR }                                           from '../../../constants/colors'
+import { map, filter }                                          from 'lodash'
+import { customFormStyles }                                     from '../../../styles'
+import { CheckBox, Divider }                                    from 'react-native-elements'
+import { options, MAX_SIZE }                                    from '../../../constants/option'
+import { DocumentPicker, DocumentPickerUtil }                   from 'react-native-document-picker'
 import { formTypes, disabledUpload, validateProgramStreamForm } from '../../../utils/validation'
-import { updateLeaveProgramForm, updateEnrollmentForm, updateTrackingForm } from '../../../redux/actions/programStreams'
+import {
+  updateLeaveProgramForm,
+  updateEnrollmentForm,
+  updateTrackingForm
+} from '../../../redux/actions/programStreams'
 
+import {
+  View,
+  Text,
+  Alert,
+  Image,
+  ScrollView,
+  TextInput,
+  TouchableWithoutFeedback
+ } from 'react-native'
 class EditForm extends Component {
   constructor(props) {
     super(props)
@@ -69,7 +81,7 @@ class EditForm extends Component {
   updateMultipleSelect(label, value) {
     const { field_properties } = this.state
     if (field_properties[label].includes(value)) {
-      field_properties[label] = _.filter(field_properties[label], selected_value => {
+      field_properties[label] = filter(field_properties[label], selected_value => {
         return selected_value != value
       })
     } else {
@@ -80,7 +92,7 @@ class EditForm extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
+    return map(options, option => ({ name: option.label, id: option.label }))
   }
 
   componentWillMount() {
@@ -93,10 +105,10 @@ class EditForm extends Component {
         : this.props.type == 'Enroll'
         ? enrollment.enrollment_field
         : enrollment.leave_program_field
-    const Keys = _.map(Fields, 'label')
-    const Types = _.map(Fields, 'type')
+    const Keys = map(Fields, 'label')
+    const Types = map(Fields, 'type')
 
-    _.map(Keys, (field, index) => {
+    map(Keys, (field, index) => {
       if (Values[field] != undefined) {
         field_properties[field] = Values[field]
       } else {
@@ -195,7 +207,7 @@ class EditForm extends Component {
     return (
       <View style={[customFormStyles.fieldContainer]}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -218,7 +230,7 @@ class EditForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -293,11 +305,11 @@ class EditForm extends Component {
       } else {
         let updateLocalfile = []
 
-        const isLocalExited = _.filter(field_properties[label], attachment => {
+        const isLocalExited = filter(field_properties[label], attachment => {
           return attachment.uri != undefined
         })
 
-        _.map(field_properties[label], attachment => {
+        map(field_properties[label], attachment => {
           if (attachment.uri != undefined) {
             updateLocalfile = [...updateLocalfile, source]
           } else {
@@ -355,11 +367,11 @@ class EditForm extends Component {
 
   _removeAttactment(data, attachmentIndex, label) {
     let { field_properties } = this.state
-    const updatedAttachment = _.filter(data, (file, index) => {
+    const updatedAttachment = filter(data, (file, index) => {
       return index != attachmentIndex
     })
 
-    const findAttachmentFile = _.filter(data, (file, index) => {
+    const findAttachmentFile = filter(data, (file, index) => {
       return index == attachmentIndex
     })
 
@@ -386,7 +398,7 @@ class EditForm extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
-        {_.map(data, (attachment, index) => {
+        {map(data, (attachment, index) => {
           if (attachment.name != undefined) {
             const name = attachment.name.substring(0, 16)
             return (
@@ -416,7 +428,7 @@ class EditForm extends Component {
         ? enrollment.enrollment_field
         : enrollment.leave_program_field
 
-    return _.map(Fields, (formField, index) => {
+    return map(Fields, (formField, index) => {
       const fieldType = formField.type
       const label = formField.label
       return (

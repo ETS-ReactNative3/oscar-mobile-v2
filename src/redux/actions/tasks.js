@@ -1,9 +1,8 @@
 import axios from 'axios'
-import { Alert } from 'react-native'
-import { Navigation } from 'react-native-navigation'
 import moment from 'moment'
 import endpoint from '../../constants/endpoint'
 import { updateUser } from './users'
+import { Navigation } from 'react-native-navigation'
 import { updateClient } from './clients'
 import { loadingScreen } from '../../navigation/config'
 

@@ -1,11 +1,11 @@
 import axios                      from 'axios'
+import { map, size }              from 'lodash'
 import { CLIENT_TYPES }           from '../types'
 import { Alert, NetInfo }         from 'react-native'
 import { Navigation }             from 'react-native-navigation'
 import { loadingScreen }          from '../../navigation/config'
 import endpoint                   from '../../constants/endpoint'
 import i18n                       from '../../i18n'
-import _                          from 'lodash'
 
 requestClients = () => ({
   type: CLIENT_TYPES.CLIENTS_REQUESTING
@@ -42,7 +42,7 @@ export function updateClientProperty(clientParams, actions) {
             actions.alertMessage()
           })
           .catch(error => {
-            let errors = _.map(error.response.data, (value, key) => {
+            let errors = map(error.response.data, (value, key) => {
               return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
             })
             Navigation.dismissOverlay('LOADING_SCREEN')
@@ -123,7 +123,7 @@ export function handleUpdateClientParams(client, client_id) {
       formData.append(`client[${key}]`, client[key] || '')
     })
 
-    _.size(profile) > 1 && formData.append('client[profile]', profile)
+    size(profile) > 1 && formData.append('client[profile]', profile)
 
     if (client.agency_ids.length > 0) {
       client.agency_ids.map(value => {

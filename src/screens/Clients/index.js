@@ -1,6 +1,5 @@
 import React, { Component }               from 'react'
 import { connect }                        from 'react-redux'
-import { View, Text, ActivityIndicator }  from 'react-native'
 import { SearchBar }                      from 'react-native-elements'
 import { Navigation }                     from 'react-native-navigation'
 import { pickBy, isEmpty }                from 'lodash'
@@ -23,6 +22,12 @@ import NoRecord                           from './NoRecord'
 import i18n                               from '../../i18n'
 import styles                             from './styles'
 import appIcon                            from '../../utils/Icon'
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  NetInfo
+}  from 'react-native'
 class Clients extends Component {
   constructor(props) {
     super(props)
