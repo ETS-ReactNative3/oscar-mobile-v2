@@ -1,21 +1,29 @@
-import React, { Component } from 'react'
-import { View, Text, TextInput, ScrollView, Dimensions, Alert, Image, TouchableWithoutFeedback } from 'react-native'
-import { CheckBox, Button, Divider } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import ImagePicker from 'react-native-image-picker'
-import { Navigation } from 'react-native-navigation'
-import moment from 'moment'
-import i18n from '../../../i18n'
-import { customFormStyles } from '../../../styles'
-import { options, MAX_SIZE } from '../../../constants/option'
-import { MAIN_COLOR } from '../../../constants/colors'
-import { validateCustomForm, formTypes, disabledUpload } from '../../../utils/validation'
-import { createEnrollmentForm } from '../../../redux/actions/programStreams'
-import { connect } from 'react-redux'
+import React, { Component }                               from 'react'
+import i18n                                               from '../../../i18n'
+import Icon                                               from 'react-native-vector-icons/MaterialIcons'
+import moment                                             from 'moment'
+import DatePicker                                         from 'react-native-datepicker'
+import ImagePicker                                        from 'react-native-image-picker'
+import SectionedMultiSelect                               from 'react-native-sectioned-multi-select'
+import { connect }                                        from 'react-redux'
+import { Navigation }                                     from 'react-native-navigation'
+import { MAIN_COLOR }                                     from '../../../constants/colors'
+import { map, filter }                                    from 'lodash'
+import { customFormStyles }                               from '../../../styles'
+import { CheckBox, Divider }                              from 'react-native-elements'
+import { options, MAX_SIZE }                              from '../../../constants/option'
+import { createEnrollmentForm }                           from '../../../redux/actions/programStreams'
+import { DocumentPicker, DocumentPickerUtil }             from 'react-native-document-picker'
+import { validateCustomForm, formTypes, disabledUpload }  from '../../../utils/validation'
+import {
+  View,
+  Text,
+  Alert,
+  Image,
+  TextInput,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 class EnrollmentForm extends Component {
   constructor(props) {
     super(props)
@@ -26,7 +34,7 @@ class EnrollmentForm extends Component {
   componentWillMount() {
     const { programStream } = this.props
     let { fieldProperties } = this.state
-    _.map(programStream.enrollment, field => {
+    map(programStream.enrollment, field => {
       if (formTypes.includes(field.type)) {
         if (['checkbox-group', 'multiple', 'select'].includes(field.type)) {
           fieldProperties[field.label] = []
@@ -66,7 +74,7 @@ class EnrollmentForm extends Component {
   updateMultipleSelect(label, value) {
     let { fieldProperties } = this.state
     if (fieldProperties[label].includes(value)) {
-      fieldProperties[label] = _.filter(fieldProperties[label], selected_value => {
+      fieldProperties[label] = filter(fieldProperties[label], selected_value => {
         return selected_value != value
       })
     } else {
@@ -76,7 +84,7 @@ class EnrollmentForm extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
+    return map(options, option => ({ name: option.label, id: option.label }))
   }
 
   datePickerType(label, data) {
@@ -165,7 +173,7 @@ class EnrollmentForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -188,7 +196,7 @@ class EnrollmentForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -257,7 +265,7 @@ class EnrollmentForm extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
-        {_.map(data, (attachment, index) => {
+        {map(data, (attachment, index) => {
           const name = attachment.name.substring(0, 16)
           return (
             <View key={index} style={customFormStyles.attachmentWrapper}>
@@ -277,7 +285,7 @@ class EnrollmentForm extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fieldProperties } = this.state
-    const updatedAttachment = _.filter(data, (file, index) => {
+    const updatedAttachment = filter(data, (file, index) => {
       return index != attachment
     })
 
@@ -352,7 +360,7 @@ class EnrollmentForm extends Component {
       <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
         <View style={customFormStyles.aboutClientContainer}>
           {this.datePickerType('Enroll Date', enrollment_date)}
-          {_.map(programStream.enrollment, (formField, index) => {
+          {map(programStream.enrollment, (formField, index) => {
             const fieldType = formField.type
             const label = formField.label
             return (

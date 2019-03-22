@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import CryptoJS from 'crypto-js'
 import { startScreen, startTabScreen } from '../../navigation/config'
-import { updatePin } from '../../redux/actions/auth'
+import { updatePin, setDefaultHeader } from '../../redux/actions/auth'
 import PinCode from '../../components/pin'
 import i18n from '../../i18n'
 
@@ -28,6 +28,7 @@ class Pin extends Component {
       const oldCode = String(pinCode)
 
       if (newCode == oldCode) {
+        this.props.setDefaultHeader(this.props.user.headers)
         pinMode == 'compare' ? startTabScreen() : this.props.updatePin(code)
       } else {
         vibration()
@@ -66,7 +67,8 @@ const mapState = state => ({
 })
 
 const mapDispatch = {
-  updatePin
+  updatePin,
+  setDefaultHeader
 }
 
 export default connect(

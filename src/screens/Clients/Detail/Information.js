@@ -1,11 +1,11 @@
 import React, { Component }         from 'react'
-import moment                       from 'moment'
-import _                            from 'lodash'
-import Field                        from '../../../components/Field'
 import Card                         from '../../../components/Card'
 import i18n                         from '../../../i18n'
-import FastImage                    from 'react-native-fast-image'
 import call                         from 'react-native-phone-call'
+import moment                       from 'moment'
+import Field                        from '../../../components/Field'
+import FastImage                    from 'react-native-fast-image'
+import { map, upperCase }           from 'lodash'
 import {
   View,
   Text,
@@ -39,7 +39,7 @@ export default class ClientInformation extends Component {
     const communeName = client.commune && `${client.commune.name_en} / ${client.commune.name_kh}`
     const districtName = client.district && client.district.name
     const provinceName = client.current_province && client.current_province.name
-    const countryName = setting && _.upperCase(setting.country_name)
+    const countryName = setting && upperCase(setting.country_name)
     const house = this.serializeAddress(i18n.t('client.form.house_number'), client.house_number)
     const street = this.serializeAddress(i18n.t('client.form.street_number'), client.street_number)
 
@@ -60,7 +60,7 @@ export default class ClientInformation extends Component {
           <Field name={i18n.t('client.form.current_province')} value={client.current_province == undefined ? '' : client.current_province.name} />
           <Field name={i18n.t('client.form.code')} value={client.code} />
           <Field name={i18n.t('client.form.kid_id')} value={client.kid_id} />
-          <Field name={i18n.t('client.form.donor')} value={_.map(client.donors, 'name').join(', ')} />
+          <Field name={i18n.t('client.form.donor')} value={map(client.donors, 'name').join(', ')} />
           <Field name={i18n.t('client.form.address')} value={this.address()} />
           <Field name={i18n.t('client.form.what3words')} value={client.what3words} />
           <Field name={i18n.t('client.form.birth_province')} value={client.birth_province == undefined ? '' : client.birth_province.name} />
@@ -107,10 +107,9 @@ export default class ClientInformation extends Component {
           <Field name={i18n.t('client.form.has_been_orphanage')} value={client.has_been_in_orphanage ? 'Yes' : 'No'} />
           <Field name={i18n.t('client.form.has_goverment_care')} value={client.has_been_in_government_care ? 'Yes' : 'No'} />
           <Field name={i18n.t('client.form.relevant_referral_information')} value={client.relevant_referral_information} />
-          <Field name={i18n.t('client.form.case_worker')} value={_.map(client.case_workers, cw => `${cw.first_name} ${cw.last_name}`).join(', ')} />
-          <Field name={i18n.t('client.form.agencies_involved')} value={_.map(client.agencies, 'name').join(', ')} />
+          <Field name={i18n.t('client.form.case_worker')} value={map(client.case_workers, cw => `${cw.first_name} ${cw.last_name}`).join(', ')} />
+          <Field name={i18n.t('client.form.agencies_involved')} value={map(client.agencies, 'name').join(', ')} />
           {client.quantitative_cases.map((qc, index) => {
-            const cases = qc.client_quantitative_cases.toString().replace(',', ' , ')
             return (
               <Field name={qc.quantitative_type} key={index}>
                 <View style={styles.qcWrapper}>

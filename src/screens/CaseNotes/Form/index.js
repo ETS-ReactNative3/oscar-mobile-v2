@@ -1,20 +1,29 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, Text, ScrollView, KeyboardAvoidingView, TextInput, Platform, Image, TouchableWithoutFeedback, Alert } from 'react-native'
-import { Navigation } from 'react-native-navigation'
-import DatePicker from 'react-native-datepicker'
-import ImagePicker from 'react-native-image-picker'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import { Button, CheckBox } from 'react-native-elements'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { groupBy, map } from 'lodash'
-import i18n from '../../../i18n'
-import { loadingScreen } from '../../../navigation/config'
-import { createTask, deleteTask } from '../../../redux/actions/tasks'
-import { saveCaseNote } from '../../../redux/actions/caseNotes'
-import { MAIN_COLOR } from '../../../constants/colors'
-import styles from './styles'
+import React, { Component }                     from 'react'
+import { connect }                              from 'react-redux'
+import { Navigation }                           from 'react-native-navigation'
+import { MAIN_COLOR }                           from '../../../constants/colors'
+import { groupBy, map }                         from 'lodash'
+import { saveCaseNote }                         from '../../../redux/actions/caseNotes'
+import { Button, CheckBox }                     from 'react-native-elements'
+import { createTask, deleteTask }               from '../../../redux/actions/tasks'
+import styles                                   from './styles'
+import i18n                                     from '../../../i18n'
+import Icon                                     from 'react-native-vector-icons/MaterialIcons'
+import DatePicker                               from 'react-native-datepicker'
+import ImagePicker                              from 'react-native-image-picker'
+import SectionedMultiSelect                     from 'react-native-sectioned-multi-select'
+import { DocumentPicker, DocumentPickerUtil }   from 'react-native-document-picker'
+import {
+  View,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  TextInput,
+  Platform,
+  Image,
+  TouchableWithoutFeedback,
+  Alert
+} from 'react-native'
 
 const MAX_UPLOAD_SIZE = 30000
 
@@ -58,7 +67,7 @@ class CaseNoteForm extends Component {
       this.attendeeInput.focus()
       return
     }
-      
+
     if (interactionType === 'default_type') {
       Alert.alert(
         i18n.t('client.case_note_form.validation_title'),
@@ -79,7 +88,6 @@ class CaseNoteForm extends Component {
       caseNoteDomainGroups
     }
 
-    loadingScreen()
     this.props.saveCaseNote(params, client, action, previousComponentId, this.props.onSaveSuccess)
   }
 

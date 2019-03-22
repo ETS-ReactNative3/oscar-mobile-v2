@@ -134,6 +134,7 @@ export const startTabScreen = async () => {
                   text: i18n.t('client.title'),
                   testID: 'CLIENTS_TAB_BAR_BUTTON',
                   icon: icons.person,
+                  iconColor: '#808080',
                   selectedIconColor: MAIN_COLOR,
                   selectedTextColor: MAIN_COLOR
                 }
@@ -161,6 +162,7 @@ export const startTabScreen = async () => {
                   text: i18n.t('task.title'),
                   testID: 'TASKS_TAB_BAR_BUTTON',
                   icon: icons.assignment,
+                  iconColor: '#808080',
                   selectedIconColor: MAIN_COLOR,
                   selectedTextColor: MAIN_COLOR
                 }
@@ -188,6 +190,7 @@ export const startTabScreen = async () => {
                   text: i18n.t('family.title'),
                   testID: 'FAMILIES_TAB_BAR_BUTTON',
                   icon: icons.people,
+                  iconColor: '#808080',
                   selectedIconColor: MAIN_COLOR,
                   selectedTextColor: MAIN_COLOR
                 }
@@ -227,6 +230,7 @@ export const startTabScreen = async () => {
                 bottomTab: {
                   text: i18n.t('user.title'),
                   icon: icons.accountBox,
+                  iconColor: '#808080',
                   selectedIconColor: MAIN_COLOR,
                   selectedTextColor: MAIN_COLOR
                 }

@@ -1,20 +1,28 @@
-import React, { Component } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Image, Dimensions, Alert } from 'react-native'
-import { Navigation } from 'react-native-navigation'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import Swiper from 'react-native-swiper'
-import Field from './Field'
-import Card from './Card'
-import DropdownAlert from 'react-native-dropdownalert'
-import _ from 'lodash'
-import i18n from '../i18n'
-import appIcon from '../utils/Icon'
-var moment = require('moment')
-const { height } = Dimensions.get('window')
-import { connect } from 'react-redux'
-import { pushScreen } from '../navigation/config'
-import { additionalFormDetailList } from '../styles'
+import React, { Component }           from 'react'
+import Card                           from './Card'
+import i18n                           from '../i18n'
+import Icon                           from 'react-native-vector-icons/MaterialIcons'
+import Field                          from './Field'
+import moment                         from 'moment'
+import Swiper                         from 'react-native-swiper'
+import appIcon                        from '../utils/Icon'
+import DropdownAlert                  from 'react-native-dropdownalert'
+import { connect }                    from 'react-redux'
+import { map, find }                  from 'lodash'
+import { pushScreen }                 from '../navigation/config'
+import { Navigation }                 from 'react-native-navigation'
+import { additionalFormDetailList }   from '../styles'
+import {
+  View,
+  Text,
+  Image,
+  Alert,
+  ScrollView,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from 'react-native'
 
+const { height } = Dimensions.get('window')
 class AdditionalFormDetailList extends Component {
   constructor(props) {
     super(props)
@@ -150,10 +158,10 @@ class AdditionalFormDetailList extends Component {
   renderFormField = customFieldProperty => {
     const self = this
     const { customForm } = this.props
-    const fieldsKey = _.map(customForm.fields, 'label')
-    const fieldsType = _.map(customForm.fields, 'type')
+    const fieldsKey = map(customForm.fields, 'label')
+    const fieldsType = map(customForm.fields, 'type')
     const filedProperties = customFieldProperty.properties
-    return _.map(fieldsKey, (field, index) => {
+    return map(fieldsKey, (field, index) => {
       let customFieldProperties = []
       if (fieldsType[index] != 'separateLine') {
         if (filedProperties[field] != undefined && typeof filedProperties[field] === 'string') {
@@ -215,7 +223,7 @@ class AdditionalFormDetailList extends Component {
 const mapState = (state, ownProps) => {
   const entity = ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
   const message = ownProps.type == 'client' ? state.clients.message : state.families.message
-  const customForm = _.find(entity.additional_form, { id: ownProps.customFormId })
+  const customForm = find(entity.additional_form, { id: ownProps.customFormId })
   return { entity, customForm, visible: true, message: message }
 }
 

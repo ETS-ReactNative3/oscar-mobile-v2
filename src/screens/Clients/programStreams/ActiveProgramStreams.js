@@ -1,14 +1,18 @@
-import React, { Component } from 'react'
-import { StyleSheet, View, Text, ScrollView, TouchableWithoutFeedback, ActivityIndicator, Alert } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Divider, SearchBar } from 'react-native-elements'
-import { programStreamStyles } from '../../../styles'
-import { pushScreen } from '../../../navigation/config'
-import _ from 'lodash'
-import appIcon from '../../../utils/Icon'
-import { Navigation } from 'react-native-navigation'
-import DropdownAlert from 'react-native-dropdownalert'
-import { connect } from 'react-redux'
+import React, { Component }               from 'react'
+import appIcon                            from '../../../utils/Icon'
+import DropdownAlert                      from 'react-native-dropdownalert'
+import { connect }                        from 'react-redux'
+import { pushScreen }                     from '../../../navigation/config'
+import { Divider, SearchBar }             from 'react-native-elements'
+import { programStreamStyles }            from '../../../styles'
+import { map, filter, isEmpty, orderBy }  from 'lodash'
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  TouchableWithoutFeedback
+} from 'react-native'
 class ActiveProgramStreams extends Component {
   constructor(props) {
     super(props)
@@ -23,13 +27,13 @@ class ActiveProgramStreams extends Component {
   componentWillMount() {
     const self = this
     const { programStreams, client } = this.props
-    const clientProgram = _.map(client.program_streams, 'id')
-    const inActiveProgram = _.map(client.inactive_program_streams, 'id')
+    const clientProgram = map(client.program_streams, 'id')
+    const inActiveProgram = map(client.inactive_program_streams, 'id')
 
     let enrolledPrograms = []
     let unEnrollPrograms = []
 
-    const programStreamReorders = _.map(programStreams, program_stream => {
+    const programStreamReorders = map(programStreams, program_stream => {
       if (inActiveProgram.includes(program_stream.id)) {
         enrolledPrograms = [program_stream, ...enrolledPrograms]
       } else {
@@ -40,7 +44,7 @@ class ActiveProgramStreams extends Component {
       return program_stream
     })
 
-    unEnrollPrograms = _.orderBy(unEnrollPrograms, [program_stream => program_stream.name.toLowerCase()], ['asc'])
+    unEnrollPrograms = orderBy(unEnrollPrograms, [program_stream => program_stream.name.toLowerCase()], ['asc'])
     const mergePrograms = enrolledPrograms.concat(unEnrollPrograms)
 
     setTimeout(function() {
@@ -56,11 +60,11 @@ class ActiveProgramStreams extends Component {
   _enrollClient(program_stream, client_program_stream) {
     const { client } = this.props
     const clientsEnrollAble = program_stream.enrollable_client_ids
-    const activeProgram = _.filter(client.inactive_program_streams, clientProgram => {
+    const activeProgram = filter(client.inactive_program_streams, clientProgram => {
       return clientProgram.id == program_stream.id
     })
-    if (!_.isEmpty(program_stream.program_exclusive) || !_.isEmpty(program_stream.mutual_dependence)) {
-      if (!_.isEmpty(program_stream.program_exclusive)) {
+    if (!isEmpty(program_stream.program_exclusive) || !isEmpty(program_stream.mutual_dependence)) {
+      if (!isEmpty(program_stream.program_exclusive)) {
         if (program_stream.program_exclusive.includes(program_stream.id)) {
           this.refs.dropdown.alertWithType('warn', 'Warning', "Client doesn't match with this program rules")
         } else {
@@ -117,7 +121,7 @@ class ActiveProgramStreams extends Component {
   _checkProgramStream(program_stream, status) {
     const { client } = this.props
     if (status == 'Exited') {
-      let findProgramStream = _.filter(client.inactive_program_streams, { id: program_stream.id })
+      let findProgramStream = filter(client.inactive_program_streams, { id: program_stream.id })
       findProgramStream = findProgramStream[0]
       this._enrollClient(program_stream, findProgramStream)
     } else {
@@ -132,7 +136,7 @@ class ActiveProgramStreams extends Component {
     let filterProgramStreams = []
 
     if (text != '' && text.length >= 1) {
-      filterProgramStreams = _.filter(original_program_streams, program_stream => {
+      filterProgramStreams = filter(original_program_streams, program_stream => {
         let name = program_stream.name.toLowerCase()
         return name.includes(text.toLowerCase())
       })
@@ -217,13 +221,13 @@ class ActiveProgramStreams extends Component {
             showLoadingIcon={isFiltering}
           />
           <ScrollView style={programStreamStyles.mainContainer}>
-            {_.map(program_streams, (program_stream, index) => {
+            {map(program_streams, (program_stream, index) => {
               let status = ''
-              const clientProgram = _.filter(client.program_streams, clientProgram => {
+              const clientProgram = filter(client.program_streams, clientProgram => {
                 return clientProgram.id == program_stream.id
               })
 
-              const inActiveProgram = _.filter(client.inactive_program_streams, clientProgram => {
+              const inActiveProgram = filter(client.inactive_program_streams, clientProgram => {
                 return clientProgram.id == program_stream.id
               })
 
@@ -253,7 +257,7 @@ class ActiveProgramStreams extends Component {
                       <View style={programStreamStyles.domainWrapper}>
                         <Text style={programStreamStyles.domainKey}>Domain:</Text>
                         <View style={programStreamStyles.domainValue}>
-                          {_.map(program_stream.domain, (domain, dIndex) => {
+                          {map(program_stream.domain, (domain, dIndex) => {
                             return (
                               <View key={dIndex} style={programStreamStyles.domainValueButtonWrapper}>
                                 <Text style={programStreamStyles.domainValueButton}>{domain}</Text>

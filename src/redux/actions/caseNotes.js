@@ -1,37 +1,39 @@
-import axios            from "axios"
-import { Alert }        from "react-native"
-import { Navigation }   from "react-native-navigation"
-import endpoint         from "../../constants/endpoint"
-import { updateClient } from "./clients"
-import { updateUser }   from './users'
+import axios              from "axios"
+import endpoint           from "../../constants/endpoint"
+import { NetInfo }        from "react-native"
+import { Navigation }     from "react-native-navigation"
+import { updateUser }     from './users'
+import { updateClient }   from "./clients"
+import { loadingScreen }  from '../../navigation/config'
 
 export function saveCaseNote(params, client, action, previousComponentId, onSuccess) {
-  return (dispatch, getState) => {
-    const hasInternet    = getState().internet.hasInternet
+  return dispatch => {
     const caseNotesPath  = endpoint.clientsPath + '/' + client.id + endpoint.caseNotesPath
     const path           = action === 'update' ? (caseNotesPath + '/' + params.id) : caseNotesPath
     const caseNoteParams = handleCaseNoteParams(params, action)
     const axiosSend      = action === 'update' ? axios.put : axios.post
-
-    if (hasInternet) {
-      axiosSend(path, caseNoteParams)
-        .then(response => {
-          let case_note = response.data.case_note
-          case_note = { ...case_note, case_note_domain_group: case_note.case_note_domain_groups }
-
-          if (action === 'update')
-            client.case_notes = client.case_notes.map(cn => cn.id === case_note.id ? case_note : cn)
-          else
-            client.case_notes.unshift(case_note)
-
-          dispatch(removeCompletedTasks(params, client, onSuccess))
-          Navigation.dismissOverlay('LOADING_SCREEN')
-          Navigation.popTo(previousComponentId)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        loadingScreen()
+        axiosSend(path, caseNoteParams)
+          .then(response => {
+            let case_note = response.data.case_note
+            case_note = { ...case_note, case_note_domain_group: case_note.case_note_domain_groups }
+            if (action === 'update')
+              client.case_notes = client.case_notes.map(cn => cn.id === case_note.id ? case_note : cn)
+            else
+              client.case_notes.unshift(case_note)
+            dispatch(removeCompletedTasks(params, client, onSuccess))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(previousComponentId)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } else {
+        alert('No internet connection')
+      }
+    })
   }
 }
 
@@ -39,7 +41,11 @@ export const removeCompletedTasks = (params, client, onSuccess) => {
   return (dispatch, getState) => {
     const users   = getState().users.data
     const auth    = getState().auth.data
-    const taskIds = params.caseNoteDomainGroups.map(cndg => cndg.task_ids).flat()
+    const taskIds = []
+
+    params.caseNoteDomainGroups.forEach(cndg => {
+      cndg.task_ids.length < 0 && taskIds.push(cndg.task_ids)
+    })
 
     let user      = users[auth.id]
 
@@ -82,7 +88,7 @@ handleCaseNoteParams = (params, action) => {
   formdata.append(`case_note[client_id]`, params.clientId)
   formdata.append(`case_note[meeting_date]`, params.meetingDate)
   formdata.append(`case_note[interaction_type]`, params.interactionType)
-  
+
   params.caseNoteDomainGroups.forEach((cndg, index) => {
     if (action === 'update')
       formdata.append(`case_note[case_note_domain_groups_attributes[${index}][id]]`, cndg.id)

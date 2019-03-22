@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, Text, TouchableOpacity } from 'react-native'
-import moment from 'moment'
-import _ from 'lodash'
-import styles from './styles'
-import i18n from '../../i18n'
-import { pushScreen } from '../../navigation/config'
-import appIcon from '../../utils/Icon'
-import DropdownAlert from 'react-native-dropdownalert'
-
+import React, { Component }               from 'react'
+import i18n                               from '../../i18n'
+import moment                             from 'moment'
+import styles                             from './styles'
+import appIcon                            from '../../utils/Icon'
+import DropdownAlert                      from 'react-native-dropdownalert'
+import { connect }                        from 'react-redux'
+import { pushScreen }                     from '../../navigation/config'
+import { orderBy, maxBy }                 from 'lodash'
+import { View, Text, TouchableOpacity }   from 'react-native'
 class Assessments extends Component {
   state = {
     client: this.props.client,
@@ -70,17 +69,13 @@ class Assessments extends Component {
     const { client } = this.state
     const isDefault = assessmentType === 'default'
     const assessments = client.assessments.filter(assessment => assessment.default === isDefault)
-    const lastAssessment = _.maxBy(assessments, 'created_at') || {}
+    const lastAssessment = maxBy(assessments, 'created_at') || {}
     const today = moment()
     const title = assessmentType === 'default' ? `Next ${setting.default_assessment} on` : `Next ${setting.custom_assessment} on`
 
     const threeMonthsAfterAssessment = moment(lastAssessment.created_at).add(3, 'months')
     const sixMonthsAfterAssessment = moment(lastAssessment.created_at).add(6, 'months')
-    // const hasIncompletedAssessment   = _.some(assessments, { completed: false })
 
-    // if (hasIncompletedAssessment ||
-    //   (assessments.length === 1 && today < threeMonthsAfterAssessment)
-    // ) {
     if (assessments.length === 1 && today < threeMonthsAfterAssessment) {
       return <AssessmentButton label={title} value={sixMonthsAfterAssessment.format('LL')} disable />
     }
@@ -93,7 +88,7 @@ class Assessments extends Component {
   _renderAssessments() {
     const { setting } = this.props
     const { client } = this.state
-    const assessments = _.orderBy(client.assessments, ['created_at'], ['asc'])
+    const assessments = orderBy(client.assessments, ['created_at'], ['asc'])
     const defaultAssessments = assessments.filter(assessment => assessment.default)
     const customAssessments = assessments.filter(assessment => !assessment.default)
 

@@ -1,18 +1,24 @@
-import React, { Component } from 'react'
-import { View, Text, ScrollView, TouchableWithoutFeedback, Image, Alert } from 'react-native'
-import { Divider } from 'react-native-elements'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import Card from '../../../components/Card'
-import _ from 'lodash'
-import moment from 'moment'
-import appIcon from '../../../utils/Icon'
-import { pushScreen } from '../../../navigation/config'
-import { connect } from 'react-redux'
-import { enrollmentDetail } from '../../../styles'
-import { deleteEnrollmentForm, deleteTrackingForm } from '../../../redux/actions/programStreams'
-import i18n from '../../../i18n'
-import ModalImage from '../../../components/ModalImage'
-import DropdownAlert from 'react-native-dropdownalert'
+import React, { Component }                             from 'react'
+import i18n                                             from '../../../i18n'
+import Card                                             from '../../../components/Card'
+import Icon                                             from 'react-native-vector-icons/MaterialIcons'
+import moment                                           from 'moment'
+import appIcon                                          from '../../../utils/Icon'
+import ModalImage                                       from '../../../components/ModalImage'
+import DropdownAlert                                    from 'react-native-dropdownalert'
+import { connect }                                      from 'react-redux'
+import { Divider }                                      from 'react-native-elements'
+import { map, find, isEmpty }                           from 'lodash'
+import { pushScreen }                                   from '../../../navigation/config'
+import { enrollmentDetail }                             from '../../../styles'
+import { deleteEnrollmentForm, deleteTrackingForm }     from '../../../redux/actions/programStreams'
+import {
+  Alert,
+  View,
+  Text,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 class EnrollmentDetail extends Component {
   constructor(props) {
     super(props)
@@ -30,7 +36,7 @@ class EnrollmentDetail extends Component {
   }
 
   _renderFile(files) {
-    return _.map(files, (file, index) => {
+    return map(files, (file, index) => {
       const filename = file.url.substring(file.url.lastIndexOf('/') + 1)
       const extension = filename.split('.').pop()
       return (
@@ -45,7 +51,7 @@ class EnrollmentDetail extends Component {
   _renderMutipleValue(values) {
     return (
       <View style={enrollmentDetail.row} key={Math.random()}>
-        {_.map(values, (value, vIndex) => {
+        {map(values, (value, vIndex) => {
           return (
             <Text key={`${Math.random()}-${vIndex}`} style={[enrollmentDetail.detailLabel, enrollmentDetail.labelWrapper]}>
               {value}
@@ -165,11 +171,11 @@ class EnrollmentDetail extends Component {
     } else {
       const values = form.properties
       const fields = type == 'Tracking' ? form.tracking_field : type == 'Enroll' ? form.enrollment_field : form.leave_program_field
-      const keys = _.map(fields, 'label')
-      const types = _.map(fields, 'type')
+      const keys = map(fields, 'label')
+      const types = map(fields, 'type')
       const cardTitle = `${this.props.type == 'Tracking' ? 'Tracking' : this.props.type == 'Enroll' ? 'Enrolled ' : 'Exited'}`
       const date = `${this.props.type == 'Tracking' ? form.created_at : this.props.type == 'Enroll' ? form.enrollment_date : form.exit_date}`
-      const newDate = !_.isEmpty(date) ? moment(date).format('D MMM, YYYY') : ''
+      const newDate = !isEmpty(date) ? moment(date).format('D MMM, YYYY') : ''
       const title = `on ${newDate}`
       return (
         <View style={{ flex: 1 }}>
@@ -180,7 +186,7 @@ class EnrollmentDetail extends Component {
               rightButton={this.renderActions(form, this.props)}
             >
               <ScrollView ref="caseNoteCard">
-                {_.map(keys, (field, index) => {
+                {map(keys, (field, index) => {
                   if (types[index] != 'separateLine') {
                     return (
                       <View key={`${Math.random()}-${index}`}>
@@ -212,11 +218,11 @@ const mapState = (state, ownProps) => {
   const client = state.clients.data[ownProps.clientId]
   const programStream =
     ownProps.clickForm == 'EnrolledProgram'
-      ? _.find(client.program_streams, { id: ownProps.programStreamId })
-      : _.find(client.inactive_program_streams, { id: ownProps.programStreamId })
-  let enrollment = programStream != undefined && _.find(programStream.enrollments, { id: ownProps.enrollmentId })
+      ? find(client.program_streams, { id: ownProps.programStreamId })
+      : find(client.inactive_program_streams, { id: ownProps.programStreamId })
+  let enrollment = programStream != undefined && find(programStream.enrollments, { id: ownProps.enrollmentId })
   if (ownProps.type == 'Tracking') {
-    enrollment = _.find(enrollment.trackings, { id: ownProps.formId })
+    enrollment = find(enrollment.trackings, { id: ownProps.formId })
   }
   return { client, programStream, enrollment }
 }

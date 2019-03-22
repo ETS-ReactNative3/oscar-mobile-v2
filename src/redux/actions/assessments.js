@@ -1,44 +1,48 @@
 import axios from 'axios'
-import { Navigation } from 'react-native-navigation'
-import endpoint from '../../constants/endpoint'
-import { updateClient } from './clients'
-import { loadingScreen } from '../../navigation/config'
+import { updateClient }             from './clients'
+import { Alert, NetInfo }           from 'react-native'
+import { loadingScreen }            from '../../navigation/config'
+import { Navigation }               from 'react-native-navigation'
+import endpoint                     from '../../constants/endpoint'
 
 export function updateAssessment(params, assessmentId, client, previousComponentId, onSuccess) {
-  loadingScreen()
-  return (dispatch, getState) => {
-    const hasInternet = getState().internet.hasInternet
-    const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath + '/' + assessmentId
-    const assessmentParams = handleAssessmentParams(params, 'update')
+  return dispatch => {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath + '/' + assessmentId
+        const assessmentParams = handleAssessmentParams(params, 'update')
 
-    if (hasInternet) {
-      axios
-        .put(path, assessmentParams)
-        .then(response => {
-          client.assessments.forEach(assessment => {
-            if (assessment.id === assessmentId) assessment.assessment_domain = params.assessmentDomains
+        loadingScreen()
+        axios
+          .put(path, assessmentParams)
+          .then(response => {
+            client.assessments.forEach(assessment => {
+              if (assessment.id === assessmentId) assessment.assessment_domain = params.assessmentDomains
+            })
+            updateClient(client)
+            onSuccess(client)
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(previousComponentId)
           })
-          updateClient(client)
-          onSuccess(client)
-          Navigation.dismissOverlay('LOADING_SCREEN')
-          Navigation.popTo(previousComponentId)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
+          .catch(err => {
+            console.log(err)
+          })
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 
 export function createAssessment(params, client, previousComponentId, onSuccess) {
-  loadingScreen()
-  return (dispatch, getState) => {
-    const hasInternet = getState().internet.hasInternet
-    const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath
-    const assessmentParams = handleAssessmentParams(params, 'create')
+  return dispatch => {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath
+        const assessmentParams = handleAssessmentParams(params, 'create')
 
-    if (hasInternet) {
-      axios
+        loadingScreen()
+        axios
         .post(path, assessmentParams)
         .then(response => {
           client.assessments.push(response.data.assessment)
@@ -51,7 +55,10 @@ export function createAssessment(params, client, previousComponentId, onSuccess)
         .catch(err => {
           console.log(err.response)
         })
-    }
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
   }
 }
 

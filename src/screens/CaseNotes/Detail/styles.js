@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10
   },
-  
+
   contentWrapper: {
     flex: 1,
     paddingLeft: 20,

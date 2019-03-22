@@ -1,11 +1,12 @@
 import React, { Component }                   from 'react'
 import { connect }                            from 'react-redux'
+import { styles }                             from './styles'
 import { pushScreen }                         from '../../navigation/config'
 import { fetchProvinces }                     from '../../redux/actions/provinces'
 import { fetchDepartments }                   from '../../redux/actions/departments'
 import { logoutUser }                         from '../../redux/actions/auth'
 import { Navigation }                         from 'react-native-navigation'
-import { styles }                             from './styles'
+import { find, capitalize }                   from 'lodash'
 import DropdownAlert                          from 'react-native-dropdownalert'
 import call                                   from 'react-native-phone-call'
 import Button                                 from 'apsl-react-native-button'
@@ -13,7 +14,6 @@ import Field                                  from '../../components/Field'
 import Card                                   from '../../components/Card'
 import appIcon                                from '../../utils/Icon'
 import i18n                                   from '../../i18n'
-import _                                      from 'lodash'
 import {
   View,
   ScrollView,
@@ -61,15 +61,15 @@ class User extends Component {
   render() {
     const { provinces, departments, user, loading } = this.props
     const { first_name, last_name, gender, job_title, department_id, mobile, email, date_of_birth, start_date, province_id } = user
-    const department = _.find(departments, { id: department_id })
-    const province = _.find(provinces, { id: province_id })
+    const department = find(departments, { id: department_id })
+    const province = find(provinces, { id: province_id })
     return (
       <View style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Card title={i18n.t('user.about_user')}>
             <Field name={i18n.t('user.first_name')} value={first_name} />
             <Field name={i18n.t('user.last_name')} value={last_name} />
-            <Field name={i18n.t('user.gender')} value={_.capitalize(gender)} />
+            <Field name={i18n.t('user.gender')} value={capitalize(gender)} />
             <Field name={i18n.t('user.job_title')} value={job_title} />
             <Field name={i18n.t('user.department')} value={department && department.name} />
             <Field name={i18n.t('user.mobile')}>

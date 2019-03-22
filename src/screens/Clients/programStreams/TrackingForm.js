@@ -1,21 +1,33 @@
-import React, { Component } from 'react'
-import { View, Text, TextInput, ScrollView, Dimensions, Alert, Image, TouchableWithoutFeedback } from 'react-native'
-import { CheckBox, Button, Divider } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import ImagePicker from 'react-native-image-picker'
-import { Navigation } from 'react-native-navigation'
-import moment from 'moment'
-import i18n from '../../../i18n'
-import { customFormStyles } from '../../../styles'
-import { options, MAX_SIZE } from '../../../constants/option'
-import { MAIN_COLOR } from '../../../constants/colors'
-import { validateCustomForm, formTypes, disabledUpload } from '../../../utils/validation'
+import React, { Component }                       from 'react'
+import i18n                                       from '../../../i18n'
+import Icon                                       from 'react-native-vector-icons/MaterialIcons'
+import DatePicker                                 from 'react-native-datepicker'
+import ImagePicker                                from 'react-native-image-picker'
+import SectionedMultiSelect                       from 'react-native-sectioned-multi-select'
+import { connect }                                from 'react-redux'
+import { Navigation }                             from 'react-native-navigation'
+import { MAIN_COLOR }                             from '../../../constants/colors'
+import { map, filter }                            from 'lodash'
+import { customFormStyles }                       from '../../../styles'
+import { CheckBox, Divider }                      from 'react-native-elements'
+import { options, MAX_SIZE }                      from '../../../constants/option'
+import { DocumentPicker, DocumentPickerUtil }     from 'react-native-document-picker'
 import { createTrackingForm, updateTrackingForm } from '../../../redux/actions/programStreams'
-import { connect } from 'react-redux'
+import {
+  formTypes,
+  disabledUpload,
+  validateCustomForm,
+} from '../../../utils/validation'
+
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Alert,
+  Image,
+  TouchableWithoutFeedback
+} from 'react-native'
 class TrackingForm extends Component {
   constructor(props) {
     super(props)
@@ -28,7 +40,7 @@ class TrackingForm extends Component {
       const { programStream, tracking, client, action } = this.props
       const { field_properties } = this.state
 
-      const lastActive = _.filter(programStream.enrollments, enrollment => {
+      const lastActive = filter(programStream.enrollments, enrollment => {
         return enrollment.status == 'Active'
       })
       const client_enrolled_programs_id = lastActive[0].id
@@ -51,7 +63,7 @@ class TrackingForm extends Component {
     const fields = action == 'create' ? tracking.fields : tracking.tracking_field
     const Values = action == 'create' ? null : tracking.properties
 
-    _.map(fields, field => {
+    map(fields, field => {
       if (formTypes.includes(field.type)) {
         if (['checkbox-group', 'multiple', 'select', 'file'].includes(field.type)) {
           field_properties[field.label] = Values != null ? Values[field.label] : []
@@ -76,7 +88,7 @@ class TrackingForm extends Component {
   _updateMultipleSelect(label, value) {
     let { field_properties } = this.state
     if (field_properties[label].includes(value)) {
-      field_properties[label] = _.filter(field_properties[label], selected_value => {
+      field_properties[label] = filter(field_properties[label], selected_value => {
         return selected_value != value
       })
     } else {
@@ -86,7 +98,7 @@ class TrackingForm extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
+    return map(options, option => ({ name: option.label, id: option.label }))
   }
 
   _datePickerType(label, data) {
@@ -171,7 +183,7 @@ class TrackingForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -194,7 +206,7 @@ class TrackingForm extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -264,7 +276,7 @@ class TrackingForm extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
-        {_.map(data, (attachment, index) => {
+        {map(data, (attachment, index) => {
           if (attachment.name != undefined) {
             const name = attachment.name.substring(0, 16)
             return (
@@ -286,7 +298,7 @@ class TrackingForm extends Component {
 
   _removeAttactment(data, attachment, label) {
     let { field_properties } = this.state
-    const updatedAttachment = _.filter(data, (file, index) => {
+    const updatedAttachment = filter(data, (file, index) => {
       return index != attachment
     })
 
@@ -374,7 +386,7 @@ class TrackingForm extends Component {
     return (
       <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
         <View style={customFormStyles.aboutClientContainer}>
-          {_.map(fields, (formField, index) => {
+          {map(fields, (formField, index) => {
             const fieldType = formField.type
             const label = formField.label
             return (

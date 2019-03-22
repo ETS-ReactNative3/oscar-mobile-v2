@@ -1,20 +1,29 @@
-import React, { Component } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Image, Dimensions, Alert } from 'react-native'
-import Swiper from 'react-native-swiper'
-import Card from '../../../components/Card'
-import _ from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { pushScreen } from '../../../navigation/config'
-import Field from '../../../components/Field'
-import { additionalFormDetailList } from '../../../styles'
-import { connect } from 'react-redux'
-import appIcon from '../../../utils/Icon'
-var moment = require('moment')
+import React, { Component }           from 'react'
+import i18n                           from '../../../i18n'
+import Card                           from '../../../components/Card'
+import Icon                           from 'react-native-vector-icons/MaterialIcons'
+import moment                         from 'moment'
+import Swiper                         from 'react-native-swiper'
+import Field                          from '../../../components/Field'
+import appIcon                        from '../../../utils/Icon'
+import DropdownAlert                  from 'react-native-dropdownalert'
+import { connect }                    from 'react-redux'
+import { Navigation }                 from 'react-native-navigation'
+import { pushScreen }                 from '../../../navigation/config'
+import { map, filter, find }          from 'lodash'
+import { deleteTrackingForm }         from '../../../redux/actions/programStreams'
+import { additionalFormDetailList }   from '../../../styles'
+import {
+  View,
+  Text,
+  Image,
+  Alert,
+  Dimensions,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
+
 const { height } = Dimensions.get('window')
-import { deleteTrackingForm } from '../../../redux/actions/programStreams'
-import { Navigation } from 'react-native-navigation'
-import i18n from '../../../i18n'
-import DropdownAlert from 'react-native-dropdownalert'
 class ListTrackingReport extends Component {
   constructor(props) {
     super(props)
@@ -132,10 +141,10 @@ class ListTrackingReport extends Component {
   renderFormField = custom_field => {
     const self = this
     const { tracking } = this.props
-    const fieldsKey = _.map(tracking.fields, 'label')
-    const fieldsType = _.map(tracking.fields, 'type')
+    const fieldsKey = map(tracking.fields, 'label')
+    const fieldsType = map(tracking.fields, 'type')
     const filedProperties = custom_field.properties
-    return _.map(fieldsKey, (field, index) => {
+    return map(fieldsKey, (field, index) => {
       let customerForms = []
       const label = filedProperties[field.replace(/<[^>]+>|;/g, '')]
       if (fieldsType[index] != 'separateLine') {
@@ -179,7 +188,7 @@ class ListTrackingReport extends Component {
     const { visible } = this.state
     const { enrollment } = this.props
     const { mainContainer, container } = additionalFormDetailList
-    const trackings = _.filter(enrollment.trackings, { tracking_id: this.props.tracking.id })
+    const trackings = filter(enrollment.trackings, { tracking_id: this.props.tracking.id })
 
     if (trackings.length == 0) {
       return (
@@ -214,8 +223,8 @@ class ListTrackingReport extends Component {
 
 const mapState = (state, ownProps) => {
   const client = state.clients.data[ownProps.clientId]
-  const programStream = _.find(client.program_streams, { id: ownProps.programStreamId })
-  const enrollment = _.find(programStream.enrollments, { id: ownProps.enrollmentId })
+  const programStream = find(client.program_streams, { id: ownProps.programStreamId })
+  const enrollment = find(programStream.enrollments, { id: ownProps.enrollmentId })
   return { client, programStream, enrollment }
 }
 

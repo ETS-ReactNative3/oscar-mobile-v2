@@ -1,12 +1,17 @@
-import React, { Component } from 'react'
-import { StyleSheet, View, Text, ScrollView, TouchableWithoutFeedback, Alert } from 'react-native'
-import { listTracking } from '../../../styles'
-import _ from 'lodash'
-import { pushScreen } from '../../../navigation/config'
-import appIcon from '../../../utils/Icon'
-import { connect } from 'react-redux'
-import Icon from 'react-native-vector-icons/Ionicons'
-import DropdownAlert from 'react-native-dropdownalert'
+import React, { Component }     from 'react'
+import Icon                     from 'react-native-vector-icons/Ionicons'
+import appIcon                  from '../../../utils/Icon'
+import DropdownAlert            from 'react-native-dropdownalert'
+import { connect }              from 'react-redux'
+import { pushScreen }           from '../../../navigation/config'
+import { filter, find }         from 'lodash'
+import { listTracking }         from '../../../styles'
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 class ListTracking extends Component {
   async renderCreateTackingForm(tracking, programStream) {
     const icons = await appIcon()
@@ -34,15 +39,15 @@ class ListTracking extends Component {
   async _renderTrackingReport(tracking) {
     const { programStream } = this.props
     const icons = await appIcon()
-    let trackingsEnrolled = _.filter(programStream.enrollments, enrollment => {
+    let trackingsEnrolled = filter(programStream.enrollments, enrollment => {
       return enrollment.trackings.length > 0
     })
     let filterTrackings = []
     let otherTrackings = []
 
     if (trackingsEnrolled.length > 0) {
-      filterTrackings = _.filter(trackingsEnrolled[0].trackings, { tracking_id: tracking.id })
-      otherTrackings = _.filter(trackingsEnrolled[0].trackings, track => {
+      filterTrackings = filter(trackingsEnrolled[0].trackings, { tracking_id: tracking.id })
+      otherTrackings = filter(trackingsEnrolled[0].trackings, track => {
         return track.tracking_id != tracking.id
       })
       trackingsEnrolled[0].trackings = filterTrackings
@@ -129,7 +134,7 @@ class ListTracking extends Component {
 
 const mapState = (state, ownProps) => {
   const client = state.clients.data[ownProps.clientId]
-  const programStream = _.find(client.program_streams, { id: ownProps.programStreamId })
+  const programStream = find(client.program_streams, { id: ownProps.programStreamId })
   return { client, programStream }
 }
 

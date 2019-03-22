@@ -1,15 +1,18 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Text, ScrollView, TouchableWithoutFeedback } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import DropdownAlert from 'react-native-dropdownalert'
-import { Divider } from 'react-native-elements'
-import { programStreamStyles } from '../../../styles'
-import { pushScreen } from '../../../navigation/config.js'
-import { connect } from 'react-redux'
-import _ from 'lodash'
-import appIcon from '../../../utils/Icon'
-import i18n from '../../../i18n'
-
+import i18n                       from '../../../i18n'
+import appIcon                    from '../../../utils/Icon'
+import DropdownAlert              from 'react-native-dropdownalert'
+import { connect }                from 'react-redux'
+import { Divider }                from 'react-native-elements'
+import { pushScreen }             from '../../../navigation/config.js'
+import { map, filter }            from 'lodash'
+import { programStreamStyles }    from '../../../styles'
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 class ProgramStreams extends Component {
   _viewEnrollmentReport(programStream) {
     pushScreen(this.props.componentId, {
@@ -73,11 +76,11 @@ class ProgramStreams extends Component {
 
     return (
       <ScrollView style={programStreamStyles.mainContainer}>
-        {_.map(programStreams, programStream => {
-          const activeEnrollments = _.filter(programStream.enrollments, enrollment => {
+        {map(programStreams, programStream => {
+          const activeEnrollments = filter(programStream.enrollments, enrollment => {
             return enrollment.status == 'Active'
           })
-          return _.map(activeEnrollments, (enrollment, index) => {
+          return map(activeEnrollments, (enrollment, index) => {
             return (
               <View key={index} style={programStreamStyles.container}>
                 <View style={programStreamStyles.leftSide}>
@@ -97,7 +100,7 @@ class ProgramStreams extends Component {
                     <View style={programStreamStyles.domainWrapper}>
                       <Text style={programStreamStyles.domainKey}>Domain:</Text>
                       <View style={programStreamStyles.domainValue}>
-                        {_.map(programStream.domain, (domain, dIndex) => {
+                        {map(programStream.domain, (domain, dIndex) => {
                           return (
                             <View key={dIndex} style={programStreamStyles.domainValueButtonWrapper}>
                               <Text style={programStreamStyles.domainValueButton}>{domain}</Text>

@@ -1,5 +1,5 @@
 import { Alert } from 'react-native'
-import _ from 'lodash'
+import { filter, isEmpty } from 'lodash'
 
 export const formTypes = ['checkbox-group', 'textarea', 'date', 'text', 'number', 'radio-group', 'select', 'file']
 
@@ -32,11 +32,11 @@ export function validateProgramStreamForm(
     enrollmentFormFields = enrollment.tracking_field
   }
 
-  const formrequired = _.filter(enrollmentFormFields, field => {
-    return field.required && _.isEmpty(field_properties[field.label])
+  const formrequired = filter(enrollmentFormFields, field => {
+    return field.required && isEmpty(field_properties[field.label])
   })
 
-  const numberBetween = _.filter(enrollmentFormFields, field => {
+  const numberBetween = filter(enrollmentFormFields, field => {
     if (field.type == 'number' && field_properties[field.label] != '') {
       if (field.max != undefined && field.min != undefined) {
         return !(
@@ -51,7 +51,7 @@ export function validateProgramStreamForm(
     }
   })
 
-  const emailValidation = _.filter(enrollmentFormFields, field => {
+  const emailValidation = filter(enrollmentFormFields, field => {
     if (field.type == 'text' && field.subtype == 'email' && field_properties[field.label] != '') {
       return !validateEmail(field_properties[field.label])
     }
@@ -121,11 +121,11 @@ export function validateProgramStreamForm(
 }
 
 export function validateAdditonalForm(status, properties, client, custom_field, additionalForm, actions) {
-  const formrequired = _.filter(additionalForm.fields, field => {
-    return field.required && _.isEmpty(properties[field.label])
+  const formrequired = filter(additionalForm.fields, field => {
+    return field.required && isEmpty(properties[field.label])
   })
 
-  const numberBetween = _.filter(additionalForm.fields, field => {
+  const numberBetween = filter(additionalForm.fields, field => {
     if (field.type == 'number' && properties[field.label] != '') {
       if (field.max != undefined && field.min != undefined) {
         return !(
@@ -140,7 +140,7 @@ export function validateAdditonalForm(status, properties, client, custom_field, 
     }
   })
 
-  const emailValidation = _.filter(additionalForm.fields, field => {
+  const emailValidation = filter(additionalForm.fields, field => {
     if (field.type == 'text' && field.subtype == 'email' && properties[field.label] != '') {
       return !validateEmail(properties[field.label])
     }
@@ -177,11 +177,11 @@ export function validateAdditonalForm(status, properties, client, custom_field, 
 }
 
 export function validateCustomForm(field_properties, fields) {
-  const formrequired = _.filter(fields, field => {
-    return field.required && _.isEmpty(field_properties[field.label])
+  const formrequired = filter(fields, field => {
+    return field.required && isEmpty(field_properties[field.label])
   })
 
-  const numberBetween = _.filter(fields, field => {
+  const numberBetween = filter(fields, field => {
     if (field.type == 'number' && field_properties[field.label] != '') {
       if (field.max != undefined && field.min != undefined) {
         return !(
@@ -196,7 +196,7 @@ export function validateCustomForm(field_properties, fields) {
     }
   })
 
-  const emailValidation = _.filter(fields, field => {
+  const emailValidation = filter(fields, field => {
     if (field.type == 'text' && field.subtype == 'email' && field_properties[field.label] != '') {
       return !validateEmail(field_properties[field.label])
     }

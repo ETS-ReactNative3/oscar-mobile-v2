@@ -1,18 +1,22 @@
-import React, { Component } from 'react'
-import { View, Text, TextInput, Picker, StyleSheet, ScrollView, Dimensions, KeyboardAvoidingView } from 'react-native'
-import { Button, CheckBox, Icon } from 'react-native-elements'
-import DatePicker from 'react-native-datepicker'
-import Profile from './Profile'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import DropdownAlert from 'react-native-dropdownalert'
-import { Navigation } from 'react-native-navigation'
-import { connect } from 'react-redux'
-import { MAIN_COLOR } from '../constants/colors'
-import { schoolGrades, poorIds, genders } from '../constants/clientOptions'
-import styles from '../screens/Clients/Edit/styles'
-import i18n from '../i18n'
-import _ from 'lodash'
-
+import React, { Component }                 from 'react'
+import i18n                                 from '../i18n'
+import styles                               from '../screens/Clients/Edit/styles'
+import Profile                              from './Profile'
+import DatePicker                           from 'react-native-datepicker'
+import DropdownAlert                        from 'react-native-dropdownalert'
+import SectionedMultiSelect                 from 'react-native-sectioned-multi-select'
+import { CheckBox }                         from 'react-native-elements'
+import { MAIN_COLOR }                       from '../constants/colors'
+import { Navigation }                       from 'react-native-navigation'
+import { map, forEach, filter }             from 'lodash'
+import { schoolGrades, poorIds, genders }   from '../constants/clientOptions'
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView
+} from 'react-native'
 export default class ClientForm extends Component {
   constructor(props) {
     super(props)
@@ -35,11 +39,11 @@ export default class ClientForm extends Component {
     let donorIds = []
     if (client.quantitative_cases.length > 0) {
       if (quantitativeTypes != undefined) {
-        _.map(quantitativeTypes, quantitative_type => {
-          _.map(client.quantitative_cases, c_case => {
+        map(quantitativeTypes, quantitative_type => {
+          map(client.quantitative_cases, c_case => {
             if (c_case.quantitative_type == quantitative_type.name) {
-              _.map(c_case.client_quantitative_cases, client_case => {
-                _.map(quantitative_type.quantitative_cases, quantitative_case => {
+              map(c_case.client_quantitative_cases, client_case => {
+                map(quantitative_type.quantitative_cases, quantitative_case => {
                   if (quantitative_case.value == client_case) {
                     quantitativeIds = quantitativeIds.concat(quantitative_case.id)
                   }
@@ -51,13 +55,13 @@ export default class ClientForm extends Component {
       }
     }
     if (client.agencies.length > 0) {
-      agencyIds = _.map(client.agencies, 'id')
+      agencyIds = map(client.agencies, 'id')
     }
     if (client.case_workers.length > 0) {
-      caseWorkersID = _.map(client.case_workers, 'id')
+      caseWorkersID = map(client.case_workers, 'id')
     }
     if (client.donors.length > 0) {
-      donorIds = _.map(client.donors, 'id')
+      donorIds = map(client.donors, 'id')
     }
     this.setState(prevState => ({
       client: Object.assign({}, prevState.client, {
@@ -93,16 +97,16 @@ export default class ClientForm extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.name, id: option.id }))
+    return map(options, option => ({ name: option.name, id: option.id }))
   }
 
   listUserItems(users) {
-    return _.map(users, user => ({ name: `${user.first_name} ${user.last_name}`, id: user.id }))
+    return map(users, user => ({ name: `${user.first_name} ${user.last_name}`, id: user.id }))
   }
 
   listBirthProvinces(birthProvinces) {
     let listBirthProvinces = []
-    _.forEach(birthProvinces, (birthProvince, index) => {
+    forEach(birthProvinces, (birthProvince, index) => {
       const provinces = this.listItems(birthProvince.provinces)
       const country = { name: birthProvince.country, id: index, children: provinces }
       listBirthProvinces.push(country)
@@ -119,7 +123,7 @@ export default class ClientForm extends Component {
           <View key={index} style={styles.inputContainer}>
             <Text style={styles.label}>{quantitative_type.name}</Text>
             <SectionedMultiSelect
-              items={_.map(quantitative_type.quantitative_cases, quantitativeCase => ({ name: quantitativeCase.value, id: quantitativeCase.id }))}
+              items={map(quantitative_type.quantitative_cases, quantitativeCase => ({ name: quantitativeCase.value, id: quantitativeCase.id }))}
               uniqueKey="id"
               modalWithSafeAreaView
               selectText={i18n.t('select_option')}
@@ -150,9 +154,9 @@ export default class ClientForm extends Component {
     const { client } = this.state
     const { users, birthProvinces, provinces, donors, referralSources, communes, villages, quantitativeTypes, agencies, districts } = this.props
 
-    let districtOptions = _.filter(districts, { province_id: client.province_id })
-    let communeOptions = _.filter(communes, { district_id: client.district_id })
-    let villageOptions = _.filter(villages, { commune_id: client.commune_id })
+    let districtOptions = filter(districts, { province_id: client.province_id })
+    let communeOptions = filter(communes, { district_id: client.district_id })
+    let villageOptions = filter(villages, { commune_id: client.commune_id })
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <ScrollView style={styles.mainContainer}>

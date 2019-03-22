@@ -1,16 +1,21 @@
 import React, { Component }     from 'react'
-import DatePicker               from 'react-native-datepicker'
-import SectionedMultiSelect     from 'react-native-sectioned-multi-select'
-import DropdownAlert            from 'react-native-dropdownalert'
+import { connect }              from 'react-redux'
 import { CheckBox }             from 'react-native-elements'
 import { Navigation }           from 'react-native-navigation'
-import { connect }              from 'react-redux'
 import { MAIN_COLOR }           from '../../../constants/colors'
 import { updateFamily }         from '../../../redux/actions/families'
-import _                        from 'lodash'
 import styles                   from './styles'
 import i18n                     from '../../../i18n'
-import { 
+import DatePicker               from 'react-native-datepicker'
+import DropdownAlert            from 'react-native-dropdownalert'
+import SectionedMultiSelect     from 'react-native-sectioned-multi-select'
+import {
+  map,
+  isEmpty,
+  assignIn,
+  filter
+} from 'lodash'
+import {
   View,
   Text,
   KeyboardAvoidingView,
@@ -45,7 +50,7 @@ class UserEdit extends Component {
 
   navigationButtonPressed({ buttonId }) {
     if (buttonId === 'SAVE_FAMILY') {
-      if (_.isEmpty(this.state.family.children)) {
+      if (isEmpty(this.state.family.children)) {
         this.setUpdateFamily('children', [' '])
       }
       this.props.updateFamily(this.state.family, this.props)
@@ -61,17 +66,17 @@ class UserEdit extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.name, id: option.id }))
+    return map(options, option => ({ name: option.name, id: option.id }))
   }
 
   listClients(options) {
-    return _.map(options, option => ({ name: `${option.family_name} ${option.given_name}`, id: option.id }))
+    return map(options, option => ({ name: `${option.family_name} ${option.given_name}`, id: option.id }))
   }
 
   render() {
     const { departments, provinces, communes, villages, districts, clients } = this.props
     const { family } = this.state
-    const clientOptions = _.assignIn({}, clients, family.clients)
+    const clientOptions = assignIn({}, clients, family.clients)
     const status = [{ name: 'Active', id: 'Active' }, { name: 'Inactive', id: 'Inactive' }]
     const familyType = [
       { name: 'Birth Family (Both Parents)', id: 'Birth Family (Both Parents)' },
@@ -84,9 +89,9 @@ class UserEdit extends Component {
       { name: 'Child-Headed Household', id: 'Child-Headed Household' },
       { name: 'No Family', id: 'Other' }
     ]
-    let districtOptions = _.filter(districts, { province_id: family.province_id })
-    let communeOptions = _.filter(communes, { district_id: family.district_id })
-    let villageOptions = _.filter(villages, { commune_id: family.commune_id })
+    let districtOptions = filter(districts, { province_id: family.province_id })
+    let communeOptions = filter(communes, { district_id: family.district_id })
+    let villageOptions = filter(villages, { commune_id: family.commune_id })
 
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -405,7 +410,7 @@ class UserEdit extends Component {
               </View>
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>{i18n.t('family.clients')}</Text>
+              <Text style={styles.label}>{i18n.t('family.children')}</Text>
               <SectionedMultiSelect
                 items={this.listClients(clientOptions)}
                 uniqueKey="id"

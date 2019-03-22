@@ -1,19 +1,26 @@
-import React, { Component } from 'react'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import DatePicker from 'react-native-datepicker'
-import ImagePicker from 'react-native-image-picker'
-import SectionedMultiSelect from 'react-native-sectioned-multi-select'
-import _ from 'lodash'
-import { Navigation } from 'react-native-navigation'
-import { CheckBox, Button, Divider } from 'react-native-elements'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
-import { options, MAX_SIZE } from '../constants/option'
-import { MAIN_COLOR } from '../constants/colors'
-import { validateCustomForm, formTypes, disabledUpload } from '../utils/validation'
-import i18n from '../i18n'
-import { customFormStyles } from '../styles/customForm'
-import { View, Text, StyleSheet, TextInput, ScrollView, Picker, AppState, Alert, Image, TouchableWithoutFeedback } from 'react-native'
-
+import React, { Component }                               from 'react'
+import i18n                                               from '../i18n'
+import Icon                                               from 'react-native-vector-icons/MaterialIcons'
+import DatePicker                                         from 'react-native-datepicker'
+import ImagePicker                                        from 'react-native-image-picker'
+import SectionedMultiSelect                               from 'react-native-sectioned-multi-select'
+import { MAIN_COLOR }                                     from '../constants/colors'
+import { Navigation }                                     from 'react-native-navigation'
+import { map, filter }                                    from 'lodash'
+import { customFormStyles }                               from '../styles/customForm'
+import { options, MAX_SIZE }                              from '../constants/option'
+import { CheckBox, Divider }                              from 'react-native-elements'
+import { DocumentPicker, DocumentPickerUtil }             from 'react-native-document-picker'
+import { validateCustomForm, formTypes, disabledUpload }  from '../utils/validation'
+import {
+  View,
+  Text,
+  Alert,
+  Image,
+  TextInput,
+  ScrollView,
+  TouchableWithoutFeedback
+} from 'react-native'
 export default class CreateCustomFormWidget extends Component {
   constructor(props) {
     super(props)
@@ -25,7 +32,7 @@ export default class CreateCustomFormWidget extends Component {
     const { customForm } = this.props
     let { fieldProperties } = this.state
 
-    _.map(customForm.fields, field => {
+    map(customForm.fields, field => {
       if (formTypes.includes(field.type)) {
         if (['checkbox-group', 'multiple', 'select'].includes(field.type)) {
           fieldProperties[field.label] = []
@@ -58,13 +65,13 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   listItems(options) {
-    return _.map(options, option => ({ name: option.label, id: option.label }))
+    return map(options, option => ({ name: option.label, id: option.label }))
   }
 
   updateMultipleSelect(label, value) {
     let { fieldProperties } = this.state
     if (fieldProperties[label].includes(value)) {
-      fieldProperties[label] = _.filter(fieldProperties[label], selected_value => {
+      fieldProperties[label] = filter(fieldProperties[label], selected_value => {
         return selected_value != value
       })
     } else {
@@ -155,7 +162,7 @@ export default class CreateCustomFormWidget extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -178,7 +185,7 @@ export default class CreateCustomFormWidget extends Component {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
-        {_.map(formField.values, (fieldValue, index) => {
+        {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
               <CheckBox
@@ -248,7 +255,7 @@ export default class CreateCustomFormWidget extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this.uploader(label, formField, data)} />
         </View>
-        {_.map(data, (attachment, index) => {
+        {map(data, (attachment, index) => {
           const name = attachment.name.substring(0, 16)
           return (
             <View key={index} style={customFormStyles.attachmentWrapper}>
@@ -268,7 +275,7 @@ export default class CreateCustomFormWidget extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fieldProperties } = this.state
-    const updatedAttachment = _.filter(data, (file, index) => {
+    const updatedAttachment = filter(data, (file, index) => {
       return index != attachment
     })
 
@@ -343,7 +350,7 @@ export default class CreateCustomFormWidget extends Component {
     return (
       <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#fff' }}>
         <View style={customFormStyles.aboutClientContainer}>
-          {_.map(customForm.fields, (formField, index) => {
+          {map(customForm.fields, (formField, index) => {
             const fieldType = formField.type
             const label = formField.label
             return (
