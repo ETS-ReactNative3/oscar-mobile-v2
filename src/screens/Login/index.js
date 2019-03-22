@@ -12,6 +12,7 @@ import {
   Image,
   TextInput,
   Vibration,
+  Keyboard,
   KeyboardAvoidingView
 } from 'react-native'
 class LoginContainer extends Component {
@@ -25,6 +26,7 @@ class LoginContainer extends Component {
 
   loginHandler() {
     const { email, password } = this.state
+    Keyboard.dismiss()
     if (!email || !password) this.displayError('Please input email/password')
     else this.props.login({ email, password }, this.props.componentId)
   }

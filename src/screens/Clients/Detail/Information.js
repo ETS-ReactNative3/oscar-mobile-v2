@@ -110,7 +110,6 @@ export default class ClientInformation extends Component {
           <Field name={i18n.t('client.form.case_worker')} value={map(client.case_workers, cw => `${cw.first_name} ${cw.last_name}`).join(', ')} />
           <Field name={i18n.t('client.form.agencies_involved')} value={map(client.agencies, 'name').join(', ')} />
           {client.quantitative_cases.map((qc, index) => {
-            const cases = qc.client_quantitative_cases.toString().replace(',', ' , ')
             return (
               <Field name={qc.quantitative_type} key={index}>
                 <View style={styles.qcWrapper}>

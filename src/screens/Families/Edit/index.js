@@ -410,7 +410,7 @@ class UserEdit extends Component {
               </View>
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>{i18n.t('family.clients')}</Text>
+              <Text style={styles.label}>{i18n.t('family.children')}</Text>
               <SectionedMultiSelect
                 items={this.listClients(clientOptions)}
                 uniqueKey="id"

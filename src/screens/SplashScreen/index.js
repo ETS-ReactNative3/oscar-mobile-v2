@@ -28,7 +28,11 @@ class SplashScreen extends Component {
 
   componentDidMount() {
     this.setLanguage()
-    setTimeout(() => this.authenticateUser(), 1500)
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) setTimeout(() => this.authenticateUser(), 1500)
+      else alert('No Internet Connection')
+    })
+
   }
 
   setLanguage = () => {

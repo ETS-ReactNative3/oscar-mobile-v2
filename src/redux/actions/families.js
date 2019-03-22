@@ -60,7 +60,7 @@ export function updateFamily(familyParams, actions) {
           })
           .catch(error => {
             let errors = map(error.response.data, (value, key) => {
-              return i18n.t('family' + key, { locale: 'en' }) + ' ' + value[0]
+              return i18n.t('family.' + key, { locale: 'en' }) + ' ' + value[0]
             })
             Navigation.dismissOverlay('LOADING_SCREEN')
             dispatch(requestFamiliesFailed(errors))
