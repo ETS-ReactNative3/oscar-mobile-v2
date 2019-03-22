@@ -102,10 +102,7 @@ class ActiveProgramStreams extends Component {
       props: {
         programStream: program_stream,
         client: client,
-        programStreams: this.state.program_streams,
-        originalProgramStreams: this.state.original_program_streams,
         clientDetailComponentId: this.props.clientDetailComponentId,
-        createEnrollment: this.createEnrollment,
         alertMessage: this.props.alertMessage
       },
       rightButtons: [

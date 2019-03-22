@@ -1,14 +1,19 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Navigation } from 'react-native-navigation'
-import DropdownAlert from 'react-native-dropdownalert'
-import { Text, View, FlatList, TouchableOpacity, Alert } from 'react-native'
-import moment from 'moment'
-import appIcons from '../../utils/Icon'
-import { pushScreen } from '../../navigation/config'
-import i18n from '../../i18n'
-import styles from './styles'
+import React, { Component }         from 'react'
+import { connect }                  from 'react-redux'
+import { Navigation }               from 'react-native-navigation'
+import { pushScreen }               from '../../navigation/config'
+import i18n                         from '../../i18n'
+import moment                       from 'moment'
+import styles                       from './styles'
+import appIcons                     from '../../utils/Icon'
+import DropdownAlert                from 'react-native-dropdownalert'
+import {
+  Text,
+  View,
+  Alert,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native'
 
 class CaseNotes extends Component {
   state = {
@@ -58,6 +63,11 @@ class CaseNotes extends Component {
 
   onCaseNotePress = async caseNote => {
     const icons = await appIcons()
+    const todayDate = moment(new Date()).format("YYYY-MM-DD").toString();
+    const createdAt = moment(caseNote.created_at)
+                      .format("YYYY-MM-DD")
+                      .toString()
+    const rightButtons = (createdAt == todayDate) ?  [{id: 'EDIT_CASE_NOTE', icon: icons.edit, color: '#fff'}] : []
 
     pushScreen(this.props.componentId, {
       screen: 'oscar.caseNoteDetail',
@@ -66,11 +76,7 @@ class CaseNotes extends Component {
         caseNote,
         client: this.state.client
       },
-      rightButtons: [{
-        id: 'EDIT_CASE_NOTE',
-        icon: icons.edit,
-        color: '#fff'
-      }]
+      rightButtons
     })
   }
 

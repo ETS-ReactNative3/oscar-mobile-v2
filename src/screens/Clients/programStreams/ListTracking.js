@@ -85,46 +85,48 @@ class ListTracking extends Component {
   render() {
     const { programStream } = this.props
     return (
-      <View style={listTracking.container}>
-        <View style={listTracking.tableWrapper}>
-          <View style={[listTracking.tableRow, listTracking.tableHeader]}>
-            <View style={listTracking.headerColumn}>
-              <Text style={listTracking.headerLabel}>Name</Text>
+      <View style={{flex: 1}}>
+        <View style={listTracking.container}>
+          <View style={listTracking.tableWrapper}>
+            <View style={[listTracking.tableRow, listTracking.tableHeader]}>
+              <View style={listTracking.headerColumn}>
+                <Text style={listTracking.headerLabel}>Name</Text>
+              </View>
+              <View style={listTracking.headerColumn}>
+                <Text style={listTracking.headerLabel}>Frequency</Text>
+              </View>
+              <View style={listTracking.headerColumn}>
+                <Text style={listTracking.headerLabel}>Report</Text>
+              </View>
+              <View style={listTracking.headerColumn}>
+                <Text style={listTracking.headerLabel}>Action</Text>
+              </View>
             </View>
-            <View style={listTracking.headerColumn}>
-              <Text style={listTracking.headerLabel}>Frequency</Text>
-            </View>
-            <View style={listTracking.headerColumn}>
-              <Text style={listTracking.headerLabel}>Report</Text>
-            </View>
-            <View style={listTracking.headerColumn}>
-              <Text style={listTracking.headerLabel}>Action</Text>
-            </View>
+            <ScrollView>
+              {programStream.tracking_fields.map((tracking, index) => {
+                return (
+                  <View key={index} style={[listTracking.tableDetailRow, listTracking.tableRow]}>
+                    <View style={listTracking.column}>
+                      <Text style={listTracking.detailLabel}>{tracking.name}</Text>
+                    </View>
+                    <View style={listTracking.column}>
+                      <Text style={listTracking.detailLabel}>{tracking.frequency}</Text>
+                    </View>
+                    <TouchableWithoutFeedback onPress={() => this._renderTrackingReport(tracking)}>
+                      <View style={listTracking.column}>
+                        <Icon name="ios-eye" size={25} style={[listTracking.detailLabel, { color: '#009999' }]} />
+                      </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => this.renderCreateTackingForm(tracking, programStream)}>
+                      <View style={listTracking.column}>
+                        <Icon name="md-add-circle" size={25} style={[listTracking.detailLabel, { color: '#009999' }]} />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+                )
+              })}
+            </ScrollView>
           </View>
-          <ScrollView>
-            {programStream.tracking_fields.map((tracking, index) => {
-              return (
-                <View key={index} style={[listTracking.tableDetailRow, listTracking.tableRow]}>
-                  <View style={listTracking.column}>
-                    <Text style={listTracking.detailLabel}>{tracking.name}</Text>
-                  </View>
-                  <View style={listTracking.column}>
-                    <Text style={listTracking.detailLabel}>{tracking.frequency}</Text>
-                  </View>
-                  <TouchableWithoutFeedback onPress={() => this._renderTrackingReport(tracking)}>
-                    <View style={listTracking.column}>
-                      <Icon name="ios-eye" size={25} style={[listTracking.detailLabel, { color: '#009999' }]} />
-                    </View>
-                  </TouchableWithoutFeedback>
-                  <TouchableWithoutFeedback onPress={() => this.renderCreateTackingForm(tracking, programStream)}>
-                    <View style={listTracking.column}>
-                      <Icon name="md-add-circle" size={25} style={[listTracking.detailLabel, { color: '#009999' }]} />
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              )
-            })}
-          </ScrollView>
         </View>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
