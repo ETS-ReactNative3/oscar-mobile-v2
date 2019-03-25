@@ -1,19 +1,17 @@
-import React, { Component } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
-import { map } from 'lodash'
-import { fetchUser } from '../../redux/actions/users'
-import { fetchDomains } from '../../redux/actions/domains'
-import { pushScreen } from '../../navigation/config'
-import i18n from '../../i18n'
-import TaskButton from './TaskButton'
+import React, { Component }   from 'react'
+import { connect }            from 'react-redux'
+import { fetchUser }          from '../../redux/actions/users'
+import { pushScreen }         from '../../navigation/config'
+import { fetchDomains }       from '../../redux/actions/domains'
+import { StyleSheet, View }   from 'react-native'
+import i18n                   from '../../i18n'
+import TaskButton             from './TaskButton'
 
 const TASK_COLORS = {
   overdue: '#e74d69',
   today: '#1ea9ab',
   upcoming: '#1ab394'
 }
-
 class Tasks extends Component {
   componentDidMount() {
     if (!this.props.clientId) {

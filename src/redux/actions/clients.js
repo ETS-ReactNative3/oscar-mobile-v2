@@ -119,14 +119,14 @@ export function handleUpdateClientParams(client, client_id) {
       'what3words'
     ]
 
-    keyParams.map(key => {
+    keyParams.forEach(key => {
       formData.append(`client[${key}]`, client[key] || '')
     })
 
     size(profile) > 1 && formData.append('client[profile]', profile)
 
     if (client.agency_ids.length > 0) {
-      client.agency_ids.map(value => {
+      client.agency_ids.forEach(value => {
         formData.append('client[agency_ids][]', value)
       })
     } else {
@@ -134,7 +134,7 @@ export function handleUpdateClientParams(client, client_id) {
     }
 
     if (client.donor_ids.length > 0) {
-      client.donor_ids.map(value => {
+      client.donor_ids.forEach(value => {
         formData.append('client[donor_ids][]', value)
       })
     } else {
@@ -142,7 +142,7 @@ export function handleUpdateClientParams(client, client_id) {
     }
 
     if (client.user_ids.length > 0) {
-      client.user_ids.map(value => {
+      client.user_ids.forEach(value => {
         formData.append('client[user_ids][]', value)
       })
     } else {
@@ -150,7 +150,7 @@ export function handleUpdateClientParams(client, client_id) {
     }
 
     if (client.quantitative_case_ids.length > 0) {
-      client.quantitative_case_ids.map(value => {
+      client.quantitative_case_ids.forEach(value => {
         formData.append('client[quantitative_case_ids][]', value)
       })
     } else {

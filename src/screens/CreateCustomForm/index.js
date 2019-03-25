@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
-import CreateCustomFormWidget from '../../components/CreateCustomFormWidget'
-import { connect } from 'react-redux'
-import { createAdditionalForm } from '../../redux/actions/customForms'
+import React, { Component }       from 'react'
+import { connect }                from 'react-redux'
+import { createAdditionalForm }   from '../../redux/actions/customForms'
+import CreateCustomFormWidget     from '../../components/CreateCustomFormWidget'
 
 class CreateCustomForm extends Component {
   render() {

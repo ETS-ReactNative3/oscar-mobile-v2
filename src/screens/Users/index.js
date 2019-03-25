@@ -20,7 +20,6 @@ import {
   TouchableWithoutFeedback,
   Text
 } from 'react-native'
-
 class User extends Component {
   constructor(props) {
     super(props)

@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Text, View, FlatList, StyleSheet, TouchableWithoutFeedback } from 'react-native'
-
+import Icon                 from 'react-native-vector-icons/MaterialIcons'
+import {
+  Text,
+  View,
+  FlatList,
+  StyleSheet,
+  TouchableWithoutFeedback
+} from 'react-native'
 export default class OscarFlatList extends Component {
   keyExtractor = (item, _) => item.id.toString()
 

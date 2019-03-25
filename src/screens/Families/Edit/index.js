@@ -74,10 +74,9 @@ class UserEdit extends Component {
   }
 
   render() {
-    const { departments, provinces, communes, villages, districts, clients } = this.props
+    const { provinces, communes, villages, districts, clients } = this.props
     const { family } = this.state
     const clientOptions = assignIn({}, clients, family.clients)
-    const status = [{ name: 'Active', id: 'Active' }, { name: 'Inactive', id: 'Inactive' }]
     const familyType = [
       { name: 'Birth Family (Both Parents)', id: 'Birth Family (Both Parents)' },
       { name: 'Birth Family (Only Mother)', id: 'Birth Family (Only Mother)' },

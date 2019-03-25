@@ -6,16 +6,12 @@ import DatePicker           from 'react-native-datepicker'
 import { Navigation }       from 'react-native-navigation'
 import styles               from './styles'
 import i18n                 from '../../../i18n'
-import { MAIN_COLOR }       from '../../../constants/colors'
-
 import {
   View,
   Text,
-  Picker,
   TextInput,
   Alert
 } from 'react-native'
-
 export default class Task extends Component {
   state = {
     name: '',

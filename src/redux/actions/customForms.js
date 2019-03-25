@@ -201,12 +201,12 @@ export function handleEntityAdditonalForm(type, properties, additionalForm, EndP
     let formData = new FormData()
     formData.append('custom_field_id', additionalForm.id)
 
-    additionalForm.fields.map((field, index) => {
+    additionalForm.fields.forEach((field, index) => {
       if (formTypes.includes(field.type)) {
         if (field.type == 'file') {
           if (properties[field.label] != undefined && properties[field.label].length > 0) {
             const uniqIndex = Math.floor(Math.random() * 1000000)
-            properties[field.label].map(attachment => {
+            properties[field.label].forEach(attachment => {
               if (attachment.uri != undefined) {
                 formData.append(`custom_field_property[form_builder_attachments_attributes[${uniqIndex}][name]]`, field.name)
                 formData.append(`custom_field_property[form_builder_attachments_attributes[${uniqIndex}][file]][]`, {
@@ -227,7 +227,7 @@ export function handleEntityAdditonalForm(type, properties, additionalForm, EndP
             formData.append(`custom_field_property[properties[${field.name}]]`, properties[field.label])
           } else if (typeof properties[field.label] === 'object') {
             if (properties[field.label].length > 0) {
-              properties[field.label].map((value, index) => {
+              properties[field.label].forEach((value, index) => {
                 formData.append(`custom_field_property[properties[${field.name}]][]`, value)
               })
             } else {

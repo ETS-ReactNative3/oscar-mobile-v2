@@ -8,7 +8,6 @@ import styles                       from './styles'
 import moment                       from 'moment'
 import appIcons                     from '../../../utils/Icon'
 import DropdownAlert                from 'react-native-dropdownalert'
-
 class CaseNoteDetail extends Component {
   state = {
     client: this.props.client,

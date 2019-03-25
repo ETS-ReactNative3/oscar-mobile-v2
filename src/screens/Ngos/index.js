@@ -1,15 +1,18 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { Navigation } from 'react-native-navigation'
-import FastImage from 'react-native-fast-image'
-import { fetchNgos } from '../../redux/actions/ngo'
-import { NGO_TYPES } from '../../redux/types'
-import { pushScreen } from '../../navigation/config'
-import styles from './styles'
-import i18n from '../../i18n'
-
-import { View, ScrollView, TouchableHighlight, ActivityIndicator } from 'react-native'
-
+import React, { Component }   from 'react'
+import { connect }            from 'react-redux'
+import { fetchNgos }          from '../../redux/actions/ngo'
+import { NGO_TYPES }          from '../../redux/types'
+import { pushScreen }         from '../../navigation/config'
+import { Navigation }         from 'react-native-navigation'
+import i18n                   from '../../i18n'
+import styles                 from './styles'
+import FastImage              from 'react-native-fast-image'
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  TouchableHighlight
+} from 'react-native'
 class NgosScreen extends Component {
   componentDidMount() {
     this.props.fetchNgos()

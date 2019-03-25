@@ -25,8 +25,7 @@ import appIcon                            from '../../utils/Icon'
 import {
   View,
   Text,
-  ActivityIndicator,
-  NetInfo
+  ActivityIndicator
 }  from 'react-native'
 class Clients extends Component {
   constructor(props) {

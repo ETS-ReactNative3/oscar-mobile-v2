@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
-import { StyleSheet, View, Image } from 'react-native'
-import Modal from 'react-native-modal'
-import { Button } from 'react-native-elements'
+import React, { Component }         from 'react'
+import { Button }                   from 'react-native-elements'
+import { StyleSheet, View, Image }  from 'react-native'
+import Modal                        from 'react-native-modal'
 
 class ModalImage extends Component {
   render() {

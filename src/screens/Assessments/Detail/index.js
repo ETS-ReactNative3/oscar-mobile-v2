@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
-import { View, Text, ScrollView, Image } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import DropdownAlert from 'react-native-dropdownalert'
-import { Navigation } from 'react-native-navigation'
-import _ from 'lodash'
-import styles from './styles'
-import { SCORE_COLOR } from '../../../constants/colors'
-import { pushScreen } from '../../../navigation/config'
-import i18n from '../../../i18n'
-
+import React, { Component }         from 'react'
+import _                            from 'lodash'
+import i18n                         from '../../../i18n'
+import Icon                         from 'react-native-vector-icons/MaterialIcons'
+import styles                       from './styles'
+import DropdownAlert                from 'react-native-dropdownalert'
+import { Navigation }               from 'react-native-navigation'
+import { pushScreen }               from '../../../navigation/config'
+import { SCORE_COLOR }              from '../../../constants/colors'
+import { View, Text, ScrollView }   from 'react-native'
 export default class AssessmentDetail extends Component {
   constructor(props) {
     super(props)

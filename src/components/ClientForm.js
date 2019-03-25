@@ -168,6 +168,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.given_name')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                onSubmitEditing={() => this.refs.family_name.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('given_name', text)}
                 value={client.given_name}
@@ -180,6 +181,8 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.family_name')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='family_name'
+                onSubmitEditing={() => this.refs.local_given_name.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('family_name', text)}
                 value={client.family_name}
@@ -192,6 +195,8 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.given_name_local')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='local_given_name'
+                onSubmitEditing={() => this.refs.local_family_name.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('local_given_name', text)}
                 value={client.local_given_name}
@@ -204,6 +209,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.family_name_local')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='local_family_name'
                 style={styles.input}
                 onChangeText={text => this.updateClientState('local_family_name', text)}
                 value={client.local_family_name}
@@ -307,6 +313,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.code')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                onSubmitEditing={() => this.refs.kid_id.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('code', text)}
                 value={this.state.client.code}
@@ -319,6 +326,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.kid_id')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='kid_id'
                 style={styles.input}
                 onChangeText={text => this.updateClientState('kid_id', text)}
                 value={this.state.client.kid_id}
@@ -433,6 +441,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.street_number')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                onSubmitEditing={() => this.refs.house_number.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('street_number', text)}
                 value={client.street_number}
@@ -445,6 +454,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.house_number')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='house_number'
                 style={styles.input}
                 onChangeText={text => this.updateClientState('house_number', text)}
                 value={client.house_number}
@@ -526,6 +536,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.name_of_referee')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                onSubmitEditing={() => this.refs.who_live_with.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('name_of_referee', text)}
                 value={client.name_of_referee}
@@ -538,6 +549,8 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.who_live_with')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='who_live_with'
+                onSubmitEditing={() => this.refs.telephone_number.focus()}
                 style={styles.input}
                 onChangeText={text => this.updateClientState('live_with', text)}
                 value={client.live_with}
@@ -550,6 +563,7 @@ export default class ClientForm extends Component {
                 placeholder={i18n.t('client.form.telephone_number')}
                 placeholderTextColor="#b7b3b3"
                 returnKeyType="next"
+                ref='telephone_number'
                 keyboardType="numeric"
                 style={styles.input}
                 onChangeText={text => this.updateClientState('telephone_number', text)}
@@ -580,7 +594,7 @@ export default class ClientForm extends Component {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>{i18n.t('client.form.received_by')}</Text>
+              <Text style={styles.label}>{i18n.t('client.form.received_by_id')}</Text>
               <SectionedMultiSelect
                 items={this.listUserItems(users)}
                 uniqueKey="id"
