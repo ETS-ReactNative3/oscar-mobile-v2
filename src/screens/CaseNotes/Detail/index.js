@@ -1,13 +1,18 @@
 import React, { Component }         from 'react'
 import { Navigation }               from 'react-native-navigation'
 import { pushScreen }               from '../../../navigation/config'
-import { View, Text, ScrollView }   from 'react-native'
 import _                            from 'lodash'
 import i18n                         from '../../../i18n'
 import styles                       from './styles'
 import moment                       from 'moment'
 import appIcons                     from '../../../utils/Icon'
 import DropdownAlert                from 'react-native-dropdownalert'
+import {
+  View,
+  Text,
+  ScrollView,
+  Image
+} from 'react-native'
 class CaseNoteDetail extends Component {
   state = {
     client: this.props.client,
@@ -108,24 +113,25 @@ class CaseNoteDetail extends Component {
   )
 
   renderAttachments = case_note => (
-    <View style={styles.fieldDataWrapper}>
-      <View>
-        <Text style={styles.label}>{i18n.t('client.assessment_form.attachments')}: </Text>
-        {
-          case_note.attachments.map((attachment, index) => {
-            const url = attachment.url || attachment.name
-            const filename = url.substring(url.lastIndexOf('/') + 1)
-            return (
-              <View key={index}>
-                <Text style={styles.listAttachments}>
-                  {index + 1}. {filename}
-                </Text>
-              </View>
-            )
-          }
-        )
+    <View>
+      <Text style={styles.label}>{i18n.t('client.assessment_form.attachments')}: </Text>
+      {
+        case_note.attachments.map((attachment, index) => {
+          const url = attachment.url || attachment.name
+          const filename = url.substring(url.lastIndexOf('/') + 1)
+          return (
+            <View key={index} style={styles.attachmentWrapper}>
+              <Image
+                style={{ width: 40, height: 40 }}
+                source={{ uri: attachment.url }}
+              />
+              <Text style={styles.listAttachments}>
+                {index + 1}. {filename}
+              </Text>
+            </View>
+          )
+        })
       }
-      </View>
     </View>
   )
 

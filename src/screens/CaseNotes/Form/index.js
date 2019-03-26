@@ -178,21 +178,17 @@ class CaseNoteForm extends Component {
       Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     } else {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
-      const fileName = Platform.OS === 'android'
-                       ? response.fileName
-                       : response.uri.split('/').pop()
 
       const source   = {
         uri: response.uri,
         path: filePath,
-        name: fileName,
+        name: response.fileName,
         type: response.type,
         size: fileSize
       }
 
       caseNoteDomainGroups = caseNoteDomainGroups.map(element => {
-        return element.domain_group_id === caseNote.domain_group_id ?
-          { ...element, attachments: element.attachments.concat(source) } : element
+        return element.domain_group_id === caseNote.domain_group_id ? { ...element, attachments: element.attachments.concat(source) } : element
       })
 
       this.setState({ attachmentsSize, caseNoteDomainGroups })
