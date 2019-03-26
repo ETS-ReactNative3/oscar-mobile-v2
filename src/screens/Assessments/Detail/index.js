@@ -7,7 +7,12 @@ import DropdownAlert                from 'react-native-dropdownalert'
 import { Navigation }               from 'react-native-navigation'
 import { pushScreen }               from '../../../navigation/config'
 import { SCORE_COLOR }              from '../../../constants/colors'
-import { View, Text, ScrollView }   from 'react-native'
+import {
+  View,
+  Text,
+  ScrollView,
+  Image
+} from 'react-native'
 export default class AssessmentDetail extends Component {
   constructor(props) {
     super(props)
@@ -54,7 +59,11 @@ export default class AssessmentDetail extends Component {
           const filename = attachment.url != undefined ? attachment.url.substring(attachment.url.lastIndexOf('/') + 1) : attachment.name
 
           return (
-            <View key={index}>
+            <View key={index} style={styles.attachmentWrapper}>
+              <Image
+                style={{ width: 40, height: 40 }}
+                source={{ uri: attachment.url }}
+              />
               <Text style={styles.listAttachments}>
                 {index + 1}. {filename}
               </Text>

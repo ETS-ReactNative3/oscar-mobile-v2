@@ -496,7 +496,7 @@ class AssessmentForm extends Component {
               backgroundColor="#000"
               icon={{ name: 'cloud-upload' }}
               title={i18n.t('button.upload')}
-              onPress={() => this.uploadAttachmentq(ad)}
+              onPress={() => this.uploadAttachment(ad)}
             />
           </View>
           {!ad.required_task_last && this.renderButtonAddTask(ad)}

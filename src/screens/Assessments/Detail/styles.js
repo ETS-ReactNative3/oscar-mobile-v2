@@ -29,6 +29,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18
   },
+  attachmentWrapper: {
+    flexDirection: 'row',
+    marginBottom: 4,
+    paddingTop: 5,
+    paddingBottom: 5,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#dedede',
+  },
   assessmentContainer: {
     paddingLeft: 20,
     paddingRight: 20,
