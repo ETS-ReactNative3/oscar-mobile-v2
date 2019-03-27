@@ -4,6 +4,8 @@ export default {
   select_option: 'ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക',
   confirm: 'സ്ഥിരീകരിക്കുക',
   search: 'തിരയുക',
+  warning: 'သတိပေးခြင်း',
+  no_internet_connection: 'အဘယ်သူမျှမအင်တာနက်ချိတ်ဆက်ရှိပါသည်။ သင် app ကို exit ချင်ပါသလား?',
   language: {
     languages: 'ഭാഷകൾ',
     restart_now: 'അപ്ലിക്കേഷൻ പുനരാരംഭിക്കും',
