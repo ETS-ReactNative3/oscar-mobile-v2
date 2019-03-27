@@ -4,6 +4,8 @@ export default {
   select_option: 'Please Select Option',
   confirm: 'Confirm',
   search: 'Search',
+  warning: 'Warning',
+  no_internet_connection: 'There is no internet connection. Do you want to exit the app?',
   language: {
     languages: 'Languages',
     restart_now: 'The app will be restarted',

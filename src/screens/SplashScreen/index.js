@@ -5,12 +5,23 @@ import logo                                 from '../../assets/oscar-logo.png'
 import styles                               from './styles'
 import CryptoJS                             from 'crypto-js'
 import Database                             from '../../config/Database'
+import RNExitApp                            from 'react-native-exit-app'
 import KeyboardManager                      from 'react-native-keyboard-manager'
 import { LANGUAGE_TYPES }                   from '../../redux/types'
 import { startNgoScreen, startScreen }      from '../../navigation/config'
 import { setDefaultHeader, verifyUser }     from '../../redux/actions/auth'
-import { View, Image, Platform, NetInfo }   from 'react-native'
+import {
+  View,
+  Image,
+  Platform,
+  NetInfo,
+  Alert,
+  ActivityIndicator,
+  SafeAreaView
+} from 'react-native'
 class SplashScreen extends Component {
+  state = { noInternet: false }
+
   static options(passProps) {
     return {
       statusBar: {
@@ -28,11 +39,7 @@ class SplashScreen extends Component {
 
   componentDidMount() {
     this.setLanguage()
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (isConnected) setTimeout(() => this.authenticateUser(), 1500)
-      else alert('No Internet Connection')
-    })
-
+    setTimeout(() => this.authenticateUser(), 1500)
   }
 
   setLanguage = () => {
@@ -40,6 +47,18 @@ class SplashScreen extends Component {
     if (languageSetting.value !== null) {
       this.props.setLanguage(languageSetting.value)
     }
+  }
+
+
+  alertNoInternet = () => {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        this.authenticateUser()
+      } else {
+        this.setState({noInternet: true})
+        setTimeout(() => this.authenticateUser(), 5000)
+      }
+    })
   }
 
   goToPinScreen = pinCode => {
@@ -52,25 +71,38 @@ class SplashScreen extends Component {
 
   authenticateUser = () => {
     const { user, verifyUser } = this.props
-    if (user == null) {
-      startNgoScreen()
-    } else {
-      NetInfo.isConnected.fetch().then(isConnected => {
-        if (isConnected) {
-          verifyUser(this.goToPinScreen)
+    NetInfo.isConnected.fetch().then(isConnected => {
+      if (isConnected) {
+        if (user == null) {
+          startNgoScreen()
         } else {
-          const pinCode = CryptoJS.SHA3(user.pin_code)
-          this.goToPinScreen(pinCode)
+          if (isConnected) {
+            verifyUser(this.goToPinScreen)
+          } else {
+            const pinCode = CryptoJS.SHA3(user.pin_code)
+            this.goToPinScreen(pinCode)
+          }
         }
-      })
-    }
+      } else {
+        Alert.alert(i18n.t('warning'), i18n.t('no_internet_connection'), [
+          {
+            text: i18n.t('language.yes'), onPress: () => RNExitApp.exitApp()
+          },
+          { text: i18n.t('language.no'), onPress: () =>  this.alertNoInternet()}
+        ])
+      }
+    })
   }
 
   render() {
+    const { noInternet } = this.state
     return (
-      <View style={styles.container}>
-        <Image style={styles.logo} source={logo} />
-      </View>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          <Image style={styles.logo} source={logo} />
+        </View>
+        {noInternet && (<ActivityIndicator style={{flexDirection: 'row', alignItems: 'flex-end'}}/>)}
+      </SafeAreaView>
     )
   }
 }

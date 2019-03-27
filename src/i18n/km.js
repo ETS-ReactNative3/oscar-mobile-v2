@@ -4,6 +4,8 @@ export default {
   select_option: 'សូមជ្រើសរើស',
   confirm: 'ព្រម',
   search: 'ស្វែងរក',
+  warning: 'ព័ត៌មាន',
+  no_internet_connection: 'មិនមានការតភ្ជាប់អ៊ីនធឺណិត។ តើអ្នកចង់ចាកចេញពីកម្មវិធីមែនទេ?',
   language: {
     languages: 'ភាសា',
     restart_now: 'កម្មវិធីនឹងបើកម្ដងទៀត',
