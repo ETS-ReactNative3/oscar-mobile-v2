@@ -11,7 +11,8 @@ import {
   View,
   Text,
   TextInput,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native'
 export default class Task extends Component {
   state = {
@@ -55,7 +56,7 @@ export default class Task extends Component {
     const { domains } = this.props
 
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.modalContainer}>
           <View style={styles.modalTitleWrapper}>
             <Text style={styles.modalTitle}>{i18n.t('task.edit_title')}</Text>
@@ -139,7 +140,7 @@ export default class Task extends Component {
             </Button>
           </View>
         </View>
-      </View>
+      </ScrollView>
     )
   }
 }
