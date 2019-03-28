@@ -272,7 +272,7 @@ class TrackingForm extends Component {
           }}
         >
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
-          Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
+          <Icon name="add-circle" size={22} color="#fff" onPress={() => this.uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
           if (attachment.name != undefined) {

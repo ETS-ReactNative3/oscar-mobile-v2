@@ -187,7 +187,7 @@ class ListTrackingReport extends Component {
   render() {
     const { visible } = this.state
     const { enrollment } = this.props
-    const { mainContainer, container } = additionalFormDetailList
+    const { mainContainer } = additionalFormDetailList
     const trackings = filter(enrollment.trackings, { tracking_id: this.props.tracking.id })
 
     if (trackings.length == 0) {
@@ -207,7 +207,7 @@ class ListTrackingReport extends Component {
             return (
               <View key={index}>
                 <Card style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }} title={createdAt} rightButton={this.renderActions(tracking)}>
-                  <View key={tracking.id.toString()} style={{ height: '85%' }}>
+                  <View key={tracking.id.toString()}>
                     <ScrollView ref="caseNoteCard">{this.renderFormField(tracking)}</ScrollView>
                   </View>
                 </Card>
