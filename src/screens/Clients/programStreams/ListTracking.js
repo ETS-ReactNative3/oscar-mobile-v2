@@ -39,18 +39,12 @@ class ListTracking extends Component {
   async _renderTrackingReport(tracking) {
     const { programStream } = this.props
     const icons = await appIcon()
-    let trackingsEnrolled = filter(programStream.enrollments, enrollment => {
-      return enrollment.trackings.length > 0
-    })
+    const activeEnrollment = find(programStream.enrollments, { status: 'Active' })
+    let trackingsEnrolled = activeEnrollment.trackings
     let filterTrackings = []
-    let otherTrackings = []
 
     if (trackingsEnrolled.length > 0) {
-      filterTrackings = filter(trackingsEnrolled[0].trackings, { tracking_id: tracking.id })
-      otherTrackings = filter(trackingsEnrolled[0].trackings, track => {
-        return track.tracking_id != tracking.id
-      })
-      trackingsEnrolled[0].trackings = filterTrackings
+      filterTrackings = filter(trackingsEnrolled, { tracking_id: tracking.id })
     }
 
     if (filterTrackings.length > 0) {
@@ -58,9 +52,8 @@ class ListTracking extends Component {
         screen: 'oscar.trackingDetail',
         title: `${tracking.name} - ${programStream.name}`,
         props: {
-          enrollmentId: trackingsEnrolled[0].id,
+          enrollmentId: activeEnrollment.id,
           tracking: tracking,
-          otherTrackings: otherTrackings,
           clientId: this.props.client.id,
           programStreamId: programStream.id,
           clickForm: this.props.clickForm

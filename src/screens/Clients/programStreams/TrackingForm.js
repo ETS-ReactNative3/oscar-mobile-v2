@@ -7,7 +7,7 @@ import SectionedMultiSelect                       from 'react-native-sectioned-m
 import { connect }                                from 'react-redux'
 import { Navigation }                             from 'react-native-navigation'
 import { MAIN_COLOR }                             from '../../../constants/colors'
-import { map, filter }                            from 'lodash'
+import { map, filter, find }                      from 'lodash'
 import { customFormStyles }                       from '../../../styles'
 import { CheckBox, Divider }                      from 'react-native-elements'
 import { options, MAX_SIZE }                      from '../../../constants/option'
@@ -40,10 +40,8 @@ class TrackingForm extends Component {
       const { programStream, tracking, client, action } = this.props
       const { field_properties } = this.state
 
-      const lastActive = filter(programStream.enrollments, enrollment => {
-        return enrollment.status == 'Active'
-      })
-      const client_enrolled_programs_id = lastActive[0].id
+      const lastActive = find(programStream.enrollments, { status: 'Active' })
+      const client_enrolled_programs_id = lastActive.id
 
       const validated = validateCustomForm(field_properties, tracking.fields)
       if (validated) {
@@ -77,7 +75,7 @@ class TrackingForm extends Component {
     })
   }
 
-  _updateField(label, updatedValue) {
+  updateField(label, updatedValue) {
     const { field_properties } = this.state
     field_properties[label] = updatedValue != 'default' ? updatedValue : ''
     this.setState({
@@ -85,7 +83,7 @@ class TrackingForm extends Component {
     })
   }
 
-  _updateMultipleSelect(label, value) {
+  updateMultipleSelect(label, value) {
     let { field_properties } = this.state
     if (field_properties[label].includes(value)) {
       field_properties[label] = filter(field_properties[label], selected_value => {
@@ -101,7 +99,7 @@ class TrackingForm extends Component {
     return map(options, option => ({ name: option.label, id: option.label }))
   }
 
-  _datePickerType(label, data) {
+  datePickerType(label, data) {
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
@@ -118,13 +116,13 @@ class TrackingForm extends Component {
           customStyles={{
             dateInput: customFormStyles.datePickerBorder
           }}
-          onDateChange={date => this._updateField(label, date)}
+          onDateChange={date => this.updateField(label, date)}
         />
       </View>
     )
   }
 
-  _textType(label, data, formField) {
+  textType(label, data, formField) {
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
@@ -133,14 +131,14 @@ class TrackingForm extends Component {
           autoCapitalize="sentences"
           returnKeyType="next"
           style={customFormStyles.input}
-          onChangeText={newData => this._updateField(label, newData)}
+          onChangeText={newData => this.updateField(label, newData)}
           value={value}
         />
       </View>
     )
   }
 
-  _numberType(label, data, formField) {
+  numberType(label, data, formField) {
     let value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
@@ -150,14 +148,14 @@ class TrackingForm extends Component {
           returnKeyType="next"
           style={customFormStyles.input}
           keyboardType="numeric"
-          onChangeText={newData => this._updateField(label, newData)}
+          onChangeText={newData => this.updateField(label, newData)}
           value={value}
         />
       </View>
     )
   }
 
-  _textareaType(label, data) {
+  textareaType(label, data) {
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
@@ -171,14 +169,14 @@ class TrackingForm extends Component {
           multiline={true}
           textAlignVertical="top"
           numberOfLines={3}
-          onChangeText={newData => this._updateField(label, newData)}
+          onChangeText={newData => this.updateField(label, newData)}
           value={value}
         />
       </View>
     )
   }
 
-  _checkBoxType(label, formField, data) {
+  checkBoxType(label, formField, data) {
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
@@ -192,7 +190,7 @@ class TrackingForm extends Component {
                 uncheckedIcon="square-o"
                 checkedColor="#009999"
                 style={customFormStyles.checkBox}
-                onPress={() => this._updateMultipleSelect(label, fieldValue.label)}
+                onPress={() => this.updateMultipleSelect(label, fieldValue.label)}
                 checked={value.includes(fieldValue.label) ? true : false}
               />
             </View>
@@ -202,7 +200,7 @@ class TrackingForm extends Component {
     )
   }
 
-  _radioType(label, formField, data) {
+  radioType(label, formField, data) {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
@@ -215,7 +213,7 @@ class TrackingForm extends Component {
                 uncheckedIcon="circle-o"
                 checkedColor="#009999"
                 style={{ backgroundColor: 'transparent' }}
-                onPress={() => this._updateField(label, fieldValue.label)}
+                onPress={() => this.updateField(label, fieldValue.label)}
                 checked={data == fieldValue.label ? true : false}
               />
             </View>
@@ -225,7 +223,7 @@ class TrackingForm extends Component {
     )
   }
 
-  _renderParagraph(label) {
+  renderParagraph(label) {
     return (
       <View style={customFormStyles.fieldContainer}>
         <Text style={[customFormStyles.label, customFormStyles.labelMargin, { color: '#000' }]}>{label}</Text>
@@ -233,7 +231,7 @@ class TrackingForm extends Component {
     )
   }
 
-  _selectType(label, formField, data) {
+  selectType(label, formField, data) {
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
@@ -255,14 +253,14 @@ class TrackingForm extends Component {
             chipText: { maxWidth: 280 },
             selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
           }}
-          onSelectedItemsChange={itemValue => this._updateField(label, itemValue[0])}
+          onSelectedItemsChange={itemValue => this.updateField(label, itemValue[0])}
           selectedItems={[value]}
         />
       </View>
     )
   }
 
-  _fileUploader(label, formField, data) {
+  fileUploader(label, formField, data) {
     return (
       <View style={[customFormStyles.fieldContainer, { marginTop: 10 }]}>
         <View
@@ -274,7 +272,7 @@ class TrackingForm extends Component {
           }}
         >
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
-          <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
+          Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
           if (attachment.name != undefined) {
@@ -283,7 +281,7 @@ class TrackingForm extends Component {
               <View key={index} style={customFormStyles.attachmentWrapper}>
                 <Image style={{ width: 40, height: 40 }} source={{ uri: attachment.uri }} />
                 <Text style={customFormStyles.listAttachments}>{name}...</Text>
-                <TouchableWithoutFeedback onPress={() => this._removeAttactment(data, index, label)}>
+                <TouchableWithoutFeedback onPress={() => this.removeAttactment(data, index, label)}>
                   <View style={customFormStyles.deleteAttactmentWrapper}>
                     <Icon color="#fff" name="delete" size={25} />
                   </View>
@@ -296,7 +294,7 @@ class TrackingForm extends Component {
     )
   }
 
-  _removeAttactment(data, attachment, label) {
+  removeAttactment(data, attachment, label) {
     let { field_properties } = this.state
     const updatedAttachment = filter(data, (file, index) => {
       return index != attachment
@@ -306,7 +304,7 @@ class TrackingForm extends Component {
     this.setState(field_properties)
   }
 
-  _selectAllFile(label, formField, data) {
+  selectAllFile(label, formField, data) {
     DocumentPicker.show(
       {
         filetype: [DocumentPickerUtil.allFiles()]
@@ -324,7 +322,7 @@ class TrackingForm extends Component {
     )
   }
 
-  _uploader(label, formField, data) {
+  uploader(label, formField, data) {
     if (disabledUpload()) {
       Alert.alert(
         'Warning',
@@ -336,7 +334,7 @@ class TrackingForm extends Component {
         } else if (response.error) {
           alert('ImagePicker Error: ', response.error)
         } else if (response.customButton) {
-          this._selectAllFile(label, formField, data)
+          this.selectAllFile(label, formField, data)
         } else if (response.didCancel) {
         } else {
           this.handleSelectedFile(response, label, formField, data)
@@ -367,7 +365,7 @@ class TrackingForm extends Component {
     this.setState({ error: null })
   }
 
-  _alertFileTypeNotAllow() {
+  alertFileTypeNotAllow() {
     if (this.state.error != null) {
       Alert.alert(
         'Warning',
@@ -391,16 +389,16 @@ class TrackingForm extends Component {
             const label = formField.label
             return (
               <View key={index}>
-                {fieldType == 'text' && this._textType(label, field_properties[label], formField)}
-                {fieldType == 'number' && this._numberType(label, field_properties[label])}
-                {fieldType == 'textarea' && this._textareaType(label, field_properties[label])}
-                {fieldType == 'date' && this._datePickerType(label, field_properties[label])}
-                {fieldType == 'checkbox-group' && this._checkBoxType(label, formField, field_properties[label])}
-                {fieldType == 'radio-group' && this._radioType(label, formField, field_properties[label])}
-                {fieldType == 'select' && formField.multiple && this._checkBoxType(label, formField, field_properties[label])}
-                {fieldType == 'select' && !formField.multiple && this._selectType(label, formField, field_properties[label])}
-                {fieldType == 'file' && this._fileUploader(label, formField, field_properties[label])}
-                {fieldType == 'paragraph' && this._renderParagraph(label)}
+                {fieldType == 'text' && this.textType(label, field_properties[label], formField)}
+                {fieldType == 'number' && this.numberType(label, field_properties[label])}
+                {fieldType == 'textarea' && this.textareaType(label, field_properties[label])}
+                {fieldType == 'date' && this.datePickerType(label, field_properties[label])}
+                {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, field_properties[label])}
+                {fieldType == 'radio-group' && this.radioType(label, formField, field_properties[label])}
+                {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, field_properties[label])}
+                {fieldType == 'select' && !formField.multiple && this.selectType(label, formField, field_properties[label])}
+                {fieldType == 'file' && this.fileUploader(label, formField, field_properties[label])}
+                {fieldType == 'paragraph' && this.renderParagraph(label)}
                 {fieldType == 'separateLine' && <Divider style={{ backgroundColor: '#ccc', marginTop: 20 }} />}
               </View>
             )
