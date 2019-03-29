@@ -42,7 +42,7 @@ class EnrollmentDetail extends Component {
       return (
         <View key={`${Math.random()}-${index}`} style={[enrollmentDetail.row, enrollmentDetail.imageWrapper]}>
           <Text style={enrollmentDetail.fileName}>{filename}</Text>
-          {extension.match(/jpg|jpeg|png/) && <Icon name="remove-red-eye" size={20} color="#27a5d1" onPress={() => this._popupImage(file.url)} />}
+          {extension.toLowerCase().match(/jpg|jpeg|png|heic/) && <Icon name="remove-red-eye" size={20} color="#27a5d1" onPress={() => this._popupImage(file.url)} />}
         </View>
       )
     })

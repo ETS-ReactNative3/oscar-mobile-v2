@@ -32,7 +32,7 @@ export default class EditAdditionalFormWidget extends Component {
       fields: {},
       custom_field_property: {},
       nextAppState: AppState.currentState,
-      fileSize: 0
+      filesSize: 0
     }
     Navigation.events().bindComponent(this)
   }
@@ -312,12 +312,16 @@ export default class EditAdditionalFormWidget extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fields } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachment
+    let filesSize = 0
+    const updatedAttachment = []
+
+    forEach(data, (file, index) => {
+      if (index != attachment) updatedAttachment.push(file)
+      else filesSize -= file.size
     })
 
     fields[label] = updatedAttachment
-    this.setState(fields)
+    this.setState({fields, filesSize})
   }
 
   selectAllFile(label, formField, data) {
@@ -359,10 +363,12 @@ export default class EditAdditionalFormWidget extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { fields } = this.state
-    const fileSize = response.fileSize
+    let { fields, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
 
-    if (this.state.fileSize + fileSize / 1024 <= MAX_SIZE) {
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
+
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -391,9 +397,9 @@ export default class EditAdditionalFormWidget extends Component {
         fields[label] = isLocalExited.length == 0 ? [...updateLocalfile, source] : updateLocalfile
       }
 
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, fields: fields })
+      this.setState({ filesSize, fields })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }

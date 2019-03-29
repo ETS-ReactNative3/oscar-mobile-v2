@@ -8,7 +8,7 @@ import SectionedMultiSelect                               from 'react-native-sec
 import { connect }                                        from 'react-redux'
 import { Navigation }                                     from 'react-native-navigation'
 import { MAIN_COLOR }                                     from '../../../constants/colors'
-import { filter, map }                                    from 'lodash'
+import { filter, map, forEach }                           from 'lodash'
 import { customFormStyles }                               from '../../../styles'
 import { CheckBox, Divider }                              from 'react-native-elements'
 import { options, MAX_SIZE }                              from '../../../constants/option'
@@ -29,7 +29,7 @@ class ExitForm extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { exit_date: '', field_properties: {}, fileSize: 0, enrollment_date: '' }
+    this.state = { exit_date: '', field_properties: {}, filesSize: 0, enrollment_date: '' }
   }
 
   navigationButtonPressed({ buttonId }) {
@@ -305,12 +305,14 @@ class ExitForm extends Component {
 
   _removeAttactment(data, attachment, label) {
     let { field_properties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachment
+    let filesSize = 0
+    const updatedAttachment = []
+    forEach(data, (file, index) => {
+      if (index != attachment) updatedAttachment.push(file)
+      else filesSize -= file.size
     })
-
     field_properties[label] = updatedAttachment
-    this.setState(field_properties)
+    this.setState({field_properties, filesSize})
   }
 
   _selectAllFile(label, formField, data) {
@@ -353,10 +355,11 @@ class ExitForm extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { field_properties } = this.state
-    const fileSize = response.fileSize
+    let { field_properties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
 
-    if (this.state.fileSize + fileSize / 1024 <= MAX_SIZE) {
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -367,9 +370,9 @@ class ExitForm extends Component {
       }
 
       field_properties[label] = formField.multiple != undefined && formField.multiple ? field_properties[label].concat(source) : [source]
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, field_properties: field_properties })
+      this.setState({ filesSize, field_properties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }

@@ -8,7 +8,7 @@ import SectionedMultiSelect                                     from 'react-nati
 import { connect }                                              from 'react-redux'
 import { Navigation }                                           from 'react-native-navigation'
 import { MAIN_COLOR }                                           from '../../../constants/colors'
-import { map, filter }                                          from 'lodash'
+import { map, filter, forEach }                                 from 'lodash'
 import { customFormStyles }                                     from '../../../styles'
 import { CheckBox, Divider }                                    from 'react-native-elements'
 import { options, MAX_SIZE }                                    from '../../../constants/option'
@@ -36,7 +36,7 @@ class EditForm extends Component {
 
     this.state = {
       field_properties: {},
-      fileSize: 0
+      filesSize: 0
     }
     Navigation.events().bindComponent(this)
     if (props.type.match(/Exit|Enroll/)) {
@@ -287,10 +287,12 @@ class EditForm extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { field_properties } = this.state
-    const fileSize = response.fileSize
+    let { field_properties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
 
-    if ((this.state.fileSize + fileSize) / 1024 <= MAX_SIZE) {
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
+
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -319,9 +321,9 @@ class EditForm extends Component {
         })
         field_properties[label] = isLocalExited.length == 0 ? [...updateLocalfile, source] : updateLocalfile
       }
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, field_properties: field_properties })
+      this.setState({ filesSize, field_properties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }
@@ -367,21 +369,16 @@ class EditForm extends Component {
 
   _removeAttactment(data, attachmentIndex, label) {
     let { field_properties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachmentIndex
-    })
+    let filesSize = 0
+    const updatedAttachment = []
 
-    const findAttachmentFile = filter(data, (file, index) => {
-      return index == attachmentIndex
+    forEach(data, (file, index) => {
+      if (index != attachmentIndex) updatedAttachment.push(file)
+      else filesSize -= file.size
     })
-
-    let fileSize = 0
-    if (findAttachmentFile.length > 0) {
-      fileSize = findAttachmentFile[0].size
-    }
 
     field_properties[label] = updatedAttachment
-    this.setState({ field_properties: field_properties, fileSize: this.state.fileSize - fileSize })
+    this.setState({field_properties, filesSize})
   }
 
   _fileUploader(label, formField, data) {

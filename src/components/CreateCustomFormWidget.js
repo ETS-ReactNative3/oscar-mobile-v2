@@ -25,7 +25,7 @@ export default class CreateCustomFormWidget extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { fieldProperties: {}, fileSize: 0 }
+    this.state = { fieldProperties: {}, filesSize: 0 }
   }
 
   componentWillMount() {
@@ -275,12 +275,15 @@ export default class CreateCustomFormWidget extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fieldProperties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachment
-    })
+    let filesSize = 0
+    const updatedAttachment = []
 
+    forEach(data, (file, index) => {
+      if (index != attachment) updatedAttachment.push(file)
+      else filesSize -= file.size
+    })
     fieldProperties[label] = updatedAttachment
-    this.setState(fieldProperties)
+    this.setState({fieldProperties, filesSize})
   }
 
   selectAllFile(label, formField, data) {
@@ -323,10 +326,12 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { fieldProperties } = this.state
-    const fileSize = response.fileSize
+    let { fieldProperties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
 
-    if (this.state.fileSize + fileSize / 1024 <= MAX_SIZE) {
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
+
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -337,9 +342,9 @@ export default class CreateCustomFormWidget extends Component {
       }
 
       fieldProperties[label] = formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, fieldProperties })
+      this.setState({ filesSize, fieldProperties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }
