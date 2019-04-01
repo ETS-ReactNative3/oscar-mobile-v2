@@ -10,6 +10,7 @@ import { LANGUAGE_TYPES }                   from '../../redux/types'
 import { startNgoScreen, startScreen }      from '../../navigation/config'
 import { setDefaultHeader, verifyUser }     from '../../redux/actions/auth'
 import { View, Image, Platform, NetInfo }   from 'react-native'
+
 class SplashScreen extends Component {
   static options(passProps) {
     return {

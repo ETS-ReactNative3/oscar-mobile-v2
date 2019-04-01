@@ -109,7 +109,6 @@ const mapState = state => ({
   loading: state.auth.loading,
   departments: state.departments.data,
   provinces: state.provinces.data,
-  message: state.auth.message
 })
 
 const mapDispatch = {

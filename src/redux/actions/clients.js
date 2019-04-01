@@ -6,25 +6,25 @@ import { Navigation }             from 'react-native-navigation'
 import { loadingScreen }          from '../../navigation/config'
 import endpoint                   from '../../constants/endpoint'
 import i18n                       from '../../i18n'
+import { updateClientOffline }    from './offline/clients'
 
-requestClients = () => ({
+export const requestClients = () => ({
   type: CLIENT_TYPES.CLIENTS_REQUESTING
 })
 
-requestClientsSuccess = data => ({
+export const requestClientsSuccess = data => ({
   type: CLIENT_TYPES.CLIENTS_REQUEST_SUCCESS,
   data
 })
 
-requestClientsFailed = error => ({
+export const requestClientsFailed = error => ({
   type: CLIENT_TYPES.CLIENTS_REQUEST_FAILED,
   error
 })
 
-export const updateClient = (client, message = '') => ({
+export const updateClient = client => ({
   type: CLIENT_TYPES.UPDATE_CLIENT,
-  client,
-  message
+  client
 })
 
 export function updateClientProperty(clientParams, actions) {
@@ -35,8 +35,7 @@ export function updateClientProperty(clientParams, actions) {
         dispatch(requestClients())
         dispatch(handleUpdateClientParams(clientParams, clientParams.id))
           .then(response => {
-            const message = 'You have update successfully.'
-            dispatch(updateClient(response.data.client, message))
+            dispatch(updateClient(response.data.client))
             Navigation.dismissOverlay('LOADING_SCREEN')
             Navigation.popTo(actions.clientDetailComponentId)
             actions.alertMessage()
@@ -49,7 +48,7 @@ export function updateClientProperty(clientParams, actions) {
             dispatch(requestClientsFailed(errors))
           })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(updateClientOffline(clientParams, actions))
       }
     })
   }

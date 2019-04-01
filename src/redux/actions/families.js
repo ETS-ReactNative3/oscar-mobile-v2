@@ -1,27 +1,29 @@
+import { Alert, NetInfo }     from 'react-native'
 import axios                  from 'axios'
 import { map }                from 'lodash'
 import { Navigation }         from 'react-native-navigation'
-import { FAMILY_TYPES }       from '../types'
 import { loadingScreen }      from '../../navigation/config'
-import { Alert, NetInfo }     from 'react-native'
 import endpoint               from '../../constants/endpoint'
 import i18n                   from '../../i18n'
+import { FAMILY_TYPES }       from '../types'
+import { updateFamilyOffline } from './offline/families'
 
-requestFamilies = () => ({
+
+export const requestFamilies = () => ({
   type: FAMILY_TYPES.FAMILIES_REQUESTING
 })
 
-requestFamiliesSuccess = data => ({
+export const requestFamiliesSuccess = data => ({
   type: FAMILY_TYPES.FAMILIES_REQUEST_SUCCESS,
   data
 })
 
-requestFamiliesFailed = error => ({
+export const requestFamiliesFailed = error => ({
   type: FAMILY_TYPES.FAMILIES_REQUEST_FAILED,
   error
 })
 
-updateFamilySuccess = family => ({
+export const updateFamilySuccess = family => ({
   type: FAMILY_TYPES.FAMILY_UPDATE_SUCCESS,
   family
 })
@@ -66,7 +68,7 @@ export function updateFamily(familyParams, actions) {
             dispatch(requestFamiliesFailed(errors))
           })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(updateFamilyOffline(familyParams, actions))
       }
     })
   }

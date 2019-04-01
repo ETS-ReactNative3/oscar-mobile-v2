@@ -98,7 +98,7 @@ export default class ClientInformation extends Component {
           <Field name={i18n.t('client.form.rated_for_id_poor')} value={client.rated_for_id_poor} />
           <Field
             name={i18n.t('client.form.received_by')}
-            value={client.received_by == undefined ? '' : client.received_by.first_name + client.received_by.last_name}
+            value={client.received_by == undefined ? '' : client.received_by.first_name + ' ' + client.received_by.last_name}
           />
           <Field name={i18n.t('client.form.initial_referral_date')} value={client.initial_referral_date} />
           <Field name={i18n.t('client.form.school_name')} value={client.school_name} />

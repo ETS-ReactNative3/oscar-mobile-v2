@@ -26,7 +26,6 @@ class TaskDetail extends Component {
   state = {
     user: this.props.user,
     client: this.props.client,
-    message: ''
   }
 
   componentWillReceiveProps(nextProps) {
@@ -126,7 +125,6 @@ class TaskDetail extends Component {
 const mapState = state => ({
   users: state.users.data,
   clients: state.clients.data,
-  message: state.clients.message
 })
 
 const mapDispatch = {

@@ -226,7 +226,6 @@ const mapState = (state, ownProps) => ({
   programStreams: state.programStreams.data,
   programStreamsLoading: state.programStreams.loading,
   client: state.clients.data[ownProps.clientId],
-  message: state.clients.message
 })
 
 export default connect(mapState)(ClientDetail)
