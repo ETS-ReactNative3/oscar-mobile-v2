@@ -1,16 +1,17 @@
 import React, { Component }                   from 'react'
 import { connect }                            from 'react-redux'
-import { Navigation }                         from 'react-native-navigation'
+import Swiper                                 from 'react-native-swiper'
 import { Button, CheckBox }                   from 'react-native-elements'
+import HTMLView                               from 'react-native-htmlview'
+import { Navigation }                         from 'react-native-navigation'
+import ImagePicker                            from 'react-native-image-picker'
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
+import Icon                                   from 'react-native-vector-icons/MaterialIcons'
+
+import * as AssessmentHelper                  from '../helpers'
 import { createTask, deleteTask }             from '../../../redux/actions/tasks'
 import { createAssessment, updateAssessment } from '../../../redux/actions/assessments'
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker'
 import i18n                                   from '../../../i18n'
-import Icon                                   from 'react-native-vector-icons/MaterialIcons'
-import Swiper                                 from 'react-native-swiper'
-import HTMLView                               from 'react-native-htmlview'
-import ImagePicker                            from 'react-native-image-picker'
-import * as AssessmentHelper                  from '../helpers'
 import { SCORE_COLOR }                        from '../../../constants/colors'
 import {
   View,
@@ -279,13 +280,21 @@ class AssessmentForm extends Component {
     })
   }
 
+  shuffledScores = ({ id }) => ([
+    (id % 4) + 1,
+    ((id + 2) % 4) + 1,
+    ((id + 1) % 4) + 1,
+    ((id + 3) % 4) + 1,
+  ])
+
   renderButtonScore = assessmentDomain => (
     <View style={styles.buttonContainer}>
-      {[1, 2, 3, 4].map(score => {
+      { this.shuffledScores(assessmentDomain).map(score => {
         const newAd = { ...assessmentDomain, score }
         const scoreInfo = this.getScoreInfo(newAd)
         const label = scoreInfo.definition ? scoreInfo.definition : score
-        const color = assessmentDomain.score == score ? scoreInfo.color : '#bfbfbf'
+        // const color = assessmentDomain.score == score ? scoreInfo.color : '#bfbfbf'
+        const color = assessmentDomain.score == score ? '#009999' : '#bfbfbf'
 
         return (
           <TouchableOpacity key={score} onPress={() => this.setAssessmentDomainField(assessmentDomain, 'score', score)}>
