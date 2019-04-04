@@ -248,7 +248,7 @@ class AssessmentForm extends Component {
     if (!assessmentDomain.score) return false
 
     const score = this.getScoreInfo(assessmentDomain)
-    return score.colorCode !== 'primary'
+    return score.colorCode !== 'primary' || score.colorCode === 'primary' && assessmentDomain.goal_required
   }
 
   isRequireTask = assessmentDomain => {
@@ -416,7 +416,7 @@ class AssessmentForm extends Component {
   renderAssessmentDomain = ad => {
     const { client } = this.props
     const domainDescription = ad.domain.description.replace(/<[^>]+>/gi, '').split('&nbsp;')[0]
-
+    const primaryScore = this.getScoreInfo(ad).colorCode == 'primary'
     return (
       <ScrollView key={ad.id} keyboardDismissMode="on-drag" showsVerticalScrollIndicator={false}>
         <View style={styles.domainDetailContainer}>
@@ -431,14 +431,17 @@ class AssessmentForm extends Component {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ flexDirection: 'row', padding: 20 }}>
-          <Text style={{ color: 'red' }}>* </Text>
+        <View style={{ padding: 20 }}>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.label, { color: 'red' }]}>* </Text>
+            <Text style={styles.label}>{i18n.t('client.assessment_form.reason')}</Text>
+          </View>
           <TextInput
             autoCapitalize="sentences"
             placeholder={i18n.t('client.assessment_form.reason')}
             placeholderTextColor="#ccc"
             returnKeyType="done"
-            style={{ flex: 1, borderBottomColor: '#ccc', borderBottomWidth: 1, height: 100 }}
+            style={{ flex: 1, borderBottomColor: '#009999', borderBottomWidth: 1, height: 100 }}
             value={ad.reason}
             multiline
             numberOfLines={5}
@@ -448,29 +451,59 @@ class AssessmentForm extends Component {
             }}
           />
         </View>
-        <View style={styles.domainInfoContainer}>
-          <Text style={styles.domainInfo}>
-            Choose which of the following description most closely describes the client's situation, base on your observations.
+        <View style={{ padding: 20 }}>
+          <Text style={styles.label}>
+            {i18n.t('client.assessment_form.description')}
           </Text>
           {this.renderButtonScore(ad)}
         </View>
 
-        <View style={{ flexDirection: 'row', padding: 20 }}>
-          {!!ad.score && this.isRequireGoal(ad) && <Text style={{ color: 'red' }}>* </Text>}
-          <TextInput
-            autoCapitalize="sentences"
-            placeholder={i18n.t('client.assessment_form.goal')}
-            placeholderTextColor="#ccc"
-            returnKeyType="done"
-            style={{ flex: 1, borderBottomColor: '#ccc', borderBottomWidth: 1, height: 100 }}
-            value={ad.goal}
-            multiline
-            numberOfLines={5}
-            textAlignVertical="top"
-            onChangeText={text => {
-              this.setAssessmentDomainField(ad, 'goal', text)
-            }}
-          />
+        <View style={{ padding: 20 }}>
+          <View style={{flexDirection: 'row'}}>
+            {ad.goal_required && <Text style={[styles.label, { color: 'red' }]}>* </Text>}
+            <Text style={styles.label}>{i18n.t('client.assessment_form.goal')}: {i18n.t('client.assessment_form.specific')}</Text>
+          </View>
+          {primaryScore && (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <Text style={{ marginBottom: 10 }}>{i18n.t('client.assessment_form.set_goal')}</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <CheckBox
+                  title={i18n.t('language.yes')}
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checkedColor="#009999"
+                  style={{ backgroundColor: 'transparent', marginRight: 10 }}
+                  checked={ad.goal_required}
+                  onPress={() => this.setAssessmentDomainField(ad, 'goal_required', true)}
+                />
+                <CheckBox
+                  title={i18n.t('language.no')}
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checkedColor="#009999"
+                  style={{ backgroundColor: 'transparent' }}
+                  checked={!ad.goal_required}
+                  onPress={() => this.setAssessmentDomainField(ad, 'goal_required', false)}
+                />
+              </View>
+            </View>
+          )}
+          {primaryScore && !ad.goal_required ? null :
+            <TextInput
+              autoCapitalize="sentences"
+              placeholder={i18n.t('client.assessment_form.goal')}
+              placeholderTextColor="#ccc"
+              returnKeyType="done"
+              style={{ flex: 1, borderBottomColor: '#009999', borderBottomWidth: 1, height: 100 }}
+              value={ad.goal}
+              multiline
+              numberOfLines={5}
+              textAlignVertical="top"
+              onChangeText={text => {
+                this.setAssessmentDomainField(ad, 'goal', text)
+              }}
+            />
+          }
         </View>
         {this.props.action === 'create' && (
           <View style={{ padding: 20 }}>
@@ -527,6 +560,7 @@ class AssessmentForm extends Component {
           ref={swiper => {
             this._swiper = swiper
           }}
+          showsButtons={true}
           loop={false}
           containerStyle={styles.container}
           onMomentumScrollEnd={this.handleValidation}
