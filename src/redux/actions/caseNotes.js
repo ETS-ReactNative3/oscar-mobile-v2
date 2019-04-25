@@ -1,10 +1,11 @@
-import axios              from "axios"
-import endpoint           from "../../constants/endpoint"
-import { NetInfo }        from "react-native"
-import { Navigation }     from "react-native-navigation"
-import { updateUser }     from './users'
-import { updateClient }   from "./clients"
-import { loadingScreen }  from '../../navigation/config'
+import axios                    from "axios"
+import { NetInfo }              from "react-native"
+import { Navigation }           from "react-native-navigation"
+import { updateUser }           from "./users"
+import { updateClient }         from "./clients"
+import { saveCaseNoteOffline }  from "./offline/caseNotes"
+import endpoint                 from "../../constants/endpoint"
+import { loadingScreen }        from '../../navigation/config'
 
 export function saveCaseNote(params, client, action, previousComponentId, onSuccess) {
   return dispatch => {
@@ -13,7 +14,8 @@ export function saveCaseNote(params, client, action, previousComponentId, onSucc
     const caseNoteParams = handleCaseNoteParams(params, action)
     const axiosSend      = action === 'update' ? axios.put : axios.post
     NetInfo.isConnected.fetch().then(isConnected => {
-      if (isConnected) {
+      // if (isConnected) {
+      if (false) {
         loadingScreen()
         axiosSend(path, caseNoteParams)
           .then(response => {
@@ -31,7 +33,7 @@ export function saveCaseNote(params, client, action, previousComponentId, onSucc
             console.log(err)
           })
       } else {
-        alert('No internet connection')
+        dispatch(saveCaseNoteOffline(params, client, action, previousComponentId, onSuccess))
       }
     })
   }

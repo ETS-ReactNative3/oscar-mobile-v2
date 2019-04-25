@@ -131,8 +131,7 @@ class ClientDetail extends Component {
     const { client, setting } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
 
-    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' }))
-      .length
+    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' })).length
 
     const inactiveProgramStreams = client.inactive_program_streams.length
     const activeProgramStreams = client.program_streams.length
@@ -143,6 +142,7 @@ class ClientDetail extends Component {
     const overdue = client.tasks.overdue.length
     const today = client.tasks.today.length
     const upcoming = client.tasks.upcoming.length
+    console.log(client)
 
     return (
       <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
