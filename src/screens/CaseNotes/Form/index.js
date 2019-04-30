@@ -504,9 +504,11 @@ const DomainGroupCard = props => {
   return (
     <View style={[styles.card, props.style]}>
       <View style={[styles.header, {flexDirection: 'row', justifyContent: 'space-between'}]}>
-        <Text style={styles.headerTitle}>
-          { props.title }
-        </Text>
+        <View style={{width: '95%'}}>
+          <Text style={styles.headerTitle}>
+            { props.title }
+          </Text>
+        </View>
         <TouchableOpacity onPress={props.toggleExpanded}>
           <Icon name={iconName} size={30} style={{marginRight: 5, color: '#ffffff'}}/>
         </TouchableOpacity>
