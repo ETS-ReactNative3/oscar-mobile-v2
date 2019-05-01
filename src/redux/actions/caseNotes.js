@@ -98,12 +98,12 @@ handleCaseNoteParams = (params, action) => {
     formdata.append(`case_note[case_note_domain_groups_attributes[${index}][domain_group_id]]`, cndg.domain_group_id)
 
     if (cndg.task_ids.length > 0)
-      cndg.task_ids.map(task => formdata.append(`case_note[case_note_domain_groups_attributes[${index}][task_ids]][]`, task))
+      cndg.task_ids.forEach(task => formdata.append(`case_note[case_note_domain_groups_attributes[${index}][task_ids]][]`, task))
     else
       formdata.append(`case_note[case_note_domain_groups_attributes[${index}][task_ids]][]`, "")
 
     if (cndg.attachments.length > 0) {
-      cndg.attachments.map(attachment => {
+      cndg.attachments.forEach(attachment => {
         if (attachment.uri != undefined && attachment.name != undefined) {
           formdata.append(
             `case_note[case_note_domain_groups_attributes[${index}][attachments]][]`,

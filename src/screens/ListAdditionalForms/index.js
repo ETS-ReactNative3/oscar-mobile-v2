@@ -1,10 +1,15 @@
-import React, { Component } from 'react'
-import { View, Text, ScrollView, ListView, StyleSheet, FlatList } from 'react-native'
-import { List, ListItem } from 'react-native-elements'
-import { Navigation } from 'react-native-navigation'
-import { pushScreen } from '../../navigation/config'
-import { connect } from 'react-redux'
-import appIcon from '../../utils/Icon'
+import React, { Component }   from 'react'
+import { connect }            from 'react-redux'
+import { ListItem }           from 'react-native-elements'
+import { pushScreen }         from '../../navigation/config'
+import appIcon                from '../../utils/Icon'
+import {
+  View,
+  Text,
+  FlatList,
+  ScrollView,
+  StyleSheet
+} from 'react-native'
 class AdditionalForm extends Component {
   async createCustomForm(customForm) {
     const icons = await appIcon()

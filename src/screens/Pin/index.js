@@ -1,12 +1,15 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
-import CryptoJS from 'crypto-js'
-import { startScreen, startTabScreen } from '../../navigation/config'
-import { updatePin, setDefaultHeader } from '../../redux/actions/auth'
-import PinCode from '../../components/pin'
-import i18n from '../../i18n'
-
+import React, { Component }             from 'react'
+import { connect }                      from 'react-redux'
+import { startTabScreen }               from '../../navigation/config'
+import { updatePin, setDefaultHeader }  from '../../redux/actions/auth'
+import i18n                             from '../../i18n'
+import PinCode                          from '../../components/pin'
+import CryptoJS                         from 'crypto-js'
+import {
+  View,
+  Text,
+  StyleSheet
+} from 'react-native'
 class Pin extends Component {
   state = {
     pinCode: this.props.pinCode,

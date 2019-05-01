@@ -12,6 +12,7 @@ import {
   startNgoScreen,
   loadingScreen
 } from '../../navigation/config'
+import { locale } from 'moment';
 
 requestLogin = () => ({
   type: AUTH_TYPES.LOGIN_REQUEST
@@ -94,9 +95,11 @@ export function login(credentail, currentComponentId) {
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
         const org = getState().ngo.name
+        const language = getState().language.language
+        const params = {...credentail, locale: language }
         dispatch(requestLogin())
         axios
-          .post(endpoint.baseURL(org) + endpoint.login, credentail)
+          .post(endpoint.baseURL(org) + endpoint.login, params)
           .then(response => {
             const { pin_code } = response.data.data
             pin_code && dispatch(setDefaultHeader(response.headers))

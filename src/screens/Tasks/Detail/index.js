@@ -1,17 +1,21 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import moment from 'moment'
-import { sortBy } from 'lodash'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { Navigation } from 'react-native-navigation'
-import i18n from '../../../i18n'
+import React, { Component }       from 'react'
+import { connect }                from 'react-redux'
+import { sortBy }                 from 'lodash'
+import { Navigation }             from 'react-native-navigation'
 import { deleteTask, updateTask } from '../../../redux/actions/tasks'
-import Card from '../../../components/Card'
-import DropdownAlert from 'react-native-dropdownalert'
-import styles from './styles'
-
-import { View, Text, TouchableWithoutFeedback, ScrollView, Alert } from 'react-native'
-
+import Icon                       from 'react-native-vector-icons/MaterialIcons'
+import i18n                       from '../../../i18n'
+import Card                       from '../../../components/Card'
+import moment                     from 'moment'
+import styles                     from './styles'
+import DropdownAlert              from 'react-native-dropdownalert'
+import {
+  View,
+  Text,
+  Alert,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from 'react-native'
 class TaskDetail extends Component {
   static options(passProps) {
     return {

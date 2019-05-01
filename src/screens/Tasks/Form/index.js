@@ -4,18 +4,16 @@ import Icon                 from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select'
 import DatePicker           from 'react-native-datepicker'
 import { Navigation }       from 'react-native-navigation'
+import { MAIN_COLOR }       from '../../../constants/colors'
 import styles               from './styles'
 import i18n                 from '../../../i18n'
-import { MAIN_COLOR }       from '../../../constants/colors'
-
 import {
   View,
   Text,
-  Picker,
   TextInput,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native'
-
 export default class Task extends Component {
   state = {
     name: '',
@@ -58,7 +56,7 @@ export default class Task extends Component {
     const { domains } = this.props
 
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.modalContainer}>
           <View style={styles.modalTitleWrapper}>
             <Text style={styles.modalTitle}>{i18n.t('task.edit_title')}</Text>
@@ -73,15 +71,19 @@ export default class Task extends Component {
                     uniqueKey='id'
                     selectText='Please choose domain'
                     single={true}
+                    showDropDowns={true}
+                    single={true}
                     hideSearch={true}
+                    showCancelButton={true}
+                    modalWithSafeAreaView
                     styles={{
-                      container: { backgroundColor: 'transparent' },
-                      item: { padding: 10},
+                      button: { backgroundColor: MAIN_COLOR },
+                      cancelButton: { width: 150 },
+                      chipText: { maxWidth: 280 },
+                      selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                     }}
                     onSelectedItemsChange={ domainIds => this.setState({ domain_id: domainIds[0] }) }
                     selectedItems={[this.state.domain_id]}
-                    modalWithSafeAreaView
-                    hideConfirm
                   />
                 </View>
             }
@@ -138,7 +140,7 @@ export default class Task extends Component {
             </Button>
           </View>
         </View>
-      </View>
+      </ScrollView>
     )
   }
 }

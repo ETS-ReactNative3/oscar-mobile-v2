@@ -6,13 +6,14 @@ import { Alert, NetInfo }                   from 'react-native'
 import { template, map, filter, find }      from 'lodash'
 import { FAMILY_TYPES, CLIENT_TYPES }       from '../types'
 import endpoint                             from '../../constants/endpoint'
-
-createEntityCustomFormSuccess = (entityUpdated, customFormType) => ({
+import Database               from '../../config/Database'
+import { createAdditionalFormOffline } from './offline/customFieldProperties'
+export const createEntityCustomFormSuccess = (entityUpdated, customFormType) => ({
   type: customFormType,
   entityUpdated
 })
 
-addEntityCustomFormState = (entity, newCustomFieldProperty, form) => {
+export const addEntityCustomFormState = (entity, newCustomFieldProperty, form) => {
   form['custom_field_properties'] = [newCustomFieldProperty]
   const updateForms = entity.add_forms.filter(add_form => {
     return add_form.id !== form.id
@@ -22,7 +23,7 @@ addEntityCustomFormState = (entity, newCustomFieldProperty, form) => {
   return entity
 }
 
-updateStateAdditionalFormInEntity = (entity, updatedCustomFieldProperty, additionalForm) => {
+export const updateStateAdditionalFormInEntity = (entity, updatedCustomFieldProperty, additionalForm) => {
   let newForm = []
   if (additionalForm.custom_field_properties.length > 0) {
     newForm = map(entity.additional_form, form => {
@@ -43,7 +44,7 @@ updateStateAdditionalFormInEntity = (entity, updatedCustomFieldProperty, additio
   return entity
 }
 
-mergeStateAdditionalFormInEntity = (entity, newCustomFieldProperty, additionalForm) => {
+export const mergeStateAdditionalFormInEntity = (entity, newCustomFieldProperty, additionalForm) => {
   let newForm = []
   if (additionalForm.custom_field_properties.length > 0) {
     newForm = map(entity.additional_form, form => {
@@ -58,7 +59,7 @@ mergeStateAdditionalFormInEntity = (entity, newCustomFieldProperty, additionalFo
   return entity
 }
 
-deleteStateAdditionalFormInEntity = (entity, deletedCustomFieldProperty, additionalForm) => {
+export const deleteStateAdditionalFormInEntity = (entity, deletedCustomFieldProperty, additionalForm) => {
   let newAddForms = []
   let newAdditionalForms = []
   let newForms = []
@@ -108,13 +109,13 @@ customFormPropertyPathAndType = type => {
 export function createAdditionalForm(properties, entityProfile, additionalForm, actions) {
   return dispatch => {
     NetInfo.isConnected.fetch().then(isConnected => {
+      const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
+      let createEntityAdditonalFormPath = template(customFieldPropertyPath)
+      createEntityAdditonalFormPath = createEntityAdditonalFormPath({ entity_id: entityProfile.id })
+
+      loadingScreen()
       if (isConnected) {
         let entityUpdated = {}
-        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
-        let createEntityAdditonalFormPath = template(customFieldPropertyPath)
-        createEntityAdditonalFormPath = createEntityAdditonalFormPath({ entity_id: entityProfile.id })
-
-        loadingScreen()
         dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
           .then(response => {
             if (actions.clickForm == 'additionalForm') {
@@ -132,7 +133,7 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
             alert(JSON.stringify(error))
           })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions))
       }
     })
   }
@@ -201,12 +202,12 @@ export function handleEntityAdditonalForm(type, properties, additionalForm, EndP
     let formData = new FormData()
     formData.append('custom_field_id', additionalForm.id)
 
-    additionalForm.fields.map((field, index) => {
+    additionalForm.fields.forEach((field, index) => {
       if (formTypes.includes(field.type)) {
         if (field.type == 'file') {
           if (properties[field.label] != undefined && properties[field.label].length > 0) {
             const uniqIndex = Math.floor(Math.random() * 1000000)
-            properties[field.label].map(attachment => {
+            properties[field.label].forEach(attachment => {
               if (attachment.uri != undefined) {
                 formData.append(`custom_field_property[form_builder_attachments_attributes[${uniqIndex}][name]]`, field.name)
                 formData.append(`custom_field_property[form_builder_attachments_attributes[${uniqIndex}][file]][]`, {
@@ -227,7 +228,7 @@ export function handleEntityAdditonalForm(type, properties, additionalForm, EndP
             formData.append(`custom_field_property[properties[${field.name}]]`, properties[field.label])
           } else if (typeof properties[field.label] === 'object') {
             if (properties[field.label].length > 0) {
-              properties[field.label].map((value, index) => {
+              properties[field.label].forEach((value, index) => {
                 formData.append(`custom_field_property[properties[${field.name}]][]`, value)
               })
             } else {

@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Image, Animated, Vibration, Easing } from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon                 from 'react-native-vector-icons/Ionicons'
+import {
+  Text,
+  View,
+  Easing,
+  Animated,
+  Vibration,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native'
 
 const COLOR = ['#76ECC9']
 const ButtonSize = 75
