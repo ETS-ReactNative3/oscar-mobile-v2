@@ -47,4 +47,19 @@ Setting.schema = {
   }
 }
 
-export default new Realm({ schema: [Task, ClientProfile, FamilyProfile, Setting], schemaVersion: 1.1 })
+class CustomFieldProperties extends Realm.Object {}
+CustomFieldProperties.schema = {
+  name: 'CustomFieldProperties',
+  properties: {
+    id: 'int',
+    custom_field_id: 'int',
+    custom_formable_id: 'int',
+    custom_formable_type: 'string',
+    properties: 'string',
+    created_at: 'date',
+    type: 'string',
+    custom_field_property_path: 'string'
+  }
+}
+
+export default new Realm({ schema: [Task, ClientProfile, FamilyProfile, Setting, CustomFieldProperties], schemaVersion: 1.1 })
