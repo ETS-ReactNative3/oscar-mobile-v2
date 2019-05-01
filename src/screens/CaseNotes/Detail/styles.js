@@ -16,6 +16,15 @@ const styles = StyleSheet.create({
     margin: 20,
     marginBottom: 10
   },
+  attachmentWrapper: {
+    flexDirection: 'row',
+    marginBottom: 4,
+    paddingTop: 5,
+    paddingBottom: 5,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#dedede',
+  },
   attendeeTitle: {
     fontWeight: 'bold',
     color: '#fff',

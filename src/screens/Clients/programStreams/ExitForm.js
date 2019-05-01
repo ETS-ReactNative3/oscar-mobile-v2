@@ -8,7 +8,7 @@ import SectionedMultiSelect                               from 'react-native-sec
 import { connect }                                        from 'react-redux'
 import { Navigation }                                     from 'react-native-navigation'
 import { MAIN_COLOR }                                     from '../../../constants/colors'
-import { filter, map }                                    from 'lodash'
+import { filter, map, forEach }                           from 'lodash'
 import { customFormStyles }                               from '../../../styles'
 import { CheckBox, Divider }                              from 'react-native-elements'
 import { options, MAX_SIZE }                              from '../../../constants/option'
@@ -29,7 +29,7 @@ class ExitForm extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { exit_date: '', field_properties: {}, fileSize: 0, enrollment_date: '' }
+    this.state = { exit_date: '', field_properties: {}, filesSize: 0, enrollment_date: '' }
   }
 
   navigationButtonPressed({ buttonId }) {
@@ -106,14 +106,18 @@ class ExitForm extends Component {
     return map(options, option => ({ name: option.label, id: option.label }))
   }
 
-  _datePickerType(label, data) {
+  _datePickerType(label, data, formField = {}) {
+    const required = formField.required || label == 'Exit Date'
     const value = data != undefined ? data : ''
     const minDate = moment(this.state.enrollment_date, 'YYYY-MM-DD')
       .add(1, 'days')
       .format('YYYY-MM-DD')
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <DatePicker
           date={value}
           style={customFormStyles.datePicker}
@@ -134,10 +138,14 @@ class ExitForm extends Component {
   }
 
   _textType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -150,10 +158,14 @@ class ExitForm extends Component {
   }
 
   _numberType(label, data, formField) {
+    const required = formField.required
     let value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -166,11 +178,15 @@ class ExitForm extends Component {
     )
   }
 
-  _textareaType(label, data) {
+  _textareaType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           placeholder="Relevant Referral Infromation"
@@ -188,10 +204,14 @@ class ExitForm extends Component {
   }
 
   _checkBoxType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -212,9 +232,13 @@ class ExitForm extends Component {
   }
 
   _radioType(label, formField, data) {
+    const required = formField.required
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -243,10 +267,14 @@ class ExitForm extends Component {
   }
 
   _selectType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
@@ -272,6 +300,7 @@ class ExitForm extends Component {
   }
 
   _fileUploader(label, formField, data) {
+    const required = formField.required
     return (
       <View style={[customFormStyles.fieldContainer, { marginTop: 10 }]}>
         <View
@@ -282,7 +311,8 @@ class ExitForm extends Component {
             padding: 4
           }}
         >
-          <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin, {flex: 1}]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
@@ -305,12 +335,14 @@ class ExitForm extends Component {
 
   _removeAttactment(data, attachment, label) {
     let { field_properties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachment
+    let filesSize = 0
+    const updatedAttachment = []
+    forEach(data, (file, index) => {
+      if (index != attachment) updatedAttachment.push(file)
+      else filesSize -= file.size
     })
-
     field_properties[label] = updatedAttachment
-    this.setState(field_properties)
+    this.setState({field_properties, filesSize})
   }
 
   _selectAllFile(label, formField, data) {
@@ -353,10 +385,11 @@ class ExitForm extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { field_properties } = this.state
-    const fileSize = response.fileSize
+    let { field_properties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
 
-    if (this.state.fileSize + fileSize / 1024 <= MAX_SIZE) {
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -367,9 +400,9 @@ class ExitForm extends Component {
       }
 
       field_properties[label] = formField.multiple != undefined && formField.multiple ? field_properties[label].concat(source) : [source]
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, field_properties: field_properties })
+      this.setState({ filesSize, field_properties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }
@@ -398,9 +431,9 @@ class ExitForm extends Component {
             return (
               <View key={index}>
                 {fieldType == 'text' && this._textType(label, field_properties[label], formField)}
-                {fieldType == 'number' && this._numberType(label, field_properties[label])}
-                {fieldType == 'textarea' && this._textareaType(label, field_properties[label])}
-                {fieldType == 'date' && this._datePickerType(label, field_properties[label])}
+                {fieldType == 'number' && this._numberType(label, field_properties[label], formField)}
+                {fieldType == 'textarea' && this._textareaType(label, field_properties[label], formField)}
+                {fieldType == 'date' && this._datePickerType(label, field_properties[label], formField)}
                 {fieldType == 'checkbox-group' && this._checkBoxType(label, formField, field_properties[label])}
                 {fieldType == 'radio-group' && this._radioType(label, formField, field_properties[label])}
                 {fieldType == 'select' && formField.multiple && this._checkBoxType(label, formField, field_properties[label])}

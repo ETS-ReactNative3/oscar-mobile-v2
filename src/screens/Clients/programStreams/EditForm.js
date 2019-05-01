@@ -8,7 +8,7 @@ import SectionedMultiSelect                                     from 'react-nati
 import { connect }                                              from 'react-redux'
 import { Navigation }                                           from 'react-native-navigation'
 import { MAIN_COLOR }                                           from '../../../constants/colors'
-import { map, filter }                                          from 'lodash'
+import { map, filter, forEach }                                 from 'lodash'
 import { customFormStyles }                                     from '../../../styles'
 import { CheckBox, Divider }                                    from 'react-native-elements'
 import { options, MAX_SIZE }                                    from '../../../constants/option'
@@ -36,7 +36,7 @@ class EditForm extends Component {
 
     this.state = {
       field_properties: {},
-      fileSize: 0
+      filesSize: 0
     }
     Navigation.events().bindComponent(this)
     if (props.type.match(/Exit|Enroll/)) {
@@ -127,7 +127,8 @@ class EditForm extends Component {
     this.setState(field_properties)
   }
 
-  datePickerType(label, data, dateType) {
+  datePickerType(label, data, dateType, formField = {}) {
+    const required = formField.required || label == 'Enroll Date' || label == 'Exit Date'
     const value = data != undefined ? data : ''
     const new_date = moment(this.props.enrollment_date, 'YYYY-MM-DD')
       .add(1, 'days')
@@ -137,7 +138,10 @@ class EditForm extends Component {
       .format('YYYY-MM-DD')
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <DatePicker
           date={value}
           style={customFormStyles.datePicker}
@@ -164,11 +168,15 @@ class EditForm extends Component {
     )
   }
 
-  numberType(label, data) {
+  numberType(label, data, formField) {
+    const required = formField.required
     let value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -181,11 +189,15 @@ class EditForm extends Component {
     )
   }
 
-  textType(label, data, textType) {
+  textType(label, data, textType, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           placeholder={label}
@@ -203,10 +215,14 @@ class EditForm extends Component {
   }
 
   checkBoxType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={[customFormStyles.fieldContainer]}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -227,9 +243,13 @@ class EditForm extends Component {
   }
 
   radioType(label, formField, data) {
+    const required = formField.required
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -250,10 +270,14 @@ class EditForm extends Component {
   }
 
   selectType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
@@ -287,10 +311,12 @@ class EditForm extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { field_properties } = this.state
-    const fileSize = response.fileSize
+    let { field_properties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
 
-    if ((this.state.fileSize + fileSize) / 1024 <= MAX_SIZE) {
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
+
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -319,9 +345,9 @@ class EditForm extends Component {
         })
         field_properties[label] = isLocalExited.length == 0 ? [...updateLocalfile, source] : updateLocalfile
       }
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, field_properties: field_properties })
+      this.setState({ filesSize, field_properties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }
@@ -367,24 +393,20 @@ class EditForm extends Component {
 
   _removeAttactment(data, attachmentIndex, label) {
     let { field_properties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachmentIndex
-    })
+    let filesSize = 0
+    const updatedAttachment = []
 
-    const findAttachmentFile = filter(data, (file, index) => {
-      return index == attachmentIndex
+    forEach(data, (file, index) => {
+      if (index != attachmentIndex) updatedAttachment.push(file)
+      else filesSize -= file.size
     })
-
-    let fileSize = 0
-    if (findAttachmentFile.length > 0) {
-      fileSize = findAttachmentFile[0].size
-    }
 
     field_properties[label] = updatedAttachment
-    this.setState({ field_properties: field_properties, fileSize: this.state.fileSize - fileSize })
+    this.setState({field_properties, filesSize})
   }
 
   _fileUploader(label, formField, data) {
+    const required = formField.required
     return (
       <View style={[customFormStyles.fieldContainer, { marginTop: 10 }]}>
         <View
@@ -395,7 +417,8 @@ class EditForm extends Component {
             padding: 4
           }}
         >
-          <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin, {flex: 1}]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
@@ -433,10 +456,10 @@ class EditForm extends Component {
       const label = formField.label
       return (
         <View key={index}>
-          {fieldType == 'text' && this.textType(label, field_properties[label], 'text')}
-          {fieldType == 'number' && this.numberType(label, field_properties[label])}
-          {fieldType == 'textarea' && this.textType(label, field_properties[label], 'textarea')}
-          {fieldType == 'date' && this.datePickerType(label, field_properties[label], 'formDate')}
+          {fieldType == 'text' && this.textType(label, field_properties[label], 'text', formField)}
+          {fieldType == 'number' && this.numberType(label, field_properties[label], formField)}
+          {fieldType == 'textarea' && this.textType(label, field_properties[label], 'textarea', formField)}
+          {fieldType == 'date' && this.datePickerType(label, field_properties[label], 'formDate', formField)}
           {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, field_properties[label])}
           {fieldType == 'radio-group' && this.radioType(label, formField, field_properties[label])}
           {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, field_properties[label])}

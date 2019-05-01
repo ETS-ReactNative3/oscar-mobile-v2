@@ -28,7 +28,7 @@ class EnrollmentForm extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { enrollment_date: '', fieldProperties: {}, fileSize: 0 }
+    this.state = { enrollment_date: '', fieldProperties: {}, filesSize: 0 }
   }
 
   componentWillMount() {
@@ -87,14 +87,18 @@ class EnrollmentForm extends Component {
     return map(options, option => ({ name: option.label, id: option.label }))
   }
 
-  datePickerType(label, data) {
+  datePickerType(label, data, formField = {}) {
+    const required = formField.required || label == 'Enroll Date'
     const value = data != undefined ? data : ''
     const minDate = moment(this.state.enrollment_date, 'YYYY-MM-DD')
       .add(1, 'days')
       .format('YYYY-MM-DD')
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <DatePicker
           date={value}
           style={customFormStyles.datePicker}
@@ -115,10 +119,14 @@ class EnrollmentForm extends Component {
   }
 
   textType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -131,10 +139,14 @@ class EnrollmentForm extends Component {
   }
 
   numberType(label, data, formField) {
+    const required = formField.required
     let value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -147,11 +159,15 @@ class EnrollmentForm extends Component {
     )
   }
 
-  textareaType(label, data) {
+  textareaType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           placeholder="Relevant Referral Infromation"
@@ -169,10 +185,14 @@ class EnrollmentForm extends Component {
   }
 
   checkBoxType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -193,9 +213,13 @@ class EnrollmentForm extends Component {
   }
 
   radioType(label, formField, data) {
+    const required = formField.required
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -224,10 +248,14 @@ class EnrollmentForm extends Component {
   }
 
   selectType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
@@ -252,6 +280,7 @@ class EnrollmentForm extends Component {
   }
 
   fileUploader(label, formField, data) {
+    const required = formField.required
     return (
       <View style={[customFormStyles.fieldContainer, { marginTop: 10 }]}>
         <View
@@ -262,7 +291,8 @@ class EnrollmentForm extends Component {
             padding: 4
           }}
         >
-          <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin, {flex: 1}]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
@@ -285,12 +315,15 @@ class EnrollmentForm extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fieldProperties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachment
-    })
+    let filesSize = 0
+    const updatedAttachment = []
 
+    forEach(data, (file, index) => {
+      if (index != attachment) updatedAttachment.push(file)
+      else filesSize -= file.size
+    })
     fieldProperties[label] = updatedAttachment
-    this.setState(fieldProperties)
+    this.setState({fieldProperties, filesSize})
   }
 
   _selectAllFile(label, formField, data) {
@@ -333,10 +366,12 @@ class EnrollmentForm extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { fieldProperties } = this.state
-    const fileSize = response.fileSize
+    let { fieldProperties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
 
-    if (this.state.fileSize + fileSize / 1024 <= MAX_SIZE) {
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
+
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -347,9 +382,9 @@ class EnrollmentForm extends Component {
       }
 
       fieldProperties[label] = formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, fieldProperties })
+      this.setState({ filesSize, fieldProperties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }
@@ -366,9 +401,9 @@ class EnrollmentForm extends Component {
             return (
               <View key={index}>
                 {fieldType == 'text' && this.textType(label, fieldProperties[label], formField)}
-                {fieldType == 'number' && this.numberType(label, fieldProperties[label])}
-                {fieldType == 'textarea' && this.textareaType(label, fieldProperties[label])}
-                {fieldType == 'date' && this.datePickerType(label, fieldProperties[label])}
+                {fieldType == 'number' && this.numberType(label, fieldProperties[label], formField)}
+                {fieldType == 'textarea' && this.textareaType(label, fieldProperties[label], formField)}
+                {fieldType == 'date' && this.datePickerType(label, fieldProperties[label], formField)}
                 {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, fieldProperties[label])}
                 {fieldType == 'radio-group' && this.radioType(label, formField, fieldProperties[label])}
                 {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, fieldProperties[label])}

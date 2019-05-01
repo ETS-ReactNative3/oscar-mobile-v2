@@ -1,6 +1,6 @@
-import React from 'react'
-import { View, ScrollView, StyleSheet, Text } from 'react-native'
-import { MAIN_COLOR } from '../constants/colors'
+import React                      from 'react'
+import { MAIN_COLOR }             from '../constants/colors'
+import { View, StyleSheet, Text } from 'react-native'
 
 const Card = (props) => (
   <View style={[styles.container, props.style]}>

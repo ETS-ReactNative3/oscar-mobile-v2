@@ -143,6 +143,7 @@ class ClientDetail extends Component {
     const overdue = client.tasks.overdue.length
     const today = client.tasks.today.length
     const upcoming = client.tasks.upcoming.length
+    const referred = client.status == 'Referred'
 
     return (
       <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
@@ -155,13 +156,14 @@ class ClientDetail extends Component {
                   value={client.assessments.length}
                   color="#23c6c8"
                   onPress={() => this.navigateToAssessments(client)}
-                  disabled={!enableAssessment}
+                  disabled={referred || !enableAssessment}
                 />
                 <Menu
                   title={i18n.t('client.case_notes')}
                   value={client.case_notes.length}
                   color="#23c6c8"
                   onPress={() => this.navigateToCaseNotes(client)}
+                  disabled={referred}
                 />
               </View>
               <View style={[styles.widgetRow, { marginBottom: 30 }]}>
@@ -170,6 +172,7 @@ class ClientDetail extends Component {
                   value={`${overdue} / ${today} / ${upcoming}`}
                   color="#23c6c8"
                   onPress={() => this.navigateToTasks(client)}
+                  disabled={referred}
                 />
               </View>
             </View>
@@ -180,7 +183,7 @@ class ClientDetail extends Component {
                   value={enrolledProgramStreamCount}
                   color="#1ab394"
                   onPress={() => this.navigateToEnrollProgramStreams(client)}
-                  disabled={enrolledProgramStreamCount == 0}
+                  disabled={referred || enrolledProgramStreamCount == 0}
                 />
                 <Menu
                   title={i18n.t('client.program_stream')}
@@ -188,6 +191,7 @@ class ClientDetail extends Component {
                   color="#1ab394"
                   loading={this.props.programStreamsLoading}
                   onPress={() => this.navigateToActiveProgramStreams(client)}
+                  disabled={referred}
                 />
               </View>
               <View style={[styles.widgetRow, { marginBottom: 30 }]}>
@@ -196,13 +200,14 @@ class ClientDetail extends Component {
                   value={client.additional_form.length}
                   color="#1c84c6"
                   onPress={() => this.navigateToAdditionalForms(client)}
-                  disabled={client.additional_form.length == 0}
+                  disabled={referred || client.additional_form.length == 0}
                 />
                 <Menu
                   title={i18n.t('client.add_form')}
                   value={client.add_forms.length}
                   color="#1c84c6"
                   onPress={() => this.navigateToAddForms(client)}
+                  disabled={referred}
                 />
               </View>
             </View>

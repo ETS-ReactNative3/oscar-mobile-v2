@@ -582,12 +582,12 @@ export function handleExitForm(status, field_properties, enrollment, client_enro
     formdata.append('program_stream_id', enrollment.program_stream_id)
     formdata.append('leave_program[exit_date]', exit_date)
 
-    enrollment.leave_program_field.map((field, index) => {
+    enrollment.leave_program_field.forEach((field, index) => {
       if (formTypes.includes(field.type)) {
         if (field.type == 'file') {
           if (field_properties[field.label] != undefined && field_properties[field.label].length > 0) {
             const uniqIndex = Math.floor(Math.random() * 1000000)
-            field_properties[field.label].map(attachment => {
+            field_properties[field.label].forEach(attachment => {
               if (attachment.uri != undefined) {
                 formdata.append(`leave_program[form_builder_attachments_attributes[${uniqIndex}][name]]`, field.name)
                 formdata.append(`leave_program[form_builder_attachments_attributes[${uniqIndex}][file]][]`, {
@@ -608,7 +608,7 @@ export function handleExitForm(status, field_properties, enrollment, client_enro
             formdata.append(`leave_program[properties[${field.name}]]`, field_properties[field.label])
           } else if (typeof field_properties[field.label] === 'object') {
             if (field_properties[field.label].length > 0) {
-              field_properties[field.label].map((value, index) => {
+              field_properties[field.label].forEach(value => {
                 formdata.append(`leave_program[properties[${field.name}]][]`, value)
               })
             } else {

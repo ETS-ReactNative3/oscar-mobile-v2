@@ -1,29 +1,29 @@
-import React, { Component } from 'react'
-import { View, Text, ScrollView, Image } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import DropdownAlert from 'react-native-dropdownalert'
-import { Navigation } from 'react-native-navigation'
-import _ from 'lodash'
-import styles from './styles'
-import { SCORE_COLOR } from '../../../constants/colors'
-import { pushScreen } from '../../../navigation/config'
-import i18n from '../../../i18n'
-
-export default class AssessmentDetail extends Component {
+import React, { Component }         from 'react'
+import _                            from 'lodash'
+import i18n                         from '../../../i18n'
+import Icon                         from 'react-native-vector-icons/MaterialIcons'
+import styles                       from './styles'
+import DropdownAlert                from 'react-native-dropdownalert'
+import { connect }                  from 'react-redux'
+import { Navigation }               from 'react-native-navigation'
+import { pushScreen }               from '../../../navigation/config'
+import { SCORE_COLOR }              from '../../../constants/colors'
+import appIcons                     from '../../../utils/Icon'
+import {
+  View,
+  Text,
+  ScrollView,
+  Image
+} from 'react-native'
+class AssessmentDetail extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      client: props.client,
-      assessment: props.assessment,
-      domains: props.domains
-    }
-
     Navigation.events().bindComponent(this)
   }
 
-  navigationButtonPressed = () => {
-    const { client, assessment, domains } = this.state
-
+  navigationButtonPressed = async () => {
+    const { client, assessment, domains } = this.props
+    const icons = await appIcons()
     pushScreen(this.props.componentId, {
       screen: 'oscar.assessmentForm',
       title: 'Edit Assessment',
@@ -33,17 +33,21 @@ export default class AssessmentDetail extends Component {
         assessment,
         action: 'update',
         previousComponentId: this.props.componentId,
-        onUpdateSuccess: this.onUpdateSuccess,
         alertMessage: () => this.alertMessage('Assessment has been successfully updated.')
-      }
+      },
+      rightButtons: [
+        {
+          id: 'SAVE_ASSESSMENT',
+          icon: icons.save,
+          color: '#fff'
+        }
+      ]
     })
   }
 
   alertMessage = message => {
     this.refs.dropdown.alertWithType('success', 'Success', message)
   }
-
-  onUpdateSuccess = (client, assessment) => this.setState({ client, assessment })
 
   renderAttachments = attachments => {
     if (attachments.length === 0) return
@@ -55,7 +59,11 @@ export default class AssessmentDetail extends Component {
           const filename = attachment.url != undefined ? attachment.url.substring(attachment.url.lastIndexOf('/') + 1) : attachment.name
 
           return (
-            <View key={index}>
+            <View key={index} style={styles.attachmentWrapper}>
+              <Image
+                style={{ width: 40, height: 40 }}
+                source={{ uri: attachment.url }}
+              />
               <Text style={styles.listAttachments}>
                 {index + 1}. {filename}
               </Text>
@@ -68,7 +76,7 @@ export default class AssessmentDetail extends Component {
   }
 
   renderTasks = tasks => {
-    if (tasks.length === 0) return
+    if (tasks == undefined || tasks.length === 0) return
 
     return (
       <View>
@@ -111,8 +119,8 @@ export default class AssessmentDetail extends Component {
   )
 
   renderAssessmentDomain = (assessmentDomain, index) => {
-    const { domains } = this.state
-    const domain = assessmentDomain.domain
+    const { domains } = this.props
+    const domain = _.find(domains, {id: assessmentDomain.domain_id})
     const domainName = `Domain ${domain.name} : ${domain.identity}`
 
     const score = domains[index][`score_${assessmentDomain.score}`]
@@ -158,7 +166,7 @@ export default class AssessmentDetail extends Component {
   }
 
   render() {
-    const { client, assessment } = this.state
+    const { client, assessment } = this.props
 
     return (
       <View style={{ flex: 1 }}>
@@ -173,3 +181,18 @@ export default class AssessmentDetail extends Component {
     )
   }
 }
+
+
+const mapState = (state, ownProps) => {
+  const client = state.clients.data[ownProps.clientId]
+  const assessment = _.find(client.assessments, {id: ownProps.assessmentId})
+  return {
+    client,
+    assessment
+  }
+}
+
+
+
+
+export default connect(mapState)(AssessmentDetail)

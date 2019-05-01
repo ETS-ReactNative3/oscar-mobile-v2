@@ -25,7 +25,7 @@ export default class CreateCustomFormWidget extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { fieldProperties: {}, fileSize: 0 }
+    this.state = { fieldProperties: {}, filesSize: 0 }
   }
 
   componentWillMount() {
@@ -80,11 +80,15 @@ export default class CreateCustomFormWidget extends Component {
     this.setState(fieldProperties)
   }
 
-  datePickerType(label, data) {
+  datePickerType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <DatePicker
           date={value}
           style={customFormStyles.datePicker}
@@ -104,10 +108,14 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   textType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -120,10 +128,14 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   numberType(label, data, formField) {
-    let value = data != undefined ? data : ''
+    const required = formField.required
+    const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           returnKeyType="next"
@@ -136,11 +148,15 @@ export default class CreateCustomFormWidget extends Component {
     )
   }
 
-  textareaType(label, data) {
+  textareaType(label, data, formField) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <TextInput
           autoCapitalize="sentences"
           placeholder="Relevant Referral Infromation"
@@ -158,10 +174,14 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   checkBoxType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -182,9 +202,13 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   radioType(label, formField, data) {
+    const required = formField.required
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         {map(formField.values, (fieldValue, index) => {
           return (
             <View key={index} style={customFormStyles.row}>
@@ -213,10 +237,14 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   selectType(label, formField, data) {
+    const required = formField.required
     const value = data != undefined ? data : ''
     return (
       <View style={customFormStyles.fieldContainer}>
-        <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        <View style={{flexDirection: 'row'}}>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin]}>{label}</Text>
+        </View>
         <SectionedMultiSelect
           items={this.listItems(formField.values)}
           uniqueKey="id"
@@ -242,6 +270,7 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   fileUploader(label, formField, data) {
+    const required = formField.required
     return (
       <View style={[customFormStyles.fieldContainer, { marginTop: 10 }]}>
         <View
@@ -252,7 +281,8 @@ export default class CreateCustomFormWidget extends Component {
             padding: 4
           }}
         >
-          <Text style={[customFormStyles.label, customFormStyles.labelMargin, { flex: 1 }]}>{label}</Text>
+          {required && <Text style={[customFormStyles.label, customFormStyles.labelMargin, {color: 'red'}]}>* </Text>}
+          <Text style={[customFormStyles.label, customFormStyles.labelMargin, {flex: 1}]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this.uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
@@ -275,12 +305,15 @@ export default class CreateCustomFormWidget extends Component {
 
   removeAttactment(data, attachment, label) {
     let { fieldProperties } = this.state
-    const updatedAttachment = filter(data, (file, index) => {
-      return index != attachment
-    })
+    let filesSize = 0
+    const updatedAttachment = []
 
+    forEach(data, (file, index) => {
+      if (index != attachment) updatedAttachment.push(file)
+      else filesSize -= file.size
+    })
     fieldProperties[label] = updatedAttachment
-    this.setState(fieldProperties)
+    this.setState({fieldProperties, filesSize})
   }
 
   selectAllFile(label, formField, data) {
@@ -323,10 +356,12 @@ export default class CreateCustomFormWidget extends Component {
   }
 
   handleSelectedFile(response, label, formField, data) {
-    let { fieldProperties } = this.state
-    const fileSize = response.fileSize
+    let { fieldProperties, filesSize } = this.state
+    const fileSize = response.fileSize / 1024
 
-    if (this.state.fileSize + fileSize / 1024 <= MAX_SIZE) {
+    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
+
+    if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
         path: filePath,
@@ -337,9 +372,9 @@ export default class CreateCustomFormWidget extends Component {
       }
 
       fieldProperties[label] = formField.multiple != undefined && formField.multiple ? fieldProperties[label].concat(source) : [source]
-      this.setState({ fileSize: this.state.fileSize + fileSize / 1024, fieldProperties })
+      this.setState({ filesSize, fieldProperties })
     } else {
-      Alert.alert('Upload file is reach limit', 'We allow only 5MB upload per request.')
+      Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
     this.setState({ error: null })
   }
@@ -356,9 +391,9 @@ export default class CreateCustomFormWidget extends Component {
             return (
               <View key={index}>
                 {fieldType == 'text' && this.textType(label, fieldProperties[label], formField)}
-                {fieldType == 'number' && this.numberType(label, fieldProperties[label])}
-                {fieldType == 'textarea' && this.textareaType(label, fieldProperties[label])}
-                {fieldType == 'date' && this.datePickerType(label, fieldProperties[label])}
+                {fieldType == 'number' && this.numberType(label, fieldProperties[label], formField)}
+                {fieldType == 'textarea' && this.textareaType(label, fieldProperties[label], formField)}
+                {fieldType == 'date' && this.datePickerType(label, fieldProperties[label], formField)}
                 {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, fieldProperties[label])}
                 {fieldType == 'radio-group' && this.radioType(label, formField, fieldProperties[label])}
                 {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, fieldProperties[label])}

@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
-import { View, Text, Image, TouchableWithoutFeedback, Alert, Dimensions, StyleSheet, ActivityIndicator } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import ImagePicker from 'react-native-image-picker'
+import Icon                 from 'react-native-vector-icons/MaterialIcons'
+import ImagePicker          from 'react-native-image-picker'
+import {
+  View,
+  Image,
+  Alert,
+  Dimensions,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableWithoutFeedback
+} from 'react-native'
 
 const MAX_LENGTH = Dimensions.get('window').width - 180
 
