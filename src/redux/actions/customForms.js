@@ -115,23 +115,24 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
 
       loadingScreen()
       if (isConnected) {
-        let entityUpdated = {}
-        dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
-          .then(response => {
-            if (actions.clickForm == 'additionalForm') {
-              entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
-            } else {
-              entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
-            }
-            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            Navigation.popTo(actions.entityDetailComponentId)
-            actions.alertMessage()
-          })
-          .catch(error => {
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            alert(JSON.stringify(error))
-          })
+        dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions))
+        // let entityUpdated = {}
+        // dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
+        //   .then(response => {
+        //     if (actions.clickForm == 'additionalForm') {
+        //       entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
+        //     } else {
+        //       entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
+        //     }
+        //     dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+        //     Navigation.dismissOverlay('LOADING_SCREEN')
+        //     Navigation.popTo(actions.entityDetailComponentId)
+        //     actions.alertMessage()
+        //   })
+        //   .catch(error => {
+        //     Navigation.dismissOverlay('LOADING_SCREEN')
+        //     alert(JSON.stringify(error))
+        //   })
       } else {
         dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions))
       }

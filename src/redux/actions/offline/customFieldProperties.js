@@ -5,6 +5,7 @@ import { loadingScreen }                    from '../../../navigation/config'
 import { Alert, NetInfo }                   from 'react-native'
 import Database               from '../../../config/Database'
 import { template, map, filter, find }      from 'lodash'
+import { QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES }       from '../../types'
 import {
   createEntityCustomFormSuccess,
   addEntityCustomFormState,
@@ -14,33 +15,31 @@ import {
   handleEntityAdditonalForm
 } from '../customForms'
 
-export function createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions) {
-  return dispatch => {
-    const params = {
-      id: Date.now(),
-      properties: JSON.stringify(properties),
-      custom_field_id: additionalForm.id,
-      custom_formable_type: actions.type,
-      custom_formable_id: entityProfile.id,
-      created_at: new Date(),
-      type: 'create',
-      custom_field_property_path: createEntityAdditonalFormPath
-    }
+const createCustomFieldPropertySuccess = data => ({
+  type: QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_REQUEST_SUCCESS,
+  data
+})
 
+const updateCustomFieldPropertySuccess = data => ({
+  type: QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_UPDATED,
+  data
+})
+
+export function createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions) {
+  return (dispatch, getState) => {
     const customFieldProperty = {
       id: Date.now(),
       properties: properties,
       custom_field_id: additionalForm.id,
       custom_formable_type: actions.type,
       custom_formable_id: entityProfile.id,
-      created_at: new Date(),
-      custom_field_property_path: createEntityAdditonalFormPath
+      created_at: new Date()
     }
 
-    Database.write(() => { Database.create('CustomFieldProperties', params) })
+    let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
+    queueCustomFieldProperties = [...queueCustomFieldProperties, customFieldProperty]
 
-    // let currentClient = JSON.stringify(Database.objects('CustomFieldProperties'))
-    // console.log(JSON.parse(currentClient))
+    dispatch(createCustomFieldPropertySuccess(queueCustomFieldProperties))
 
     if (actions.clickForm == 'additionalForm') {
       entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, customFieldProperty, additionalForm)
