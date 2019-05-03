@@ -14,9 +14,7 @@ export default (state = initialState, action) => {
       return state.set('data', action.data).set('loading', false)
 
     case QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_UPDATED:
-      return state
-        .setIn(['data', action.client.id], action.client)
-        .set('loading', false)
+      return state.setIn(['data',action.index], action.queueData).set('loading', false)
 
     default:
       return state

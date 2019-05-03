@@ -1,10 +1,8 @@
 import axios                                from 'axios'
-import { formTypes }                        from '../../../utils/validation'
 import { Navigation }                       from 'react-native-navigation'
+import { template, findIndex }              from 'lodash'
 import { loadingScreen }                    from '../../../navigation/config'
 import { Alert, NetInfo }                   from 'react-native'
-import Database               from '../../../config/Database'
-import { template, map, filter, find }      from 'lodash'
 import { QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES }       from '../../types'
 import {
   createEntityCustomFormSuccess,
@@ -12,7 +10,6 @@ import {
   updateStateAdditionalFormInEntity,
   mergeStateAdditionalFormInEntity,
   deleteStateAdditionalFormInEntity,
-  handleEntityAdditonalForm
 } from '../customForms'
 
 const createCustomFieldPropertySuccess = data => ({
@@ -20,12 +17,13 @@ const createCustomFieldPropertySuccess = data => ({
   data
 })
 
-const updateCustomFieldPropertySuccess = data => ({
+const updateCustomFieldPropertySuccess = (queueData, index) => ({
   type: QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_UPDATED,
-  data
+  queueData,
+  index
 })
 
-export function createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions) {
+export function createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, actions) {
   return (dispatch, getState) => {
     const customFieldProperty = {
       id: Date.now(),
@@ -33,7 +31,9 @@ export function createAdditionalFormOffline(properties, entityProfile, additiona
       custom_field_id: additionalForm.id,
       custom_formable_type: actions.type,
       custom_formable_id: entityProfile.id,
-      created_at: new Date()
+      created_at: new Date(),
+      form: 'persist',
+      action: 'create'
     }
 
     let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
@@ -54,32 +54,39 @@ export function createAdditionalFormOffline(properties, entityProfile, additiona
   }
 }
 
-export function editAdditionalForm(properties, entityProfile, custom_field, additionalForm, actions) {
-  return dispatch => {
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (isConnected) {
-        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
-        let updateEntityAdditonalFormPath = template(customFieldPropertyPath)
-        updateEntityAdditonalFormPath = updateEntityAdditonalFormPath({ entity_id: entityProfile.id })
-        updateEntityAdditonalFormPath = updateEntityAdditonalFormPath + '/' + custom_field.id
+export function editAdditionalFormOffline(properties, entityProfile, customField, additionalForm, customFormType, actions) {
+  return (dispatch, getState) => {
+    let form = 'persist'
+    let action = 'create'
+    let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
+    const currentQueueDataIndex = findIndex(queueCustomFieldProperties, { id: customField.id })
+    if (customField.form == undefined) {
+      form = 'server'
+      action = 'update'
+    }
+    const customFieldProperty = {
+      id: customField.id,
+      properties: properties,
+      custom_field_id: additionalForm.id,
+      custom_formable_type: actions.type,
+      custom_formable_id: entityProfile.id,
+      created_at: customField.created_at,
+      form,
+      action
+    }
 
-        loadingScreen()
-        dispatch(handleEntityAdditonalForm('update', properties, additionalForm, updateEntityAdditonalFormPath))
-          .then(response => {
-            const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
-            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            Navigation.popTo(actions.currentComponentId)
-            actions.alertMessage()
-          })
-          .catch(error => {
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            alert(JSON.stringify(error))
-          })
-      } else {
-        Alert.alert('No internet connection')
-      }
-    })
+    if (currentQueueDataIndex < 0) {
+      queueCustomFieldProperties = [...queueCustomFieldProperties, customFieldProperty]
+      dispatch(createCustomFieldPropertySuccess(queueCustomFieldProperties))
+    } else {
+      dispatch(updateCustomFieldPropertySuccess(customFieldProperty, currentQueueDataIndex))
+    }
+
+    const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, customFieldProperty, additionalForm)
+    dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+    Navigation.dismissOverlay('LOADING_SCREEN')
+    Navigation.popTo(actions.currentComponentId)
+    actions.alertMessage()
   }
 }
 

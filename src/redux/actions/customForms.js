@@ -6,8 +6,8 @@ import { Alert, NetInfo }                   from 'react-native'
 import { template, map, filter, find }      from 'lodash'
 import { FAMILY_TYPES, CLIENT_TYPES }       from '../types'
 import endpoint                             from '../../constants/endpoint'
-import Database               from '../../config/Database'
-import { createAdditionalFormOffline } from './offline/customFieldProperties'
+import { createAdditionalFormOffline, editAdditionalFormOffline } from './offline/customFieldProperties'
+
 export const createEntityCustomFormSuccess = (entityUpdated, customFormType) => ({
   type: customFormType,
   entityUpdated
@@ -110,29 +110,27 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
   return dispatch => {
     NetInfo.isConnected.fetch().then(isConnected => {
       const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
-      let createEntityAdditonalFormPath = template(customFieldPropertyPath)
-      createEntityAdditonalFormPath = createEntityAdditonalFormPath({ entity_id: entityProfile.id })
-
       loadingScreen()
       if (isConnected) {
-        dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions))
-        // let entityUpdated = {}
-        // dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
-        //   .then(response => {
-        //     if (actions.clickForm == 'additionalForm') {
-        //       entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
-        //     } else {
-        //       entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
-        //     }
-        //     dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     Navigation.popTo(actions.entityDetailComponentId)
-        //     actions.alertMessage()
-        //   })
-        //   .catch(error => {
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     alert(JSON.stringify(error))
-        //   })
+        let entityUpdated = {}
+        let createEntityAdditonalFormPath = template(customFieldPropertyPath)
+        createEntityAdditonalFormPath = createEntityAdditonalFormPath({ entity_id: entityProfile.id })
+        dispatch(handleEntityAdditonalForm('create', properties, additionalForm, createEntityAdditonalFormPath))
+          .then(response => {
+            if (actions.clickForm == 'additionalForm') {
+              entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
+            } else {
+              entityUpdated = addEntityCustomFormState(entityProfile, response.data, additionalForm)
+            }
+            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.entityDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(error))
+          })
       } else {
         dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions))
       }
@@ -140,16 +138,16 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
   }
 }
 
-export function editAdditionalForm(properties, entityProfile, custom_field, additionalForm, actions) {
+export function editAdditionalForm(properties, entityProfile, customField, additionalForm, actions) {
   return dispatch => {
     NetInfo.isConnected.fetch().then(isConnected => {
+      const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
+      loadingScreen()
       if (isConnected) {
-        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
         let updateEntityAdditonalFormPath = template(customFieldPropertyPath)
         updateEntityAdditonalFormPath = updateEntityAdditonalFormPath({ entity_id: entityProfile.id })
         updateEntityAdditonalFormPath = updateEntityAdditonalFormPath + '/' + custom_field.id
 
-        loadingScreen()
         dispatch(handleEntityAdditonalForm('update', properties, additionalForm, updateEntityAdditonalFormPath))
           .then(response => {
             const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, response.data, additionalForm)
@@ -163,7 +161,7 @@ export function editAdditionalForm(properties, entityProfile, custom_field, addi
             alert(JSON.stringify(error))
           })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(editAdditionalFormOffline(properties, entityProfile, customField, additionalForm, customFormType, actions))
       }
     })
   }
