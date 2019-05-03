@@ -1,8 +1,5 @@
-import axios                                from 'axios'
 import { Navigation }                       from 'react-native-navigation'
-import { template, findIndex, find, filter }        from 'lodash'
-import { loadingScreen }                    from '../../../navigation/config'
-import { Alert, NetInfo }                   from 'react-native'
+import { findIndex, filter }        from 'lodash'
 import { QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES }       from '../../types'
 import {
   createEntityCustomFormSuccess,
@@ -61,7 +58,7 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
     let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
     const currentQueueDataIndex = findIndex(queueCustomFieldProperties, { id: customField.id })
 
-    if (customField.form == undefined) {
+    if (customField.form != 'persist') {
       from = 'server'
       action = 'update'
     }
