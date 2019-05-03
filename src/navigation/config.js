@@ -77,6 +77,11 @@ export const startNgoScreen = () => {
 
 export const setDefaultOptions = () => {
   Navigation.setDefaultOptions({
+    animations: {
+      push: {
+        enabled: 'false'
+      }
+    },
     statusBar: {
       style: 'light',
       backgroundColor: '#008282'

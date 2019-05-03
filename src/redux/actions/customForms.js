@@ -6,7 +6,11 @@ import { Alert, NetInfo }                   from 'react-native'
 import { template, map, filter, find }      from 'lodash'
 import { FAMILY_TYPES, CLIENT_TYPES }       from '../types'
 import endpoint                             from '../../constants/endpoint'
-import { createAdditionalFormOffline, editAdditionalFormOffline } from './offline/customFieldProperties'
+import {
+  createAdditionalFormOffline,
+  editAdditionalFormOffline,
+  deleteAdditionalFormOffline
+} from './offline/customFieldProperties'
 
 export const createEntityCustomFormSuccess = (entityUpdated, customFormType) => ({
   type: customFormType,
@@ -132,7 +136,7 @@ export function createAdditionalForm(properties, entityProfile, additionalForm, 
             alert(JSON.stringify(error))
           })
       } else {
-        dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions))
+        dispatch(createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, actions))
       }
     })
   }
@@ -146,7 +150,7 @@ export function editAdditionalForm(properties, entityProfile, customField, addit
       if (isConnected) {
         let updateEntityAdditonalFormPath = template(customFieldPropertyPath)
         updateEntityAdditonalFormPath = updateEntityAdditonalFormPath({ entity_id: entityProfile.id })
-        updateEntityAdditonalFormPath = updateEntityAdditonalFormPath + '/' + custom_field.id
+        updateEntityAdditonalFormPath = updateEntityAdditonalFormPath + '/' + customField.id
 
         dispatch(handleEntityAdditonalForm('update', properties, additionalForm, updateEntityAdditonalFormPath))
           .then(response => {
@@ -170,8 +174,8 @@ export function editAdditionalForm(properties, entityProfile, customField, addit
 export function deleteAdditionalForm(customFieldProperty, entityProfile, actions, alertMessage) {
   return dispatch => {
     NetInfo.isConnected.fetch().then(isConnected => {
+      const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
       if (isConnected) {
-        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
         let deleteEntityAdditonalFormPath = template(customFieldPropertyPath)
         deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath({ entity_id: entityProfile.id })
         deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath + '/' + customFieldProperty.id
@@ -190,7 +194,7 @@ export function deleteAdditionalForm(customFieldProperty, entityProfile, actions
             alert(JSON.stringify(error))
           })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(deleteAdditionalFormOffline(customFieldProperty, entityProfile, customFormType, actions, alertMessage))
       }
     })
   }

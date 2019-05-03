@@ -43,9 +43,15 @@ public class MainApplication extends NavigationApplication {
         return BuildConfig.DEBUG;
     }
 
-    protected List<ReactPackage> getPackages() {
-        long size = 500 * 1024L * 1024L; // 500 MB
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SoLoader.init(this, /* native exopackage */ false);
+        long size = 50L * 1024L * 1024L; // 50 MB
         ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
+    }
+
+    protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new RNI18nPackage(),
             new VectorIconsPackage(),

@@ -1,6 +1,6 @@
 import axios                                from 'axios'
 import { Navigation }                       from 'react-native-navigation'
-import { template, findIndex }              from 'lodash'
+import { template, findIndex, find, filter }        from 'lodash'
 import { loadingScreen }                    from '../../../navigation/config'
 import { Alert, NetInfo }                   from 'react-native'
 import { QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES }       from '../../types'
@@ -32,7 +32,7 @@ export function createAdditionalFormOffline(properties, entityProfile, additiona
       custom_formable_type: actions.type,
       custom_formable_id: entityProfile.id,
       created_at: new Date(),
-      form: 'persist',
+      from: 'persist',
       action: 'create'
     }
 
@@ -56,14 +56,16 @@ export function createAdditionalFormOffline(properties, entityProfile, additiona
 
 export function editAdditionalFormOffline(properties, entityProfile, customField, additionalForm, customFormType, actions) {
   return (dispatch, getState) => {
-    let form = 'persist'
+    let from = 'persist'
     let action = 'create'
     let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
     const currentQueueDataIndex = findIndex(queueCustomFieldProperties, { id: customField.id })
+
     if (customField.form == undefined) {
-      form = 'server'
+      from = 'server'
       action = 'update'
     }
+
     const customFieldProperty = {
       id: customField.id,
       properties: properties,
@@ -71,7 +73,7 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
       custom_formable_type: actions.type,
       custom_formable_id: entityProfile.id,
       created_at: customField.created_at,
-      form,
+      from,
       action
     }
 
@@ -90,31 +92,32 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
   }
 }
 
-export function deleteAdditionalForm(customFieldProperty, entityProfile, actions, alertMessage) {
-  return dispatch => {
-    NetInfo.isConnected.fetch().then(isConnected => {
-      if (isConnected) {
-        const { customFieldPropertyPath, customFormType } = customFormPropertyPathAndType(actions.type)
-        let deleteEntityAdditonalFormPath = template(customFieldPropertyPath)
-        deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath({ entity_id: entityProfile.id })
-        deleteEntityAdditonalFormPath = deleteEntityAdditonalFormPath + '/' + customFieldProperty.id
+export function deleteAdditionalFormOffline(customFieldProperty, entityProfile, customFormType, actions, alertMessage) {
+  return (dispatch, getState) => {
+    let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
 
-        loadingScreen()
-        axios
-          .delete(deleteEntityAdditonalFormPath)
-          .then(response => {
-            const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
-            dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            alertMessage()
-          })
-          .catch(error => {
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            alert(JSON.stringify(error))
-          })
-      } else {
-        Alert.alert('No internet connection')
+    if (customFieldProperty.from == 'persist') {
+      queueCustomFieldProperties = filter(queueCustomFieldProperties, queueCustomFieldProperty => {
+        return queueCustomFieldProperty.id !== customFieldProperty.id
+      })
+    } else {
+      const customFieldPropertyDeleted = {
+        id: customFieldProperty.id,
+        properties: customFieldProperty.properties,
+        custom_field_id: customFieldProperty.custom_field_id,
+        custom_formable_type: actions.type,
+        custom_formable_id: entityProfile.id,
+        created_at: customFieldProperty.created_at,
+        from: 'server',
+        action: 'delete'
       }
-    })
+      queueCustomFieldProperties = [...queueCustomFieldProperties, customFieldPropertyDeleted]
+    }
+
+    dispatch(createCustomFieldPropertySuccess(queueCustomFieldProperties))
+    const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
+    dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
+    Navigation.dismissOverlay('LOADING_SCREEN')
+    alertMessage()
   }
 }
