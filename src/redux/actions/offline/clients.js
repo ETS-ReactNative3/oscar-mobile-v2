@@ -1,5 +1,6 @@
 import { Navigation }     from 'react-native-navigation'
 import { size }           from 'lodash'
+import { CLIENT_TYPES }   from '../../types'
 import { loadingScreen }  from '../../../navigation/config'
 import Database           from '../../../config/Database'
 
@@ -9,6 +10,11 @@ import {
   requestClientsFailed,
   updateClient
 } from '../clients'
+
+export const updateClientQueue = client => ({
+  type: CLIENT_TYPES.UPDATE_CLIENT_QUEUE,
+  client
+})
 
 export function updateClientOffline(client, actions) {
   return (dispatch, getState) => {
@@ -57,23 +63,7 @@ export function updateClientOffline(client, actions) {
       quantitative_cases: clientQuantitativeCases,
     }
 
-    const params = {
-      client_id: parseInt(client.id),
-      client_params: JSON.stringify(updatedClient),
-      type: "clientInfo"
-    }
-
-    let currentClient = Database.objects('ClientProfile').filtered('client_id == $0 AND type == $1', parseInt(client.id), 'clientInfo')
-
-    Database.write(() => {
-      if (currentClient.length == 1) {
-        currentClient[0].client_params = JSON.stringify(updatedClient)
-      } else {
-        Database.create('ClientProfile', params)
-      }
-    })
-
-
+    dispatch(updateClientQueue(updatedClient))
     dispatch(updateClient(updatedClient))
     Navigation.dismissOverlay('LOADING_SCREEN')
     Navigation.popTo(actions.clientDetailComponentId)

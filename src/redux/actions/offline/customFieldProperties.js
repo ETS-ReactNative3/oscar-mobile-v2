@@ -58,7 +58,7 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
     let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
     const currentQueueDataIndex = findIndex(queueCustomFieldProperties, { id: customField.id })
 
-    if (customField.form != 'persist') {
+    if (customField.from != 'persist') {
       from = 'server'
       action = 'update'
     }
