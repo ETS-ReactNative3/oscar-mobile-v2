@@ -9,19 +9,18 @@ import {
   deleteStateAdditionalFormInEntity,
 } from '../customForms'
 
-const createCustomFieldPropertySuccess = data => ({
+export const createCustomFieldPropertySuccess = data => ({
   type: QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_REQUEST_SUCCESS,
   data
 })
 
-const updateCustomFieldPropertySuccess = (queueData, index) => ({
-  type: QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_UPDATED,
-  queueData,
-  index
+export const customFieldPropertyDeleted = data => ({
+  type: QUEUE_CUSTOM_FIELD_PEROPERTY_TYPES.QUEUE_CUSTOM_FIELD_PEROPERTIES_DELETED,
+  data
 })
 
-export function createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, actions) {
-  return (dispatch, getState) => {
+export function createAdditionalFormOffline(properties, entityProfile, additionalForm, customFormType, createEntityAdditonalFormPath, actions) {
+  return dispatch => {
     const customFieldProperty = {
       id: Date.now(),
       properties: properties,
@@ -30,13 +29,12 @@ export function createAdditionalFormOffline(properties, entityProfile, additiona
       custom_formable_id: entityProfile.id,
       created_at: new Date(),
       from: 'persist',
-      action: 'create'
+      action: 'create',
+      endPoint: createEntityAdditonalFormPath,
+      additionalForm: { id: additionalForm.id, fields: additionalForm.fields }
     }
 
-    let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
-    queueCustomFieldProperties = [...queueCustomFieldProperties, customFieldProperty]
-
-    dispatch(createCustomFieldPropertySuccess(queueCustomFieldProperties))
+    dispatch(createCustomFieldPropertySuccess(customFieldProperty))
 
     if (actions.clickForm == 'additionalForm') {
       entityUpdated = mergeStateAdditionalFormInEntity(entityProfile, customFieldProperty, additionalForm)
@@ -51,16 +49,16 @@ export function createAdditionalFormOffline(properties, entityProfile, additiona
   }
 }
 
-export function editAdditionalFormOffline(properties, entityProfile, customField, additionalForm, customFormType, actions) {
-  return (dispatch, getState) => {
+export function editAdditionalFormOffline(properties, entityProfile, customField, additionalForm, customFormType, updateEntityAdditonalFormPath, actions) {
+  return dispatch => {
     let from = 'persist'
     let action = 'create'
-    let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
-    const currentQueueDataIndex = findIndex(queueCustomFieldProperties, { id: customField.id })
+    let endPoint = customField.endPoint
 
-    if (customField.form != 'persist') {
+    if (customField.from != 'persist') {
       from = 'server'
       action = 'update'
+      endPoint = updateEntityAdditonalFormPath
     }
 
     const customFieldProperty = {
@@ -70,17 +68,13 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
       custom_formable_type: actions.type,
       custom_formable_id: entityProfile.id,
       created_at: customField.created_at,
+      additionalForm: { id: additionalForm.id, fields: additionalForm.fields },
       from,
-      action
+      action,
+      endPoint
     }
 
-    if (currentQueueDataIndex < 0) {
-      queueCustomFieldProperties = [...queueCustomFieldProperties, customFieldProperty]
-      dispatch(createCustomFieldPropertySuccess(queueCustomFieldProperties))
-    } else {
-      dispatch(updateCustomFieldPropertySuccess(customFieldProperty, currentQueueDataIndex))
-    }
-
+    dispatch(createCustomFieldPropertySuccess(customFieldProperty))
     const entityUpdated = updateStateAdditionalFormInEntity(entityProfile, customFieldProperty, additionalForm)
     dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
     Navigation.dismissOverlay('LOADING_SCREEN')
@@ -89,14 +83,10 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
   }
 }
 
-export function deleteAdditionalFormOffline(customFieldProperty, entityProfile, customFormType, actions, alertMessage) {
-  return (dispatch, getState) => {
-    let queueCustomFieldProperties = getState().queueCustomFieldProperties.data
-
+export function deleteAdditionalFormOffline(customFieldProperty, entityProfile, customFormType, deleteEntityAdditonalFormPath, actions , alertMessage) {
+  return dispatch => {
     if (customFieldProperty.from == 'persist') {
-      queueCustomFieldProperties = filter(queueCustomFieldProperties, queueCustomFieldProperty => {
-        return queueCustomFieldProperty.id !== customFieldProperty.id
-      })
+      dispatch(customFieldPropertyDeleted(customFieldPropertyDeleted))
     } else {
       const customFieldPropertyDeleted = {
         id: customFieldProperty.id,
@@ -105,13 +95,12 @@ export function deleteAdditionalFormOffline(customFieldProperty, entityProfile, 
         custom_formable_type: actions.type,
         custom_formable_id: entityProfile.id,
         created_at: customFieldProperty.created_at,
+        endPoint: deleteEntityAdditonalFormPath,
         from: 'server',
         action: 'delete'
       }
-      queueCustomFieldProperties = [...queueCustomFieldProperties, customFieldPropertyDeleted]
+      dispatch(createCustomFieldPropertySuccess(customFieldPropertyDeleted))
     }
-
-    dispatch(createCustomFieldPropertySuccess(queueCustomFieldProperties))
     const entityUpdated = deleteStateAdditionalFormInEntity(entityProfile, customFieldProperty, actions.customForm)
     dispatch(createEntityCustomFormSuccess(entityUpdated, customFormType))
     Navigation.dismissOverlay('LOADING_SCREEN')

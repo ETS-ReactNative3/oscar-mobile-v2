@@ -15,7 +15,8 @@ const store = createStore(
 persistStore(store, {
   storage: AsyncStorage,
   stateReconciler: seamlessImmutableReconciler,
-  transforms: [seamlessImmutableTransformCreator({})]
+  transforms: [seamlessImmutableTransformCreator({})],
+  blacklist: ['network']
 })
 
 export default function configureStore() {

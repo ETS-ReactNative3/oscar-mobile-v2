@@ -11,6 +11,7 @@ import { connect }                          from 'react-redux'
 import { pushScreen }                       from '../../../navigation/config'
 import { Navigation }                       from 'react-native-navigation'
 import { View, Text, ScrollView }           from 'react-native'
+import Layout from '../../../components/Layout'
 class ClientDetail extends Component {
   constructor(props) {
     super(props)
@@ -145,83 +146,85 @@ class ClientDetail extends Component {
     const referred = client.status == 'Referred'
 
     return (
-      <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Swiper activeDotColor="#23c6c8" loop={false} height={250}>
-            <View style={styles.widgetContainer}>
-              <View style={styles.widgetRow}>
-                <Menu
-                  title={i18n.t('client.assessments')}
-                  value={client.assessments.length}
-                  color="#23c6c8"
-                  onPress={() => this.navigateToAssessments(client)}
-                  disabled={referred || !enableAssessment}
-                />
-                <Menu
-                  title={i18n.t('client.case_notes')}
-                  value={client.case_notes.length}
-                  color="#23c6c8"
-                  onPress={() => this.navigateToCaseNotes(client)}
-                  disabled={referred}
-                />
+      <Layout>
+        <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Swiper activeDotColor="#23c6c8" loop={false} height={250}>
+              <View style={styles.widgetContainer}>
+                <View style={styles.widgetRow}>
+                  <Menu
+                    title={i18n.t('client.assessments')}
+                    value={client.assessments.length}
+                    color="#23c6c8"
+                    onPress={() => this.navigateToAssessments(client)}
+                    disabled={referred || !enableAssessment}
+                  />
+                  <Menu
+                    title={i18n.t('client.case_notes')}
+                    value={client.case_notes.length}
+                    color="#23c6c8"
+                    onPress={() => this.navigateToCaseNotes(client)}
+                    disabled={referred}
+                  />
+                </View>
+                <View style={[styles.widgetRow, { marginBottom: 30 }]}>
+                  <Menu
+                    title={i18n.t('client.tasks')}
+                    value={`${overdue} / ${today} / ${upcoming}`}
+                    color="#23c6c8"
+                    onPress={() => this.navigateToTasks(client)}
+                    disabled={referred}
+                  />
+                </View>
               </View>
-              <View style={[styles.widgetRow, { marginBottom: 30 }]}>
-                <Menu
-                  title={i18n.t('client.tasks')}
-                  value={`${overdue} / ${today} / ${upcoming}`}
-                  color="#23c6c8"
-                  onPress={() => this.navigateToTasks(client)}
-                  disabled={referred}
-                />
+              <View style={styles.widgetContainer}>
+                <View style={styles.widgetRow}>
+                  <Menu
+                    title={i18n.t('client.enrolled_program_streams')}
+                    value={enrolledProgramStreamCount}
+                    color="#1ab394"
+                    onPress={() => this.navigateToEnrollProgramStreams(client)}
+                    disabled={referred || enrolledProgramStreamCount == 0}
+                  />
+                  <Menu
+                    title={i18n.t('client.program_stream')}
+                    value={programStreams}
+                    color="#1ab394"
+                    loading={this.props.programStreamsLoading}
+                    onPress={() => this.navigateToActiveProgramStreams(client)}
+                    disabled={referred}
+                  />
+                </View>
+                <View style={[styles.widgetRow, { marginBottom: 30 }]}>
+                  <Menu
+                    title={i18n.t('client.additional_form')}
+                    value={client.additional_form.length}
+                    color="#1c84c6"
+                    onPress={() => this.navigateToAdditionalForms(client)}
+                    disabled={referred || client.additional_form.length == 0}
+                  />
+                  <Menu
+                    title={i18n.t('client.add_form')}
+                    value={client.add_forms.length}
+                    color="#1c84c6"
+                    onPress={() => this.navigateToAddForms(client)}
+                    disabled={referred}
+                  />
+                </View>
               </View>
-            </View>
-            <View style={styles.widgetContainer}>
-              <View style={styles.widgetRow}>
-                <Menu
-                  title={i18n.t('client.enrolled_program_streams')}
-                  value={enrolledProgramStreamCount}
-                  color="#1ab394"
-                  onPress={() => this.navigateToEnrollProgramStreams(client)}
-                  disabled={referred || enrolledProgramStreamCount == 0}
-                />
-                <Menu
-                  title={i18n.t('client.program_stream')}
-                  value={programStreams}
-                  color="#1ab394"
-                  loading={this.props.programStreamsLoading}
-                  onPress={() => this.navigateToActiveProgramStreams(client)}
-                  disabled={referred}
-                />
-              </View>
-              <View style={[styles.widgetRow, { marginBottom: 30 }]}>
-                <Menu
-                  title={i18n.t('client.additional_form')}
-                  value={client.additional_form.length}
-                  color="#1c84c6"
-                  onPress={() => this.navigateToAdditionalForms(client)}
-                  disabled={referred || client.additional_form.length == 0}
-                />
-                <Menu
-                  title={i18n.t('client.add_form')}
-                  value={client.add_forms.length}
-                  color="#1c84c6"
-                  onPress={() => this.navigateToAddForms(client)}
-                  disabled={referred}
-                />
-              </View>
-            </View>
-          </Swiper>
+            </Swiper>
 
-          <View style={styles.absoluteContainer}>
-            <View style={styles.statusContainer}>
-              <Text style={styles.status}>{client.status}</Text>
+            <View style={styles.absoluteContainer}>
+              <View style={styles.statusContainer}>
+                <Text style={styles.status}>{client.status}</Text>
+              </View>
             </View>
-          </View>
 
-          <ClientInformation client={client} setting={setting} />
-        </ScrollView>
-        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
-      </View>
+            <ClientInformation client={client} setting={setting} />
+          </ScrollView>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+        </View>
+      </Layout>
     )
   }
 }

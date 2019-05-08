@@ -15,6 +15,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.soloader.SoLoader;
+import com.ocetnik.timer.BackgroundTimerPackage;
 
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
@@ -60,7 +61,8 @@ public class MainApplication extends NavigationApplication {
             new ReactNativeRestartPackage(),
             new FastImageViewPackage(),
             new ReactNativeDocumentPicker(),
-            new ImagePickerPackage()
+            new ImagePickerPackage(),
+            new BackgroundTimerPackage()
         );
     }
 

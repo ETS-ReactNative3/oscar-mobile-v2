@@ -2,7 +2,7 @@ import Immutable from 'seamless-immutable'
 import { INTERNET_TYPES } from '../types'
 
 const initialState = Immutable({
-  hasInternet: false
+  hasInternet: true
 })
 
 export default (state = initialState, action) => {

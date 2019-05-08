@@ -1,7 +1,7 @@
 import { NetInfo } from 'react-native'
 import { INTERNET_TYPES } from '../types'
 
-updateConnection = connection => ({
+export const updateConnection = connection => ({
   type: INTERNET_TYPES.UPDATE_CONNECTION,
   connection
 })
