@@ -2,7 +2,7 @@ import React, { Component }                     from 'react'
 import { connect }                              from 'react-redux'
 import { Navigation }                           from 'react-native-navigation'
 import { MAIN_COLOR }                           from '../../../constants/colors'
-import { groupBy, map }                         from 'lodash'
+import { groupBy, map, debounce }               from 'lodash'
 import { saveCaseNote }                         from '../../../redux/actions/caseNotes'
 import { Button, CheckBox }                     from 'react-native-elements'
 import { createTask, deleteTask }               from '../../../redux/actions/tasks'
@@ -218,7 +218,7 @@ class CaseNoteForm extends Component {
     this.setState({ caseNoteDomainGroups })
   }
 
-  openTaskModal = domainGroupId => {
+  openTaskModal = debounce(domainGroupId => {
     const { client, domains, custom } = this.props
     Navigation.showModal({
       component: {
@@ -229,7 +229,7 @@ class CaseNoteForm extends Component {
         },
       }
     })
-  }
+  }, 1000, { maxWait: 1000, leading: true, trailing: false })
 
   deleteTask = task => {
     const { client } = this.props
