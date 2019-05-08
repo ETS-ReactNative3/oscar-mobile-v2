@@ -185,7 +185,8 @@ const mapState = state => ({
   clients: state.clients.data,
   loading: state.clients.loading,
   setting: state.setting.data,
-  hasInternet: state.internet.hasInternet
+  hasInternet: state.internet.hasInternet,
+  clientQueue: state.clientQueue.data
 })
 
 const mapDispatch = {
