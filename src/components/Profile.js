@@ -27,6 +27,7 @@ class Profile extends Component {
     return {
       noData: true,
       title: 'Select Profile',
+      quality: 0.1,
       storageOptions: {
         cameraRoll: true,
         waitUntilSaved: true
