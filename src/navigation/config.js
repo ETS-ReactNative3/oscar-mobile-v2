@@ -49,7 +49,7 @@ export const pushScreen = debounce((componentId, options = {}) => {
       }
     }
   })
-}, 1000, { maxWait: 1000, leading: true, trailing: false })
+}, 500, { maxWait: 1000, leading: true, trailing: false })
 
 export const startNgoScreen = () => {
   Navigation.setRoot({
