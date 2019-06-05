@@ -145,7 +145,7 @@ class ClientDetail extends Component {
   }
 
   render() {
-    const { client, setting } = this.props
+    const { client, setting, referralSourceCategories, language } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
 
     const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' }))
@@ -258,7 +258,7 @@ class ClientDetail extends Component {
               </React.Fragment>
           }
 
-          <ClientInformation client={client} setting={setting} />
+          <ClientInformation client={client} setting={setting} referralSourceCategories={referralSourceCategories} language={language}/>
         </ScrollView>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
@@ -269,8 +269,10 @@ class ClientDetail extends Component {
 const mapState = (state, ownProps) => ({
   programStreams: state.programStreams.data,
   programStreamsLoading: state.programStreams.loading,
+  referralSourceCategories: state.referralSourceCategories.data,
   client: state.clients.data[ownProps.clientId],
-  message: state.clients.message
+  message: state.clients.message,
+  language: state.language.language
 })
 
 const mapDispatch = {

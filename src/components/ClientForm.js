@@ -8,7 +8,7 @@ import SectionedMultiSelect                 from 'react-native-sectioned-multi-s
 import { CheckBox }                         from 'react-native-elements'
 import { MAIN_COLOR }                       from '../constants/colors'
 import { Navigation }                       from 'react-native-navigation'
-import { map, forEach, filter }             from 'lodash'
+import { map, forEach, filter, find }       from 'lodash'
 import { schoolGrades, poorIds, genders }   from '../constants/clientOptions'
 import {
   View,
@@ -17,6 +17,7 @@ import {
   ScrollView,
   KeyboardAvoidingView
 } from 'react-native'
+import language from '../redux/reducers/language';
 export default class ClientForm extends Component {
   constructor(props) {
     super(props)
@@ -71,6 +72,7 @@ export default class ClientForm extends Component {
         followed_up_by_id: client.followed_up_by != null ? client.followed_up_by.id : '',
         user_ids: caseWorkersID,
         referral_source_id: client.referral_source != null ? client.referral_source.id : '',
+        referral_source_category_id: client.referral_source_category_id,
         agency_ids: agencyIds,
         quantitative_case_ids: quantitativeIds,
         province_id: client.current_province != null ? client.current_province.id : '',
@@ -98,6 +100,14 @@ export default class ClientForm extends Component {
 
   listItems(options) {
     return map(options, option => ({ name: option.name, id: option.id }))
+  }
+
+  listReferralSourceCategories(options) {
+    const language = this.props.language
+    if (language == 'km')
+      return map(options, option => ({ name: option.name, id: option.id }))
+    else
+      return map(options, option => ({ name: option.name_en, id: option.id }))
   }
 
   listUserItems(users) {
@@ -152,11 +162,13 @@ export default class ClientForm extends Component {
 
   render() {
     const { client } = this.state
-    const { users, birthProvinces, provinces, donors, referralSources, communes, villages, quantitativeTypes, agencies, districts } = this.props
-
+    const { users, birthProvinces, provinces, donors, communes, villages, agencies, districts, referralSourceCategories } = this.props
+    const referralSource = find(referralSourceCategories, { id: client.referral_source_category_id })
+    const referralSourceOptions = referralSource == undefined ? [] : referralSource.children
     let districtOptions = filter(districts, { province_id: client.province_id })
     let communeOptions = filter(communes, { district_id: client.district_id })
     let villageOptions = filter(villages, { commune_id: client.commune_id })
+
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <ScrollView style={styles.mainContainer}>
@@ -502,10 +514,35 @@ export default class ClientForm extends Component {
             <View style={styles.inputContainer}>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.label, {color: 'red'}]}>* </Text>
+                <Text style={styles.label}>{i18n.t('client.form.referral_source_category_id')}</Text>
+              </View>
+              <SectionedMultiSelect
+                items={this.listReferralSourceCategories(referralSourceCategories)}
+                uniqueKey="id"
+                modalWithSafeAreaView
+                selectText={i18n.t('select_option')}
+                searchPlaceholderText={i18n.t('search')}
+                confirmText={i18n.t('confirm')}
+                showDropDowns={true}
+                single={true}
+                hideSearch={false}
+                showCancelButton={true}
+                styles={{
+                  button: { backgroundColor: MAIN_COLOR },
+                  cancelButton: { width: 150 },
+                  chipText: { maxWidth: 280 },
+                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
+                }}
+                onSelectedItemsChange={itemValue => this.updateClientState('referral_source_category_id', itemValue[0])}
+                selectedItems={[client.referral_source_category_id]}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <View style={{flexDirection: 'row'}}>
                 <Text style={styles.label}>{i18n.t('client.form.referral_source')}</Text>
               </View>
               <SectionedMultiSelect
-                items={this.listItems(referralSources)}
+                items={referralSourceOptions}
                 uniqueKey="id"
                 modalWithSafeAreaView
                 selectText={i18n.t('select_option')}

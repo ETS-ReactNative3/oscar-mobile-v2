@@ -17,6 +17,7 @@ import programStreams from './programStreams'
 import birthProvinces from './birthProvinces'
 import quantitativeTypes from './quantitativeTypes'
 import referralSources from './referralSources'
+import referralSourceCategories from './referralSourceCategories'
 import agencies from './agencies'
 import donors from './donors'
 
@@ -40,5 +41,6 @@ export default combineReducers({
   quantitativeTypes,
   referralSources,
   agencies,
-  donors
+  donors,
+  referralSourceCategories
 })

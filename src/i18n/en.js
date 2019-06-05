@@ -56,6 +56,7 @@ export default {
       time_in_care: 'Time In Care',
       follow_up_date: 'First Follow-Up Date',
       referral_source: 'Referral Source',
+      referral_source_category_id: 'Referral Source Category',
       referral_phone: 'Referral Phone Number',
       name_of_referee: 'Name of Referee',
       who_live_with: 'Primary Carer Name',

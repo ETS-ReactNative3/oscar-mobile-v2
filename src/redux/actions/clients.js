@@ -130,6 +130,7 @@ export function handleUpdateClientParams(client, client_id) {
       'birth_province_id',
       'initial_referral_date',
       'referral_source_id',
+      'referral_source_category_id',
       'referral_phone',
       'received_by_id',
       'followed_up_by_id',
