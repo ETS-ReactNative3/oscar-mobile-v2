@@ -12,6 +12,7 @@ import { fetchSetting }                   from '../../redux/actions/setting'
 import { fetchBirthProvinces }            from '../../redux/actions/birthProvinces'
 import { fetchProgramStreams }            from '../../redux/actions/programStreams'
 import { fetchReferralSources }           from '../../redux/actions/referralSources'
+import { fetchReferralSourceCategories }  from '../../redux/actions/referralSourceCategories'
 import { fetchQuantitativeTypes }         from '../../redux/actions/quantitativeTypes'
 import { fetchAgencies }                  from '../../redux/actions/agencies'
 import { fetchDonors }                    from '../../redux/actions/donors'
@@ -58,6 +59,7 @@ class Clients extends Component {
     this.props.fetchBirthProvinces()
     this.props.fetchProgramStreams()
     this.props.fetchReferralSources()
+    this.props.fetchReferralSourceCategories()
     this.props.fetchQuantitativeTypes()
     this.props.fetchAgencies()
     this.props.fetchDonors()
@@ -194,7 +196,8 @@ const mapDispatch = {
   fetchQuantitativeTypes,
   fetchAgencies,
   fetchDonors,
-  fetchUsers
+  fetchUsers,
+  fetchReferralSourceCategories
 }
 
 export default connect(

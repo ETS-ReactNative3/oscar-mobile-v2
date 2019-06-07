@@ -10,19 +10,23 @@ class EditClient extends Component {
   }
 }
 
-const mapState = state => ({
-  birthProvinces: state.birthProvinces.data,
-  provinces: state.provinces.data,
-  districts: state.districts.data,
-  communes: state.communes.data,
-  villages: state.villages.data,
-  donors: state.donors.data,
-  referralSources: state.referralSources.data,
-  quantitativeTypes: state.quantitativeTypes.data,
-  users: state.users.data,
-  agencies: state.agencies.data,
-  error: state.clients.error
-})
+const mapState = state => {
+  return {
+    birthProvinces: state.birthProvinces.data,
+    provinces: state.provinces.data,
+    districts: state.districts.data,
+    communes: state.communes.data,
+    villages: state.villages.data,
+    donors: state.donors.data,
+    referralSources: state.referralSources.data,
+    referralSourceCategories: state.referralSourceCategories.data,
+    quantitativeTypes: state.quantitativeTypes.data,
+    users: state.users.data,
+    language: state.language.language,
+    agencies: state.agencies.data,
+    error: state.clients.error
+  }
+}
 
 const mapDispatch = {
   updateClientProperty

@@ -21,6 +21,7 @@ export default {
   donorsPath: '/donors',
   usersPath: '/users',
   referralSourcesPath: '/referral_sources',
+  referralSourceCategoriessPath: '/referral_sources/categories',
   tasksPath: '/users',
   createTaskPath: '/tasks',
   editTaskPath: '/tasks',

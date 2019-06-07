@@ -5,7 +5,7 @@ import call                         from 'react-native-phone-call'
 import moment                       from 'moment'
 import Field                        from '../../../components/Field'
 import FastImage                    from 'react-native-fast-image'
-import { map, upperCase }           from 'lodash'
+import { map, upperCase, find }     from 'lodash'
 import {
   View,
   Text,
@@ -42,13 +42,13 @@ export default class ClientInformation extends Component {
     const countryName = setting && upperCase(setting.country_name)
     const house = this.serializeAddress(i18n.t('client.form.house_number'), client.house_number)
     const street = this.serializeAddress(i18n.t('client.form.street_number'), client.street_number)
-
     return [house, street, villageName, communeName, districtName, provinceName, countryName].filter(Boolean).join(', ')
   }
 
   render() {
-    const { client } = this.props
-
+    const { client, referralSourceCategories, language } = this.props
+    const referralSourceCategory = find(referralSourceCategories, {id: client.referral_source_category_id})
+    const referralSourceCategoryName = referralSourceCategory == undefined ? '' : language == 'km' ? referralSourceCategory.name : referralSourceCategory.name_en
     return (
       <View style={styles.container}>
         <Card title={i18n.t('client.about_client')}>
@@ -71,6 +71,7 @@ export default class ClientInformation extends Component {
             value={client.followed_up_by == undefined ? '' : client.followed_up_by.first_name + ' ' + client.followed_up_by.last_name}
           />
           <Field name={i18n.t('client.form.follow_up_date')} value={client.follow_up_date} />
+          <Field name={i18n.t('client.form.referral_source_category_id')} value={referralSourceCategoryName} />
           <Field name={i18n.t('client.form.referral_source')} value={client.referral_source == undefined ? '' : client.referral_source.name} />
           <Field name={i18n.t('client.form.referral_phone')}>
             {
