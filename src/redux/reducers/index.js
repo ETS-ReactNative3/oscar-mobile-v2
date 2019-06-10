@@ -19,6 +19,7 @@ import quantitativeTypes from './quantitativeTypes'
 import referralSources from './referralSources'
 import agencies from './agencies'
 import donors from './donors'
+import translations from './translations'
 
 export default combineReducers({
   auth,
@@ -40,5 +41,6 @@ export default combineReducers({
   quantitativeTypes,
   referralSources,
   agencies,
-  donors
+  donors,
+  translations
 })
