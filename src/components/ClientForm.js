@@ -162,7 +162,7 @@ export default class ClientForm extends Component {
 
   render() {
     const { client } = this.state
-    const { users, birthProvinces, provinces, donors, communes, villages, agencies, districts, referralSourceCategories } = this.props
+    const { users, birthProvinces, provinces, donors, communes, villages, agencies, districts, referralSourceCategories, setting } = this.props
     const referralSource = find(referralSourceCategories, { id: client.referral_source_category_id })
     const referralSourceOptions = referralSource == undefined ? [] : referralSource.children
     let districtOptions = filter(districts, { province_id: client.province_id })
@@ -623,29 +623,32 @@ export default class ClientForm extends Component {
                 value={client.telephone_number}
               />
             </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>{i18n.t('client.form.rated_for_id_poor')}</Text>
-              <SectionedMultiSelect
-                items={poorIds}
-                uniqueKey="id"
-                modalWithSafeAreaView
-                selectText={i18n.t('select_option')}
-                searchPlaceholderText={i18n.t('search')}
-                confirmText={i18n.t('confirm')}
-                showDropDowns={true}
-                single={true}
-                hideSearch={false}
-                showCancelButton={true}
-                styles={{
-                  button: { backgroundColor: MAIN_COLOR },
-                  cancelButton: { width: 150 },
-                  chipText: { maxWidth: 280 },
-                  selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
-                }}
-                onSelectedItemsChange={itemValue => this.updateClientState('rated_for_id_poor', itemValue[0])}
-                selectedItems={[client.rated_for_id_poor]}
-              />
-            </View>
+            {
+              setting.country_name === 'cambodia' &&
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>{i18n.t('client.form.rated_for_id_poor')}</Text>
+                  <SectionedMultiSelect
+                    items={poorIds}
+                    uniqueKey="id"
+                    modalWithSafeAreaView
+                    selectText={i18n.t('select_option')}
+                    searchPlaceholderText={i18n.t('search')}
+                    confirmText={i18n.t('confirm')}
+                    showDropDowns={true}
+                    single={true}
+                    hideSearch={false}
+                    showCancelButton={true}
+                    styles={{
+                      button: { backgroundColor: MAIN_COLOR },
+                      cancelButton: { width: 150 },
+                      chipText: { maxWidth: 280 },
+                      selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
+                    }}
+                    onSelectedItemsChange={itemValue => this.updateClientState('rated_for_id_poor', itemValue[0])}
+                    selectedItems={[client.rated_for_id_poor]}
+                  />
+                </View>
+            }
             <View style={styles.inputContainer}>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.label, {color: 'red'}]}>* </Text>
