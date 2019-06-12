@@ -533,7 +533,11 @@ export default class ClientForm extends Component {
                   chipText: { maxWidth: 280 },
                   selectToggle: { marginTop: 5, marginBottom: 5, paddingHorizontal: 10, paddingVertical: 12, borderRadius: 4 }
                 }}
-                onSelectedItemsChange={itemValue => this.updateClientState('referral_source_category_id', itemValue[0])}
+                onSelectedItemsChange={itemValue => {
+                  this.updateClientState('referral_source_category_id', itemValue[0])
+                  if (itemValue[0] !== client.referral_source_category_id)
+                    this.updateClientState('referral_source_id', null)
+                }}
                 selectedItems={[client.referral_source_category_id]}
               />
             </View>
