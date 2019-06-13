@@ -855,6 +855,7 @@ const mapState = state => {
     villages: state.villages.data,
     donors: state.donors.data,
     referralSources: state.referralSources.data,
+    referralSourceCategories: state.referralSourceCategories.data,
     quantitativeTypes: state.quantitativeTypes.data,
     users: state.users.data,
     agencies: state.agencies.data,
