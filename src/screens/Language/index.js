@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Alert }            from 'react-native'
 import { connect }          from 'react-redux'
-import { LANGUAGE_TYPES }   from '../../redux/types'
 import Database             from '../../config/Database'
 import RNRestart            from 'react-native-restart'
 import i18n                 from '../../i18n'
