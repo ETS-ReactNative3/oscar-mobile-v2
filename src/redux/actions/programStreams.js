@@ -116,7 +116,7 @@ updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickF
   })
   if (clickForm == 'EnrolledProgram') {
     updatedProgramStreams = map(client.program_streams, programStream => {
-      if (programStream.id == programStream.id) {
+      if (originalProgramStream.id == programStream.id) {
         programStream.enrollments = updateEnrollments
       }
       return programStream
@@ -124,7 +124,7 @@ updateEnrollment = (updatedProperty, originalProgramStream, client, type, clickF
     client.program_streams = updatedProgramStreams
   } else {
     updatedProgramStreams = map(client.inactive_program_streams, programStream => {
-      if (programStream.id == programStream.id) {
+      if (originalProgramStream.id == programStream.id) {
         programStream.enrollments = updateEnrollments
       }
       return programStream
