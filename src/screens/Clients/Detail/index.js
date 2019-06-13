@@ -25,11 +25,12 @@ class ClientDetail extends Component {
 
   async navigationButtonPressed({ buttonId }) {
     if (buttonId === 'EDIT_CLIENT') {
-      const { client } = this.props
+      const { client, translations } = this.props
       const icons = await appIcons()
+      const languages = translations.clients.edit
       pushScreen(this.props.componentId, {
         screen: 'oscar.editClient',
-        title: 'EDIT CLIENT',
+        title: languages.edit_client_title,
         props: {
           client,
           clientDetailComponentId: this.props.componentId,
@@ -46,10 +47,10 @@ class ClientDetail extends Component {
     }
   }
 
-  navigateToAssessments = client => {
+  navigateToAssessments = (client, title) => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.assessments',
-      title: i18n.t('client.assessments'),
+      title,
       props: {
         clientId: client.id,
         setting: this.props.setting
@@ -57,11 +58,11 @@ class ClientDetail extends Component {
     })
   }
 
-  navigateToCaseNotes = async client => {
+  navigateToCaseNotes = async (client, title) => {
     const icons = await appIcons()
     pushScreen(this.props.componentId, {
       screen: 'oscar.caseNotes',
-      title: i18n.t('client.case_notes'),
+      title,
       props: { clientId: client.id },
       rightButtons: [
         {
@@ -73,18 +74,18 @@ class ClientDetail extends Component {
     })
   }
 
-  navigateToTasks = client => {
+  navigateToTasks = (client, title) => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.tasks',
-      title: i18n.t('task.title'),
+      title,
       props: { clientId: client.id }
     })
   }
 
-  navigateToEnrollProgramStreams = client => {
+  navigateToEnrollProgramStreams = (client, title) => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.enrolledProgramStreams',
-      title: 'Active Program Streams',
+      title,
       props: {
         clientId: client.id,
         clientDetailComponentId: this.props.componentId,
@@ -93,10 +94,10 @@ class ClientDetail extends Component {
     })
   }
 
-  navigateToActiveProgramStreams = client => {
+  navigateToActiveProgramStreams = (client, title) => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.activeProgramStreams',
-      title: 'Active Program Streams',
+      title,
       props: {
         clientId: client.id,
         clientDetailComponentId: this.props.componentId,
@@ -105,10 +106,10 @@ class ClientDetail extends Component {
     })
   }
 
-  navigateToAdditionalForms = client => {
+  navigateToAdditionalForms = (client, title) => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.additionalForms',
-      title: 'Additional Form',
+      title,
       props: {
         entityId: client.id,
         type: 'client'
@@ -116,10 +117,10 @@ class ClientDetail extends Component {
     })
   }
 
-  navigateToAddForms = client => {
+  navigateToAddForms = (client, title) => {
     pushScreen(this.props.componentId, {
       screen: 'oscar.addForms',
-      title: 'Add Form',
+      title,
       props: {
         entityId: client.id,
         entityDetailComponentId: this.props.componentId,
@@ -145,8 +146,9 @@ class ClientDetail extends Component {
   }
 
   render() {
-    const { client, setting } = this.props
+    const { client, setting, translations } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
+    const languages = translations.clients.show
 
     const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' }))
       .length
@@ -161,7 +163,6 @@ class ClientDetail extends Component {
     const today = client.tasks.today.length
     const upcoming = client.tasks.upcoming.length
     const referred = client.status == 'Referred'
-
     return (
       <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -170,12 +171,12 @@ class ClientDetail extends Component {
               <View style={styles.widgetContainer}>
                 <View style={styles.widgetRow}>
                   <Menu
-                    value={i18n.t('client.form.accepted')}
+                    value={languages.accepted}
                     color="#1c84c6"
                     onPress={() => this.onAcceptClient(client)}
                   />
                   <Menu
-                    value={i18n.t('client.form.rejected')}
+                    value={languages.rejected}
                     color="#ED5565"
                     onPress={() => this.onRejectClient(client)}
                   />
@@ -189,26 +190,26 @@ class ClientDetail extends Component {
                   <View style={styles.widgetContainer}>
                     <View style={styles.widgetRow}>
                       <Menu
-                        title={i18n.t('client.assessments')}
+                        title={languages.view_assessments}
                         value={client.assessments.length}
                         color="#23c6c8"
-                        onPress={() => this.navigateToAssessments(client)}
+                        onPress={() => this.navigateToAssessments(client, languages.view_assessments)}
                         disabled={referred || !enableAssessment}
                       />
                       <Menu
-                        title={i18n.t('client.case_notes')}
+                        title={languages.view_case_notes}
                         value={client.case_notes.length}
                         color="#23c6c8"
-                        onPress={() => this.navigateToCaseNotes(client)}
+                        onPress={() => this.navigateToCaseNotes(client, languages.view_case_notes)}
                         disabled={referred}
                       />
                     </View>
                     <View style={[styles.widgetRow, { marginBottom: 30 }]}>
                       <Menu
-                        title={i18n.t('client.tasks')}
+                        title={languages.view_tasks}
                         value={`${overdue} / ${today} / ${upcoming}`}
                         color="#23c6c8"
-                        onPress={() => this.navigateToTasks(client)}
+                        onPress={() => this.navigateToTasks(client, languages.view_tasks)}
                         disabled={referred}
                       />
                     </View>
@@ -216,34 +217,34 @@ class ClientDetail extends Component {
                   <View style={styles.widgetContainer}>
                     <View style={styles.widgetRow}>
                       <Menu
-                        title={i18n.t('client.enrolled_program_streams')}
+                        title={languages.enrolled_program_streams}
                         value={enrolledProgramStreamCount}
                         color="#1ab394"
-                        onPress={() => this.navigateToEnrollProgramStreams(client)}
+                        onPress={() => this.navigateToEnrollProgramStreams(client, languages.enrolled_program_streams)}
                         disabled={referred || enrolledProgramStreamCount == 0}
                       />
                       <Menu
-                        title={i18n.t('client.program_stream')}
+                        title={languages.program_streams}
                         value={programStreams}
                         color="#1ab394"
                         loading={this.props.programStreamsLoading}
-                        onPress={() => this.navigateToActiveProgramStreams(client)}
+                        onPress={() => this.navigateToActiveProgramStreams(client, languages.program_streams)}
                         disabled={referred}
                       />
                     </View>
                     <View style={[styles.widgetRow, { marginBottom: 30 }]}>
                       <Menu
-                        title={i18n.t('client.additional_form')}
+                        title={languages.additional_forms}
                         value={client.additional_form.length}
                         color="#1c84c6"
-                        onPress={() => this.navigateToAdditionalForms(client)}
+                        onPress={() => this.navigateToAdditionalForms(client, languages.additional_forms)}
                         disabled={referred || client.additional_form.length == 0}
                       />
                       <Menu
-                        title={i18n.t('client.add_form')}
+                        title={languages.add_form}
                         value={client.add_forms.length}
                         color="#1c84c6"
-                        onPress={() => this.navigateToAddForms(client)}
+                        onPress={() => this.navigateToAddForms(client, languages.add_form)}
                         disabled={referred}
                       />
                     </View>
@@ -258,7 +259,7 @@ class ClientDetail extends Component {
               </React.Fragment>
           }
 
-          <ClientInformation client={client} setting={setting} />
+          <ClientInformation client={client} setting={setting} languages={languages}/>
         </ScrollView>
         <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
       </View>
@@ -266,12 +267,17 @@ class ClientDetail extends Component {
   }
 }
 
-const mapState = (state, ownProps) => ({
-  programStreams: state.programStreams.data,
-  programStreamsLoading: state.programStreams.loading,
-  client: state.clients.data[ownProps.clientId],
-  message: state.clients.message
-})
+const mapState = (state, ownProps) => {
+  const language = state.language.language
+  const translations = state.translations.data[language]
+  return {
+    programStreams: state.programStreams.data,
+    programStreamsLoading: state.programStreams.loading,
+    client: state.clients.data[ownProps.clientId],
+    message: state.clients.message,
+    translations
+  }
+}
 
 const mapDispatch = {
   acceptClient,

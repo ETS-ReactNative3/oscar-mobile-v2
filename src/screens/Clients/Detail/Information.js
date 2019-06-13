@@ -34,45 +34,47 @@ export default class ClientInformation extends Component {
   }
 
   address = () => {
-    const { client, setting } = this.props
+    const { client, setting, languages } = this.props
     const villageName = client.village && `${client.village.name_en} / ${client.village.name_kh}`
     const communeName = client.commune && `${client.commune.name_en} / ${client.commune.name_kh}`
     const districtName = client.district && client.district.name
     const provinceName = client.current_province && client.current_province.name
     const countryName = setting && upperCase(setting.country_name)
-    const house = this.serializeAddress(i18n.t('client.form.house_number'), client.house_number)
-    const street = this.serializeAddress(i18n.t('client.form.street_number'), client.street_number)
+    const house = this.serializeAddress(languages.house_number, client.house_number)
+    const street = this.serializeAddress(languages.street_number, client.street_number)
 
     return [house, street, villageName, communeName, districtName, provinceName, countryName].filter(Boolean).join(', ')
   }
 
   render() {
-    const { client } = this.props
+    const { client, languages } = this.props
 
     return (
       <View style={styles.container}>
-        <Card title={i18n.t('client.about_client')}>
+        <Card title={languages.general_info}>
           {client.profile && <FastImage style={styles.profile} source={{ uri: client.profile.uri }} resizeMode="contain" />}
-          <Field name={i18n.t('client.form.given_name')} value={client.given_name} />
-          <Field name={i18n.t('client.form.family_name')} value={client.family_name} />
-          <Field name={i18n.t('client.form.age')} value={this.calculateAge()} />
-          <Field name={i18n.t('client.form.date_of_birth')} value={client.date_of_birth} />
-          <Field name={i18n.t('client.form.current_province')} value={client.current_province == undefined ? '' : client.current_province.name} />
-          <Field name={i18n.t('client.form.code')} value={client.code} />
-          <Field name={i18n.t('client.form.kid_id')} value={client.kid_id} />
-          <Field name={i18n.t('client.form.donor')} value={map(client.donors, 'name').join(', ')} />
-          <Field name={i18n.t('client.form.address')} value={this.address()} />
-          <Field name={i18n.t('client.form.what3words')} value={client.what3words} />
-          <Field name={i18n.t('client.form.birth_province')} value={client.birth_province == undefined ? '' : client.birth_province.name} />
-          <Field name={i18n.t('client.form.name_of_referee')} value={client.name_of_referee} />
-          <Field name={i18n.t('client.form.time_in_care')} value={client.time_in_care} />
+          <Field name={languages.given_name} value={client.given_name} />
+          <Field name={languages.family_name} value={client.family_name} />
+          <Field name={languages.local_given_name} value={client.local_given_name} />
+          <Field name={languages.local_family_name} value={client.local_family_name} />
+          <Field name={languages.age} value={this.calculateAge()} />
+          <Field name={languages.date_of_birth} value={client.date_of_birth} />
+          <Field name={languages.current_province} value={client.current_province == undefined ? '' : client.current_province.name} />
+          <Field name={languages.code} value={client.code} />
+          <Field name={languages.kid_id} value={client.kid_id} />
+          <Field name={languages.donor} value={map(client.donors, 'name').join(', ')} />
+          <Field name={languages.address} value={this.address()} />
+          <Field name={languages.what3words} value={client.what3words} />
+          <Field name={languages.birth_province} value={client.birth_province == undefined ? '' : client.birth_province.name} />
+          <Field name={languages.name_of_referee} value={client.name_of_referee} />
+          <Field name={languages.time_in_care} value={client.time_in_care} />
           <Field
-            name={i18n.t('client.form.follow_up_by')}
+            name={languages.follow_up_by}
             value={client.followed_up_by == undefined ? '' : client.followed_up_by.first_name + ' ' + client.followed_up_by.last_name}
           />
-          <Field name={i18n.t('client.form.follow_up_date')} value={client.follow_up_date} />
-          <Field name={i18n.t('client.form.referral_source')} value={client.referral_source == undefined ? '' : client.referral_source.name} />
-          <Field name={i18n.t('client.form.referral_phone')}>
+          <Field name={languages.follow_up_date} value={client.follow_up_date} />
+          <Field name={languages.referral_source} value={client.referral_source == undefined ? '' : client.referral_source.name} />
+          <Field name={languages.referral_phone}>
             {
               client.referral_phone && (
                 <TouchableWithoutFeedback onPress={() => call({ number: client.referral_phone, prompt: false }) }>
@@ -83,8 +85,8 @@ export default class ClientInformation extends Component {
               )
             }
           </Field>
-          <Field name={i18n.t('client.form.who_live_with')} value={client.live_with} />
-          <Field name={i18n.t('client.form.telephone_number')}>
+          <Field name={languages.live_with} value={client.live_with} />
+          <Field name={languages.telephone_number}>
             {
               client.telephone_number && (
                 <TouchableWithoutFeedback onPress={() => call({ number: client.telephone_number, prompt: false }) }>
@@ -95,20 +97,20 @@ export default class ClientInformation extends Component {
               )
             }
           </Field>
-          <Field name={i18n.t('client.form.rated_for_id_poor')} value={client.rated_for_id_poor} />
+          <Field name={languages.is_the_client_rated_for_id_poor} value={client.rated_for_id_poor} />
           <Field
-            name={i18n.t('client.form.received_by_id')}
+            name={languages.received_by}
             value={client.received_by == undefined ? '' : client.received_by.first_name + client.received_by.last_name}
           />
-          <Field name={i18n.t('client.form.initial_referral_date')} value={client.initial_referral_date} />
-          <Field name={i18n.t('client.form.school_name')} value={client.school_name} />
-          <Field name={i18n.t('client.form.school_grade')} value={client.school_grade} />
-          <Field name={i18n.t('client.form.main_school_contact')} value={client.main_school_contact} />
-          <Field name={i18n.t('client.form.has_been_orphanage')} value={client.has_been_in_orphanage ? 'Yes' : 'No'} />
-          <Field name={i18n.t('client.form.has_goverment_care')} value={client.has_been_in_government_care ? 'Yes' : 'No'} />
-          <Field name={i18n.t('client.form.relevant_referral_information')} value={client.relevant_referral_information} />
-          <Field name={i18n.t('client.form.case_worker')} value={map(client.case_workers, cw => `${cw.first_name} ${cw.last_name}`).join(', ')} />
-          <Field name={i18n.t('client.form.agencies_involved')} value={map(client.agencies, 'name').join(', ')} />
+          <Field name={languages.initial_referral_date} value={client.initial_referral_date} />
+          <Field name={languages.school_name} value={client.school_name} />
+          <Field name={languages.school_grade} value={client.school_grade} />
+          <Field name={languages.main_school_contact} value={client.main_school_contact} />
+          <Field name={languages.has_been_in_orphanage} value={client.has_been_in_orphanage ? 'Yes' : 'No'} />
+          <Field name={languages.has_been_in_government_care} value={client.has_been_in_government_care ? 'Yes' : 'No'} />
+          <Field name={languages.relevant_referral_information} value={client.relevant_referral_information} />
+          <Field name={languages.case_worker} value={map(client.case_workers, cw => `${cw.first_name} ${cw.last_name}`).join(', ')} />
+          <Field name={languages.agencies_involved} value={map(client.agencies, 'name').join(', ')} />
           {client.quantitative_cases.map((qc, index) => {
             return (
               <Field name={qc.quantitative_type} key={index}>
