@@ -56,6 +56,7 @@ export default {
       time_in_care: 'Time In Care',
       follow_up_date: 'First Follow-Up Date',
       referral_source: 'Referral Source',
+      referral_source_category_id: 'Referral Source Category',
       referral_phone: 'Referral Phone Number',
       name_of_referee: 'Name of Referee',
       who_live_with: 'Primary Carer Name',
@@ -144,6 +145,14 @@ export default {
       partner: 'Ongoing Partner',
       family: 'Family',
       family_preservation: 'Family Preservation'
+    },
+    exit_ngos: {
+      exit_ngo: 'Exit Client from NGO',
+      exit_circumstance: 'Exit Circumstance',
+      exit_date: 'Exit Date',
+      exit_note: 'Exit Note',
+      exit_reasons: 'Reason for Exit / Case Rejection',
+      other_info_of_exit: 'Other - More Information',
     }
   },
   family: {

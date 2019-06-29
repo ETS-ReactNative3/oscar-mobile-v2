@@ -1,12 +1,15 @@
 export default {
   baseURL: function(subDomain) {
-    // return 'https://' + subDomain + '.oscarhq.com/api/v1'
-    return 'http://' + subDomain + '.oscarhq-staging.com/api/v1'
+    return 'https://' + subDomain + '.oscarhq.com/api/v1'
+    // return 'http://' + subDomain + '.oscarhq-staging.com/api/v1'
+    // return 'http://' + subDomain + '.lvh.me:3000/api/v1'
   },
   login: '/auth/sign_in',
   updateTokenPath: '/auth',
   tokenValidationPath: '/auth/validate_token',
   clientsPath: '/clients',
+  enterNgoPath: '/enter_ngos',
+  exitNgoPath: '/exit_ngos',
   domainPath: '/domains',
   domainGroupsPath: '/domain_groups',
   familiesPath: '/families',
@@ -18,6 +21,7 @@ export default {
   donorsPath: '/donors',
   usersPath: '/users',
   referralSourcesPath: '/referral_sources',
+  referralSourceCategoriessPath: '/referral_sources/categories',
   tasksPath: '/users',
   createTaskPath: '/tasks',
   editTaskPath: '/tasks',

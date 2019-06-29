@@ -86,7 +86,7 @@ export function editAdditionalFormOffline(properties, entityProfile, customField
 export function deleteAdditionalFormOffline(customFieldProperty, entityProfile, customFormType, deleteEntityAdditonalFormPath, actions , alertMessage) {
   return dispatch => {
     if (customFieldProperty.from == 'persist') {
-      dispatch(customFieldPropertyDeleted(customFieldPropertyDeleted))
+      dispatch(customFieldPropertyDeleted(customFieldProperty))
     } else {
       const customFieldPropertyDeleted = {
         id: customFieldProperty.id,

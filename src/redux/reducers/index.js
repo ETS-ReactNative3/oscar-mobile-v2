@@ -17,9 +17,11 @@ import programStreams from './programStreams'
 import birthProvinces from './birthProvinces'
 import quantitativeTypes from './quantitativeTypes'
 import referralSources from './referralSources'
+import referralSourceCategories from './referralSourceCategories'
 import agencies from './agencies'
 import donors from './donors'
 import queueCustomFieldProperties from './offline/queueCustomFieldProperties'
+import queueClientEnrollments from './offline/queueClientEnrollments'
 import clientQueue from './offline/clientQueue'
 
 export default combineReducers({
@@ -44,5 +46,7 @@ export default combineReducers({
   agencies,
   donors,
   queueCustomFieldProperties,
+  queueClientEnrollments,
   clientQueue,
+  referralSourceCategories
 })
