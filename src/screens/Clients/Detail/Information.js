@@ -46,7 +46,7 @@ export default class ClientInformation extends Component {
   }
 
   render() {
-    const { client, referralSourceCategories, language } = this.props
+    const { client, referralSourceCategories, language, setting } = this.props
     const referralSourceCategory = find(referralSourceCategories, {id: client.referral_source_category_id})
     const referralSourceCategoryName = referralSourceCategory == undefined ? '' : language == 'km' ? referralSourceCategory.name : referralSourceCategory.name_en
     return (
@@ -96,7 +96,10 @@ export default class ClientInformation extends Component {
               )
             }
           </Field>
-          <Field name={i18n.t('client.form.rated_for_id_poor')} value={client.rated_for_id_poor} />
+          {
+            setting.country_name === 'cambodia' &&
+            <Field name={i18n.t('client.form.rated_for_id_poor')} value={client.rated_for_id_poor} />
+          }
           <Field
             name={i18n.t('client.form.received_by_id')}
             value={client.received_by == undefined ? '' : client.received_by.first_name + client.received_by.last_name}

@@ -123,7 +123,7 @@ class CaseNoteDetail extends Component {
             <View key={index} style={styles.attachmentWrapper}>
               <Image
                 style={{ width: 40, height: 40 }}
-                source={{ uri: attachment.url }}
+                source={{ uri: attachment.thumb.url }}
               />
               <Text style={styles.listAttachments}>
                 {index + 1}. {filename}

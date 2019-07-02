@@ -15,6 +15,7 @@ import ImagePicker                              from 'react-native-image-picker'
 import Collapsible                              from 'react-native-collapsible'
 import SectionedMultiSelect                     from 'react-native-sectioned-multi-select'
 import { DocumentPicker, DocumentPickerUtil }   from 'react-native-document-picker'
+import { MAX_SIZE, options }                    from '../../../constants/option'
 import {
   View,
   Text,
@@ -27,8 +28,6 @@ import {
   Alert,
   TouchableOpacity
 } from 'react-native'
-
-const MAX_UPLOAD_SIZE = 30000
 
 class CaseNoteForm extends Component {
   constructor(props) {
@@ -139,16 +138,6 @@ class CaseNoteForm extends Component {
   }
 
   uploadAttachment = caseNote => {
-    const options = {
-      noData: true,
-      title: 'Select Document',
-      customButtons: [{ name: 'Document', title: 'Choose Document from Library ...' }],
-      storageOptions: {
-        cameraRoll: true,
-        waitUntilSaved: true
-      }
-    }
-
     ImagePicker.showImagePicker(options, response => {
       if (response.error) {
         alert('ImagePicker Error: ', response.error)
@@ -184,7 +173,7 @@ class CaseNoteForm extends Component {
     const fileSize    = response.fileSize / 1024
     attachmentsSize  += fileSize
 
-    if (attachmentsSize > MAX_UPLOAD_SIZE) {
+    if (attachmentsSize > MAX_SIZE) {
       Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     } else {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
@@ -317,12 +306,11 @@ class CaseNoteForm extends Component {
               {
                 caseNote.attachments.map((attachment, index) => {
                   const name = (attachment.name || attachment.url.split('/').pop()).substring(0, 20)
-
                   return (
                     <View style={styles.attachmentWrapper} key={index}>
                       <Image
                         style={{ width: 40, height: 40 }}
-                        source={{ uri: attachment.uri }}
+                        source={{ uri: attachment.uri || attachment.thumb.url }}
                       />
                       <Text style={styles.listAttachments}>{index + 1}. { name }...</Text>
                       {
