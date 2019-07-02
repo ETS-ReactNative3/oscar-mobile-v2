@@ -130,7 +130,7 @@ class ExitNgoForm extends Component {
                 underlineColorAndroid="#c7cdd3"
                 value={exit_circumstance}
                 onChangeText={exit_circumstance => this.setState({ exit_circumstance })}
-                style={{ height: 40 }}
+                style={{ height: 40, paddingLeft: 5, backgroundColor: '#dedede' }}
                 editable={false}
               />
             </View>
