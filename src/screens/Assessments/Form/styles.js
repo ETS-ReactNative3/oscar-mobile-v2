@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
   },
   finishedAssessment: {
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
+    justifyContent: 'center'
   }
 })
 

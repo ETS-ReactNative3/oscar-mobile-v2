@@ -59,8 +59,9 @@ class AssessmentForm extends Component {
   }
 
   componentWillMount() {
-    const { domains, client, assessment } = this.props
-    const assessmentDomains = AssessmentHelper.populateAssessmentDomains(assessment, domains, client)
+    const { domains, client, assessment, custom_domain } = this.props
+    const filteredDomains = domains.filter(domain => domain.custom_domain === custom_domain)
+    const assessmentDomains = AssessmentHelper.populateAssessmentDomains(assessment, filteredDomains, client)
     const scores = this.shuffleScores()
     this.setState({ assessmentDomains, scores })
   }
