@@ -49,7 +49,6 @@ class SplashScreen extends Component {
     }
   }
 
-
   alertNoInternet = () => {
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
