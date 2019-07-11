@@ -63,7 +63,7 @@ export default {
       telephone_number: 'Primary Carer Phone Number',
       id_poor: 'ID Poor',
       rated_for_id_poor: 'Is The Client Rated For ID Poor?',
-      received_by_id: 'Referral Received By',
+      received_by: 'Referral Received By',
       profile: 'Photo',
       follow_up_by: 'First Follow-Up By',
       initial_referral_date: 'Initial Referral Date',

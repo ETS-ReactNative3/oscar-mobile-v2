@@ -62,7 +62,7 @@ export default {
       telephone_number: 'တယ်လီဖုန်းနံပါတ်',
       id_poor: 'လူဆင္းရဲ မွတ္ပံုတင္',
       rated_for_id_poor: 'Client ကိုဆင်းရဲသောသူသည် ID အတှကျ rated ဖြစ်ပါတယ်',
-      received_by_id: 'မွ လက္ခံသည္',
+      received_by: 'မွ လက္ခံသည္',
       profile: 'ရုပ်ပုံ',
       follow_up_by: 'မွ ဆက္လက္ေဆာင္ရြက္သည္',
       initial_referral_date: 'ကနဦး လႊဲေျပာင္းသည့္ ရက္စြဲ',

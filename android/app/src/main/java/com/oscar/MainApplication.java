@@ -13,8 +13,8 @@ import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
-import com.facebook.soloader.SoLoader;
+import com.ocetnik.timer.BackgroundTimerPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
@@ -24,6 +24,7 @@ import com.oblador.vectoricons.VectorIconsPackage;
 
 import java.util.Arrays;
 import java.util.List;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
 public class MainApplication extends NavigationApplication {
 
@@ -43,9 +44,12 @@ public class MainApplication extends NavigationApplication {
         return BuildConfig.DEBUG;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
     protected List<ReactPackage> getPackages() {
-        long size = 500 * 1024L * 1024L; // 500 MB
-        ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
         return Arrays.<ReactPackage>asList(
             new RNI18nPackage(),
             new VectorIconsPackage(),
@@ -54,7 +58,10 @@ public class MainApplication extends NavigationApplication {
             new ReactNativeRestartPackage(),
             new FastImageViewPackage(),
             new ReactNativeDocumentPicker(),
-            new ImagePickerPackage()
+            new ImagePickerPackage(),
+            new BackgroundTimerPackage(),
+            new AsyncStoragePackage(),
+            new RNFetchBlobPackage()
         );
     }
 

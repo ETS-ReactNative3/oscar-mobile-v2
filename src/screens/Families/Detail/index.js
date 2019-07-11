@@ -138,7 +138,6 @@ class FamilyDetail extends Component {
 const mapState = (state, ownProps) => ({
   family: state.families.data[ownProps.familyId],
   setting: state.setting.data,
-  message: state.families.message
 })
 
 export default connect(mapState)(FamilyDetail)

@@ -1,18 +1,20 @@
-import axios                              from 'axios'
-import { forEach, capitalize }            from 'lodash'
-import { AUTH_TYPES, LOGOUT_TYPES }       from '../types'
-import { Alert, AsyncStorage, NetInfo }   from 'react-native'
-import { Navigation }                     from 'react-native-navigation'
-import endpoint                           from '../../constants/endpoint'
-import i18n                               from '../../i18n'
-import CryptoJS                           from 'crypto-js'
+import { Alert, NetInfo }           from 'react-native'
+import { Navigation }               from 'react-native-navigation'
+import FilesystemStorage            from 'redux-persist-filesystem-storage'
+import { locale }                   from 'moment'
+import axios                        from 'axios'
+import { forEach, capitalize }      from 'lodash'
+import CryptoJS                     from 'crypto-js'
+import { AUTH_TYPES, LOGOUT_TYPES } from '../types'
+import endpoint                     from '../../constants/endpoint'
+import i18n                         from '../../i18n'
+
 import {
   pushScreen,
   startTabScreen,
   startNgoScreen,
   loadingScreen
 } from '../../navigation/config'
-import { locale } from 'moment';
 
 requestLogin = () => ({
   type: AUTH_TYPES.LOGIN_REQUEST
@@ -212,7 +214,7 @@ export function clearAppData() {
   return dispatch => {
     setTimeout(function() {
       dispatch({ type: AUTH_TYPES.RESET_AUTH_STATE })
-      AsyncStorage.clear()
+      FilesystemStorage.clear()
     }, 500)
   }
 }

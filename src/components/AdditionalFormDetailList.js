@@ -222,9 +222,8 @@ class AdditionalFormDetailList extends Component {
 
 const mapState = (state, ownProps) => {
   const entity = ownProps.type == 'client' ? state.clients.data[ownProps.entityId] : state.families.data[ownProps.entityId]
-  const message = ownProps.type == 'client' ? state.clients.message : state.families.message
   const customForm = find(entity.additional_form, { id: ownProps.customFormId })
-  return { entity, customForm, visible: true, message: message }
+  return { entity, customForm, visible: true }
 }
 
 export default connect(mapState)(AdditionalFormDetailList)

@@ -9,6 +9,7 @@ import i18n                         from '../../../i18n'
 import appIcons                     from '../../../utils/Icon'
 import { pushScreen }               from '../../../navigation/config'
 import { acceptClient, rejectClient } from '../../../redux/actions/clients'
+import Layout                       from '../../../components/Layout'
 import Menu                         from './Menu'
 import ClientInformation            from './Information'
 import styles                       from './styles'
@@ -148,8 +149,7 @@ class ClientDetail extends Component {
     const { client, setting, referralSourceCategories, language } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
 
-    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' }))
-      .length
+    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' })).length
 
     const inactiveProgramStreams = client.inactive_program_streams.length
     const activeProgramStreams = client.program_streams.length
@@ -164,105 +164,107 @@ class ClientDetail extends Component {
     const accepted = client.status == 'Accepted' || client.status == 'Active'
 
     return (
-      <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {
-            referred &&
-              <View style={styles.widgetContainer}>
-                <View style={styles.widgetRow}>
-                  <Menu
-                    value={i18n.t('client.form.accepted')}
-                    color="#1c84c6"
-                    onPress={() => this.onAcceptClient(client)}
-                  />
-                  <Menu
-                    value={i18n.t('client.form.rejected')}
-                    color="#ED5565"
-                    onPress={() => this.onRejectClient(client)}
-                  />
-                </View>
-              </View>
-          }
-          {
-            !referred &&
-              <React.Fragment>
-                <Swiper activeDotColor="#23c6c8" loop={false} height={250}>
-                  <View style={styles.widgetContainer}>
-                    <View style={styles.widgetRow}>
-                      <Menu
-                        title={i18n.t('client.assessments')}
-                        value={client.assessments.length}
-                        color="#23c6c8"
-                        onPress={() => this.navigateToAssessments(client)}
-                        disabled={!accepted || !enableAssessment}
-                      />
-                      <Menu
-                        title={i18n.t('client.case_notes')}
-                        value={client.case_notes.length}
-                        color="#23c6c8"
-                        onPress={() => this.navigateToCaseNotes(client)}
-                        disabled={!accepted}
-                      />
-                    </View>
-                    <View style={[styles.widgetRow, { marginBottom: 30 }]}>
-                      <Menu
-                        title={i18n.t('client.tasks')}
-                        value={`${overdue} / ${today} / ${upcoming}`}
-                        color="#23c6c8"
-                        onPress={() => this.navigateToTasks(client)}
-                        disabled={!accepted}
-                      />
-                    </View>
-                  </View>
-                  <View style={styles.widgetContainer}>
-                    <View style={styles.widgetRow}>
-                      <Menu
-                        title={i18n.t('client.enrolled_program_streams')}
-                        value={enrolledProgramStreamCount}
-                        color="#1ab394"
-                        onPress={() => this.navigateToEnrollProgramStreams(client)}
-                        disabled={!accepted || enrolledProgramStreamCount == 0}
-                      />
-                      <Menu
-                        title={i18n.t('client.program_stream')}
-                        value={programStreams}
-                        color="#1ab394"
-                        loading={this.props.programStreamsLoading}
-                        onPress={() => this.navigateToActiveProgramStreams(client)}
-                        disabled={!accepted}
-                      />
-                    </View>
-                    <View style={[styles.widgetRow, { marginBottom: 30 }]}>
-                      <Menu
-                        title={i18n.t('client.additional_form')}
-                        value={client.additional_form.length}
-                        color="#1c84c6"
-                        onPress={() => this.navigateToAdditionalForms(client)}
-                        disabled={!accepted || client.additional_form.length == 0}
-                      />
-                      <Menu
-                        title={i18n.t('client.add_form')}
-                        value={client.add_forms.length}
-                        color="#1c84c6"
-                        onPress={() => this.navigateToAddForms(client)}
-                        disabled={!accepted}
-                      />
-                    </View>
-                  </View>
-                </Swiper>
-
-                <View style={styles.absoluteContainer}>
-                  <View style={styles.statusContainer}>
-                    <Text style={styles.status}>{client.status}</Text>
+      <Layout>
+        <View style={{ flex: 1, backgroundColor: '#EDEFF1' }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {
+              referred &&
+                <View style={styles.widgetContainer}>
+                  <View style={styles.widgetRow}>
+                    <Menu
+                      value={i18n.t('client.form.accepted')}
+                      color="#1c84c6"
+                      onPress={() => this.onAcceptClient(client)}
+                    />
+                    <Menu
+                      value={i18n.t('client.form.rejected')}
+                      color="#ED5565"
+                      onPress={() => this.onRejectClient(client)}
+                    />
                   </View>
                 </View>
-              </React.Fragment>
-          }
+            }
+            {
+              !referred &&
+                <React.Fragment>
+                  <Swiper activeDotColor="#23c6c8" loop={false} height={250}>
+                    <View style={styles.widgetContainer}>
+                      <View style={styles.widgetRow}>
+                        <Menu
+                          title={i18n.t('client.assessments')}
+                          value={client.assessments.length}
+                          color="#23c6c8"
+                          onPress={() => this.navigateToAssessments(client)}
+                          disabled={!accepted || !enableAssessment}
+                        />
+                        <Menu
+                          title={i18n.t('client.case_notes')}
+                          value={client.case_notes.length}
+                          color="#23c6c8"
+                          onPress={() => this.navigateToCaseNotes(client)}
+                          disabled={!accepted}
+                        />
+                      </View>
+                      <View style={[styles.widgetRow, { marginBottom: 30 }]}>
+                        <Menu
+                          title={i18n.t('client.tasks')}
+                          value={`${overdue} / ${today} / ${upcoming}`}
+                          color="#23c6c8"
+                          onPress={() => this.navigateToTasks(client)}
+                          disabled={!accepted}
+                        />
+                      </View>
+                    </View>
+                    <View style={styles.widgetContainer}>
+                      <View style={styles.widgetRow}>
+                        <Menu
+                          title={i18n.t('client.enrolled_program_streams')}
+                          value={enrolledProgramStreamCount}
+                          color="#1ab394"
+                          onPress={() => this.navigateToEnrollProgramStreams(client)}
+                          disabled={!accepted || enrolledProgramStreamCount == 0}
+                        />
+                        <Menu
+                          title={i18n.t('client.program_stream')}
+                          value={programStreams}
+                          color="#1ab394"
+                          loading={this.props.programStreamsLoading}
+                          onPress={() => this.navigateToActiveProgramStreams(client)}
+                          disabled={!accepted}
+                        />
+                      </View>
+                      <View style={[styles.widgetRow, { marginBottom: 30 }]}>
+                        <Menu
+                          title={i18n.t('client.additional_form')}
+                          value={client.additional_form.length}
+                          color="#1c84c6"
+                          onPress={() => this.navigateToAdditionalForms(client)}
+                          disabled={!accepted || client.additional_form.length == 0}
+                        />
+                        <Menu
+                          title={i18n.t('client.add_form')}
+                          value={client.add_forms.length}
+                          color="#1c84c6"
+                          onPress={() => this.navigateToAddForms(client)}
+                          disabled={!accepted}
+                        />
+                      </View>
+                    </View>
+                  </Swiper>
 
-          <ClientInformation client={client} setting={setting} referralSourceCategories={referralSourceCategories} language={language}/>
-        </ScrollView>
-        <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
-      </View>
+                  <View style={styles.absoluteContainer}>
+                    <View style={styles.statusContainer}>
+                      <Text style={styles.status}>{client.status}</Text>
+                    </View>
+                  </View>
+                </React.Fragment>
+            }
+
+            <ClientInformation client={client} setting={setting} referralSourceCategories={referralSourceCategories} language={language}/>
+          </ScrollView>
+          <DropdownAlert ref="dropdown" updateStatusBar={false} useNativeDriver={true} />
+        </View>
+      </Layout>
     )
   }
 }

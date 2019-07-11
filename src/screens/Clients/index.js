@@ -19,6 +19,7 @@ import { fetchDonors }                    from '../../redux/actions/donors'
 import { fetchUsers }                     from '../../redux/actions/users'
 import { pushScreen }                     from '../../navigation/config'
 import FlatList                           from '../../components/FlatList'
+import Layout                             from '../../components/Layout'
 import NoRecord                           from './NoRecord'
 import i18n                               from '../../i18n'
 import styles                             from './styles'
@@ -121,57 +122,63 @@ class Clients extends Component {
 
     if (loading)
       return (
-        <View
-          style={{
-            backgroundColor: '#fff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            flexDirection: 'row'
-          }}
-        >
-          <ActivityIndicator color="#009999" size="large" />
-          <Text style={{ fontSize: 16, marginLeft: 8 }}>Loading...</Text>
-        </View>
+        <Layout>
+          <View
+            style={{
+              backgroundColor: '#fff',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flex: 1,
+              flexDirection: 'row'
+            }}
+          >
+            <ActivityIndicator color="#009999" size="large" />
+            <Text style={{ fontSize: 16, marginLeft: 8 }}>Loading...</Text>
+          </View>
+        </Layout>
       )
 
     if (!showSearch && !search && isEmpty(clients)) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>{i18n.t('no_data')}</Text>
-        </View>
+        <Layout>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>{i18n.t('no_data')}</Text>
+          </View>
+        </Layout>
       )
     }
 
     return (
-      <View style={styles.container}>
-        {showSearch ? (
-          <SearchBar
-            containerStyle={styles.searchContainer}
-            inputStyle={styles.searchInput}
-            lightTheme
-            placeholder="Search name, local name, village"
-            autoCapitalize="none"
-            textInputRef="clear"
-            onChangeText={this.searchClient}
-            noIcon
-            showLoadingIcon={searching}
-          />
-        ) : null}
-        {showSearch && search && isEmpty(clients) ? (
-          <NoRecord onShowAllRecords={() => this.setState({ clients: this.props.clients })} />
-        ) : (
-          <FlatList
-            data={clients}
-            title={this.clientName}
-            subItems={this.subItems}
-            onPress={this.onClientPress}
-            refreshing={loading}
-            onRefresh={() => this.props.fetchClients()}
-            isClientList
-          />
-        )}
-      </View>
+      <Layout>
+        <View style={styles.container}>
+          {showSearch ? (
+            <SearchBar
+              containerStyle={styles.searchContainer}
+              inputStyle={styles.searchInput}
+              lightTheme
+              placeholder="Search name, local name, village"
+              autoCapitalize="none"
+              textInputRef="clear"
+              onChangeText={this.searchClient}
+              noIcon
+              showLoadingIcon={searching}
+            />
+          ) : null}
+          {showSearch && search && isEmpty(clients) ? (
+            <NoRecord onShowAllRecords={() => this.setState({ clients: this.props.clients })} />
+          ) : (
+            <FlatList
+              data={clients}
+              title={this.clientName}
+              subItems={this.subItems}
+              onPress={this.onClientPress}
+              refreshing={loading}
+              onRefresh={() => this.props.fetchClients()}
+              isClientList
+            />
+          )}
+        </View>
+      </Layout>
     )
   }
 }
@@ -180,7 +187,8 @@ const mapState = state => ({
   clients: state.clients.data,
   loading: state.clients.loading,
   setting: state.setting.data,
-  hasInternet: state.internet.hasInternet
+  hasInternet: state.internet.hasInternet,
+  clientQueue: state.clientQueue.data
 })
 
 const mapDispatch = {

@@ -3,7 +3,7 @@ import thunkMiddleware from 'redux-thunk'
 import rootReducer from './reducers'
 import { autoRehydrate, persistStore } from 'redux-persist'
 import { seamlessImmutableReconciler, seamlessImmutableTransformCreator } from 'redux-persist-seamless-immutable'
-import { AsyncStorage } from 'react-native'
+import FilesystemStorage from 'redux-persist-filesystem-storage'
 const store = createStore(
   rootReducer,
   {},
@@ -13,9 +13,10 @@ const store = createStore(
   )
 )
 persistStore(store, {
-  storage: AsyncStorage,
+  storage: FilesystemStorage,
   stateReconciler: seamlessImmutableReconciler,
-  transforms: [seamlessImmutableTransformCreator({})]
+  transforms: [seamlessImmutableTransformCreator({})],
+  blacklist: ['network']
 })
 
 export default function configureStore() {

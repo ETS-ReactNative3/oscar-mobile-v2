@@ -63,7 +63,7 @@ export default {
       telephone_number: 'លេខទូរស័ព្ទ',
       id_poor: 'កំរិតប័ណ្ណក្រីក្រ',
       rated_for_id_poor: 'តើអតិថិជនត្រូវបានវាយតម្លៃថាអត្តសញ្ញាណក្រីក្រឬទេ',
-      received_by_id: 'បុគ្គលិកទទួលករណី',
+      received_by: 'បុគ្គលិកទទួលករណី',
       profile: 'រូបថត',
       follow_up_by: 'បុុគ្គលិកដែលតាមដាន',
       initial_referral_date: 'កាលបរិចេ្ឆទនៃការបញ្ជូនដំបូង',
