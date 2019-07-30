@@ -11,14 +11,18 @@ import {
   updateClient
 } from '../clients'
 
+export const removeClientQueue = client => ({
+  type: CLIENT_TYPES.REMOVE_CLIENT_QUEUE,
+  client
+})
+
 export const updateClientQueue = client => ({
   type: CLIENT_TYPES.UPDATE_CLIENT_QUEUE,
   client
 })
 
-export function updateClientOffline(client, actions) {
+export function updateClientOffline(client, onSaveCompleted) {
   return (dispatch, getState) => {
-    loadingScreen()
     dispatch(requestClients())
 
     const users             = getState().users.data
@@ -44,9 +48,9 @@ export function updateClientOffline(client, actions) {
 
     const clientFollowedUpBy    = client.followed_up_by_id      ? users[client.followed_up_by_id] : null
     const clientRecievedBy      = client.received_by_id         ? users[client.received_by_id] : null
-    const clientCaseWorkers     = client.user_ids.length > 0    ? Object.values(users).filter(user => client.user_ids.includes(user.id)) : null
-    const clientDonors          = client.donor_ids.length > 0   ? donors.filter(donor => client.donor_ids.includes(donor.id)) : null
-    const clientAgencies        = client.agency_ids.length > 0  ? agencies.filter(agency => client.agency_ids.includes(agency.id)) : null
+    const clientCaseWorkers     = client.user_ids.length > 0    ? Object.values(users).filter(user => client.user_ids.includes(user.id)) : []
+    const clientDonors          = client.donor_ids.length > 0   ? donors.filter(donor => client.donor_ids.includes(donor.id)) : []
+    const clientAgencies        = client.agency_ids.length > 0  ? agencies.filter(agency => client.agency_ids.includes(agency.id)) : []
 
     const updatedClient         = {
       ...client,
@@ -65,8 +69,6 @@ export function updateClientOffline(client, actions) {
 
     dispatch(updateClientQueue(updatedClient))
     dispatch(updateClient(updatedClient))
-    Navigation.dismissOverlay('LOADING_SCREEN')
-    Navigation.popTo(actions.clientDetailComponentId)
-    actions.alertMessage()
+    onSaveCompleted(true)
   }
 }

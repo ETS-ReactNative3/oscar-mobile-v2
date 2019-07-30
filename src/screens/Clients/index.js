@@ -73,7 +73,7 @@ class Clients extends Component {
       screen: 'oscar.clientDetail',
       title: this.clientName(client),
       props: {
-        clientId: client.id,
+        clientId: client.archived_slug,
         setting: this.props.setting
       },
       rightButtons: [
@@ -105,9 +105,9 @@ class Clients extends Component {
   }
 
   subItems = client => {
-    const taskCount = client.tasks.overdue.length + client.tasks.today.length + client.tasks.upcoming.length
+    const taskCount       = client.tasks.length
     const assessmentCount = client.assessments.length
-    const caseNoteCount = client.case_notes.length
+    const caseNoteCount   = client.case_notes.length
 
     return [
       `${taskCount} ${i18n.t('client.tasks')}`,

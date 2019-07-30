@@ -15,6 +15,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
@@ -61,7 +62,8 @@ public class MainApplication extends NavigationApplication {
             new ImagePickerPackage(),
             new BackgroundTimerPackage(),
             new AsyncStoragePackage(),
-            new RNFetchBlobPackage()
+            new RNFetchBlobPackage(),
+            new NetInfoPackage()
         );
     }
 

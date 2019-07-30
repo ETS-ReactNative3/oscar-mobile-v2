@@ -5,6 +5,7 @@ import Swiper                       from 'react-native-swiper'
 import { Navigation }               from 'react-native-navigation'
 import DropdownAlert                from 'react-native-dropdownalert'
 import { some }                     from 'lodash'
+import moment from 'moment'
 import i18n                         from '../../../i18n'
 import appIcons                     from '../../../utils/Icon'
 import { pushScreen }               from '../../../navigation/config'
@@ -15,9 +16,21 @@ import ClientInformation            from './Information'
 import styles                       from './styles'
 
 class ClientDetail extends Component {
-  constructor(props) {
-    super(props)
+  componentDidMount() {
     Navigation.events().bindComponent(this)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { given_name, family_name } = nextProps.client
+    const clientName = [given_name, family_name].filter(Boolean).join(' ') || '(No Name)'
+
+    Navigation.mergeOptions(this.props.componentId, {
+      topBar: {
+        title: {
+          text: clientName
+        }
+      }
+    })
   }
 
   alertMessage = message => {
@@ -145,21 +158,31 @@ class ClientDetail extends Component {
     })
   }
 
+  taskCount = () => {
+    const { tasks } = this.props.client
+
+    const upcoming = tasks.filter(task => moment(task.completion_date).isAfter(Date.now(), 'day'))
+    const today    = tasks.filter(task => moment(task.completion_date).isSame(Date.now(), 'day'))
+    const overdue  = tasks.filter(task => moment(task.completion_date).isBefore(Date.now(), 'day'))
+
+    return {
+      today: today.length,
+      overdue: overdue.length,
+      upcoming: upcoming.length
+    }
+}
+
   render() {
     const { client, setting, referralSourceCategories, language } = this.props
     const enableAssessment = setting.enable_custom_assessment || setting.enable_default_assessment
+    // const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' })).length
 
-    const enrolledProgramStreamCount = client.program_streams.filter(program_stream => some(program_stream.enrollments, { status: 'Active' })).length
-
-    const inactiveProgramStreams = client.inactive_program_streams.length
-    const activeProgramStreams = client.program_streams.length
-    const allProgramStreams = this.props.programStreams.length
-    const availableProgramStreams = allProgramStreams - inactiveProgramStreams - activeProgramStreams
-    const programStreams = `${inactiveProgramStreams} / ${availableProgramStreams}`
-
-    const overdue = client.tasks.overdue.length
-    const today = client.tasks.today.length
-    const upcoming = client.tasks.upcoming.length
+    // const inactiveProgramStreams = client.inactive_program_streams.length
+    // const activeProgramStreams = client.program_streams.length
+    // const allProgramStreams = this.props.programStreams.length
+    // const availableProgramStreams = allProgramStreams - inactiveProgramStreams - activeProgramStreams
+    // const programStreams = `${inactiveProgramStreams} / ${availableProgramStreams}`
+    const taskCount = this.taskCount()
     const referred = client.status == 'Referred'
     const accepted = client.status == 'Accepted' || client.status == 'Active'
 
@@ -208,48 +231,50 @@ class ClientDetail extends Component {
                       <View style={[styles.widgetRow, { marginBottom: 30 }]}>
                         <Menu
                           title={i18n.t('client.tasks')}
-                          value={`${overdue} / ${today} / ${upcoming}`}
+                          value={`${taskCount.overdue} / ${taskCount.today} / ${taskCount.upcoming}`}
                           color="#23c6c8"
                           onPress={() => this.navigateToTasks(client)}
                           disabled={!accepted}
                         />
                       </View>
                     </View>
-                    <View style={styles.widgetContainer}>
-                      <View style={styles.widgetRow}>
-                        <Menu
-                          title={i18n.t('client.enrolled_program_streams')}
-                          value={enrolledProgramStreamCount}
-                          color="#1ab394"
-                          onPress={() => this.navigateToEnrollProgramStreams(client)}
-                          disabled={!accepted || enrolledProgramStreamCount == 0}
-                        />
-                        <Menu
-                          title={i18n.t('client.program_stream')}
-                          value={programStreams}
-                          color="#1ab394"
-                          loading={this.props.programStreamsLoading}
-                          onPress={() => this.navigateToActiveProgramStreams(client)}
-                          disabled={!accepted}
-                        />
+                    { /*
+                      <View style={styles.widgetContainer}>
+                        <View style={styles.widgetRow}>
+                          <Menu
+                            title={i18n.t('client.enrolled_program_streams')}
+                            value={enrolledProgramStreamCount}
+                            color="#1ab394"
+                            onPress={() => this.navigateToEnrollProgramStreams(client)}
+                            disabled={!accepted || enrolledProgramStreamCount == 0}
+                          />
+                          <Menu
+                            title={i18n.t('client.program_stream')}
+                            value={programStreams}
+                            color="#1ab394"
+                            loading={this.props.programStreamsLoading}
+                            onPress={() => this.navigateToActiveProgramStreams(client)}
+                            disabled={!accepted}
+                          />
+                        </View>
+                        <View style={[styles.widgetRow, { marginBottom: 30 }]}>
+                          <Menu
+                            title={i18n.t('client.additional_form')}
+                            value={client.additional_form.length}
+                            color="#1c84c6"
+                            onPress={() => this.navigateToAdditionalForms(client)}
+                            disabled={!accepted || client.additional_form.length == 0}
+                          />
+                          <Menu
+                            title={i18n.t('client.add_form')}
+                            value={client.add_forms.length}
+                            color="#1c84c6"
+                            onPress={() => this.navigateToAddForms(client)}
+                            disabled={!accepted}
+                          />
+                        </View>
                       </View>
-                      <View style={[styles.widgetRow, { marginBottom: 30 }]}>
-                        <Menu
-                          title={i18n.t('client.additional_form')}
-                          value={client.additional_form.length}
-                          color="#1c84c6"
-                          onPress={() => this.navigateToAdditionalForms(client)}
-                          disabled={!accepted || client.additional_form.length == 0}
-                        />
-                        <Menu
-                          title={i18n.t('client.add_form')}
-                          value={client.add_forms.length}
-                          color="#1c84c6"
-                          onPress={() => this.navigateToAddForms(client)}
-                          disabled={!accepted}
-                        />
-                      </View>
-                    </View>
+                    */ }
                   </Swiper>
 
                   <View style={styles.absoluteContainer}>
@@ -275,7 +300,7 @@ const mapState = (state, ownProps) => ({
   referralSourceCategories: state.referralSourceCategories.data,
   client: state.clients.data[ownProps.clientId],
   message: state.clients.message,
-  language: state.language.language
+  language: state.language.language,
 })
 
 const mapDispatch = {

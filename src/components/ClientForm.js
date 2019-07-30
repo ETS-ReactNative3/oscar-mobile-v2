@@ -652,7 +652,7 @@ export default class ClientForm extends Component {
             <View style={styles.inputContainer}>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.label, {color: 'red'}]}>* </Text>
-                <Text style={styles.label}>{i18n.t('client.form.received_by_id')}</Text>
+                <Text style={styles.label}>{i18n.t('client.form.received_by')}</Text>
               </View>
               <SectionedMultiSelect
                 items={this.listUserItems(users)}

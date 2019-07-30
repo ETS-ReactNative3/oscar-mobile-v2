@@ -28,28 +28,25 @@ export const updateClient = client => ({
   client
 })
 
-export function updateClientProperty(clientParams, actions) {
+export function updateClientProperty(clientParams, onSaveCompleted) {
   return dispatch => {
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
-        loadingScreen()
         dispatch(requestClients())
         dispatch(handleUpdateClientParams(clientParams, clientParams.id))
           .then(response => {
             dispatch(updateClient(response.data.client))
-            Navigation.dismissOverlay('LOADING_SCREEN')
-            Navigation.popTo(actions.clientDetailComponentId)
-            actions.alertMessage()
+            onSaveCompleted(true)
           })
           .catch(error => {
             let errors = map(error.response.data, (value, key) => {
               return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
             })
-            Navigation.dismissOverlay('LOADING_SCREEN')
+            onSaveCompleted(false)
             dispatch(requestClientsFailed(errors))
           })
       } else {
-        dispatch(updateClientOffline(clientParams, actions))
+        dispatch(updateClientOffline(clientParams, onSaveCompleted))
       }
     })
   }
@@ -97,13 +94,10 @@ export function fetchClients() {
   return dispatch => {
     dispatch(requestClients())
     axios
-      .get(endpoint.clientsPath)
+      .get(endpoint.caseWorkingClientsPath)
       .then(response => {
-        const clients = response.data.clients.reduce((res, client) => {
-          res[client.id] = client
-          return res
-        }, {})
-        dispatch(requestClientsSuccess(clients))
+        console.log(response.data)
+        dispatch(requestClientsSuccess(response.data))
       })
       .catch(error => {
         dispatch(requestClientsFailed(error))
