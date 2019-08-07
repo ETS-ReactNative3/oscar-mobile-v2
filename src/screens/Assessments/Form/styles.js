@@ -58,14 +58,13 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   button: {
-    backgroundColor: '#bfbfbf',
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#999999',
     padding: 10,
     margin: 5,
     borderRadius: 5,
     alignItems: 'center'
-  },
-  buttonText: {
-    color: '#fff'
   },
   input: {
     height: 40,

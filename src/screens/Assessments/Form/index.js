@@ -368,12 +368,12 @@ class AssessmentForm extends Component {
         const scoreInfo = this.getScoreInfo(newAd)
         const label = scoreInfo.definition ? scoreInfo.definition : score
         // const color = assessmentDomain.score == score ? scoreInfo.color : '#bfbfbf'
-        const color = assessmentDomain.score == score ? '#009999' : '#bfbfbf'
+        const color = assessmentDomain.score == score ? '#DCDCDC' : '#FFF'
 
         return (
           <TouchableOpacity key={score} onPress={() => this.setAssessmentDomainScore(assessmentDomain, score)}>
             <View style={[styles.button, { backgroundColor: color }]}>
-              <Text style={styles.buttonText}>{label}</Text>
+              <Text>{label}</Text>
             </View>
           </TouchableOpacity>
         )
