@@ -70,3 +70,12 @@ export function updateClientOffline(client, actions) {
     actions.alertMessage()
   }
 }
+
+export const removeClientQueue = client => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_TYPES.REMOVE_CLIENT_QUEUE,
+      client
+    })
+  }
+}

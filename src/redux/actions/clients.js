@@ -42,6 +42,7 @@ export function updateClientProperty(clientParams, actions) {
             actions.alertMessage()
           })
           .catch(error => {
+            console.log("Error updateClientProperty", error)
             let errors = map(error.response.data, (value, key) => {
               return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
             })
@@ -52,6 +53,22 @@ export function updateClientProperty(clientParams, actions) {
         dispatch(updateClientOffline(clientParams, actions))
       }
     })
+  }
+}
+
+export function syncUpdateClientProperty(clientParams) {
+  return dispatch => {
+    dispatch(handleUpdateClientParams(clientParams, clientParams.id))
+      .then(response => {
+        dispatch(updateClient(response.data.client))
+      })
+      .catch(error => {
+        console.log("Error updateClientProperty", error)
+        let errors = map(error.response.data, (value, key) => {
+          return i18n.t('client.form.' + key, { locale: 'en' }) + ' ' + value[0]
+        })
+        dispatch(requestClientsFailed(errors))
+      })
   }
 }
 
@@ -103,9 +120,11 @@ export function fetchClients() {
           res[client.id] = client
           return res
         }, {})
-        dispatch(requestClientsSuccess(clients))
+
+        dispatch(requestClientsSuccess(clients)) 
       })
       .catch(error => {
+        console.log('error client ', error)
         dispatch(requestClientsFailed(error))
       })
   }

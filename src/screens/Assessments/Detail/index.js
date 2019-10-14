@@ -32,6 +32,7 @@ class AssessmentDetail extends Component {
         domains,
         assessment,
         action: 'update',
+        custom_domain: !assessment.default,
         previousComponentId: this.props.componentId,
         alertMessage: () => this.alertMessage('Assessment has been successfully updated.')
       },
@@ -188,7 +189,8 @@ const mapState = (state, ownProps) => {
   const assessment = _.find(client.assessments, {id: ownProps.assessmentId})
   return {
     client,
-    assessment
+    assessment,
+    domains: state.domains.data
   }
 }
 

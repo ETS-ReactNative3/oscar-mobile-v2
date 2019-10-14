@@ -23,6 +23,7 @@ import donors from './donors'
 import queueCustomFieldProperties from './offline/queueCustomFieldProperties'
 import queueClientEnrollments from './offline/queueClientEnrollments'
 import clientQueue from './offline/clientQueue'
+import assessmentQueue from './offline/assessmentQueue'
 
 export default combineReducers({
   auth,
@@ -47,6 +48,7 @@ export default combineReducers({
   donors,
   queueCustomFieldProperties,
   queueClientEnrollments,
+  referralSourceCategories,
   clientQueue,
-  referralSourceCategories
+  assessmentQueue
 })

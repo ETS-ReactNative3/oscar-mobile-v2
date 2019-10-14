@@ -4,6 +4,7 @@ import { Alert, NetInfo }           from 'react-native'
 import { loadingScreen }            from '../../navigation/config'
 import { Navigation }               from 'react-native-navigation'
 import endpoint                     from '../../constants/endpoint'
+import { saveAssessmentOffline, createAssessmentOffline }    from './offline/assessment'
 
 export function updateAssessment(params, assessmentId, client, previousComponentId, alertMessage) {
   return dispatch => {
@@ -23,15 +24,34 @@ export function updateAssessment(params, assessmentId, client, previousComponent
 
             Navigation.dismissOverlay('LOADING_SCREEN')
             Navigation.popTo(previousComponentId)
-            alertMessage()
           })
           .catch(err => {
             console.log(err)
           })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(saveAssessmentOffline(params, assessmentId, client, previousComponentId))
       }
     })
+  }
+}
+
+export function syncUpdateAssessment(params, assessmentId, client) {
+  return dispatch => {
+    const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath + '/' + assessmentId
+    const assessmentParams = handleAssessmentParams(params, 'update')
+
+    axios
+      .put(path, assessmentParams)
+      .then(response => {
+        client.assessments.forEach(assessment => {
+          if (assessment.id === assessmentId) assessment.assessment_domain = response.data.assessment.assessment_domain
+        })
+
+        dispatch(updateClient(client))
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
 
@@ -46,20 +66,37 @@ export function createAssessment(params, client, previousComponentId, onSuccess)
         axios
         .post(path, assessmentParams)
         .then(response => {
+
           client.assessments.push(response.data.assessment)
           dispatch(updateClient(client))
 
           Navigation.dismissOverlay('LOADING_SCREEN')
           Navigation.popTo(previousComponentId)
-          alertMessage()
         })
         .catch(err => {
           console.log(err.response)
         })
       } else {
-        Alert.alert('No internet connection')
+        dispatch(createAssessmentOffline(params, client, previousComponentId))
       }
     })
+  }
+}
+
+export function syncCreateAssessment(params, client) {
+  return dispatch => {
+    const path = endpoint.clientsPath + '/' + client.id + endpoint.assessmentsPath
+    const assessmentParams = handleAssessmentParams(params, 'create')
+    axios
+        .post(path, assessmentParams)
+        .then(response => {
+          client.assessments.push(response.data.assessment)
+          dispatch(updateClient(client))
+          console.log("SYNC created assessment success");
+        })
+        .catch(err => {
+          console.log(err.response)
+        })
   }
 }
 
