@@ -14,8 +14,7 @@ export function saveCaseNote(params, client, action, previousComponentId, onSucc
     const caseNoteParams = handleCaseNoteParams(params, action)
     const axiosSend      = action === 'update' ? axios.put : axios.post
     NetInfo.isConnected.fetch().then(isConnected => {
-      // if (isConnected) {
-      if (false) {
+      if (isConnected) {
         loadingScreen()
         axiosSend(path, caseNoteParams)
           .then(response => {
