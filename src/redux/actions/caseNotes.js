@@ -1,5 +1,5 @@
 import axios                    from "axios"
-import { NetInfo }              from "react-native"
+import { NetInfo, Alert }              from "react-native"
 import { Navigation }           from "react-native-navigation"
 import { updateUser }           from "./users"
 import { updateClient }         from "./clients"
@@ -32,7 +32,8 @@ export function saveCaseNote(params, client, action, previousComponentId, onSucc
             console.log(err)
           })
       } else {
-        dispatch(saveCaseNoteOffline(params, client, action, previousComponentId, onSuccess))
+        Alert.alert('No internet connection')
+        // dispatch(saveCaseNoteOffline(params, client, action, previousComponentId, onSuccess))
       }
     })
   }
