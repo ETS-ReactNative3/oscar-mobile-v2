@@ -1,4 +1,4 @@
-package com.rotati.oscarhq;
+package com.rotati.oscarhq.stagging;
 
 import android.app.Application;
 
