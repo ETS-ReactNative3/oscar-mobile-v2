@@ -9,7 +9,6 @@ import com.dylanvann.fastimage.FastImageViewPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import io.realm.react.RealmReactPackage;
-import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -51,7 +50,6 @@ public class MainApplication extends NavigationApplication {
 
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
-            new RNI18nPackage(),
             new VectorIconsPackage(),
             new RealmReactPackage(),
             new RNExitAppPackage(),
