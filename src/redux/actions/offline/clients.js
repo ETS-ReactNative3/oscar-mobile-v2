@@ -2,7 +2,6 @@ import { Navigation }     from 'react-native-navigation'
 import { size }           from 'lodash'
 import { CLIENT_TYPES }   from '../../types'
 import { loadingScreen }  from '../../../navigation/config'
-import Database           from '../../../config/Database'
 
 import {
   requestClients,

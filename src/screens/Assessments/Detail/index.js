@@ -32,6 +32,7 @@ class AssessmentDetail extends Component {
         domains,
         assessment,
         action: 'update',
+        custom_domain: !assessment.default,
         previousComponentId: this.props.componentId,
         alertMessage: () => this.alertMessage('Assessment has been successfully updated.')
       },

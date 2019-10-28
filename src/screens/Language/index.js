@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { Alert }            from 'react-native'
+import { Alert, AsyncStorage }            from 'react-native'
 import { connect }          from 'react-redux'
 import { LANGUAGE_TYPES }   from '../../redux/types'
-import Database             from '../../config/Database'
 import RNRestart            from 'react-native-restart'
 import i18n                 from '../../i18n'
 import FastImage            from 'react-native-fast-image'
@@ -28,11 +27,9 @@ class LanguageScreen extends Component {
     )
   }
 
-  setLanguage = (language) => {
+  setLanguage = async (language) => {
     this.props.setLanguage(language)
-
-    const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
-    Database.write(() => { languageSetting.value = language })
+    await AsyncStorage.setItem('Language', language)
     RNRestart.Restart()
   }
 

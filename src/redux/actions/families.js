@@ -68,7 +68,8 @@ export function updateFamily(familyParams, actions) {
             dispatch(requestFamiliesFailed(errors))
           })
       } else {
-        dispatch(updateFamilyOffline(familyParams, actions))
+        Alert.alert('No internet connection')
+        // dispatch(updateFamilyOffline(familyParams, actions))
       }
     })
   }

@@ -1,21 +1,19 @@
-import I18n     from 'i18n-js'
-import en       from './en'
-import km       from './km'
-import my       from './my'
-import Database from '../config/Database'
+import { AsyncStorage }       from 'react-native'
+import I18n                   from 'i18n-js'
+import en                     from './en'
+import km                     from './km'
+import my                     from './my'
 
 I18n.defaultLocale  = "en"
 I18n.translations   = { km, en, my }
 
-const langSetting   = Database.objects('Setting').filtered('key = $0', 'language')[0]
-
-if (langSetting === undefined) {
-  Database.write(() => {
-    Database.create('Setting', { key: 'language', value: 'en' })
-  })
-  I18n.locale = "en"
-} else {
-  I18n.locale = langSetting.value
-}
+AsyncStorage.getItem('Language', async (error, language) => {
+  I18n.locale = language
+  
+  if (language === undefined) {
+    await AsyncStorage.setItem('Language', 'en')
+    I18n.locale = "en"
+  }
+})
 
 export default I18n

@@ -4,7 +4,6 @@ import i18n                                 from '../../i18n'
 import logo                                 from '../../assets/oscar-logo.png'
 import styles                               from './styles'
 import CryptoJS                             from 'crypto-js'
-import Database                             from '../../config/Database'
 import RNExitApp                            from 'react-native-exit-app'
 import KeyboardManager                      from 'react-native-keyboard-manager'
 import { LANGUAGE_TYPES }                   from '../../redux/types'
@@ -13,11 +12,12 @@ import { setDefaultHeader, verifyUser }     from '../../redux/actions/auth'
 import {
   View,
   Image,
-  Platform,
-  NetInfo,
   Alert,
+  NetInfo,
+  Platform,
+  SafeAreaView,
+  AsyncStorage,
   ActivityIndicator,
-  SafeAreaView
 } from 'react-native'
 class SplashScreen extends Component {
   state = { noInternet: false }
@@ -38,15 +38,14 @@ class SplashScreen extends Component {
   }
 
   componentDidMount() {
-    this.setLanguage()
+    this.updateLanguage()
     setTimeout(() => this.authenticateUser(), 1500)
   }
 
-  setLanguage = () => {
-    const languageSetting = Database.objects('Setting').filtered('key = $0', 'language')[0]
-    if (languageSetting.value !== null) {
-      this.props.setLanguage(languageSetting.value)
-    }
+  updateLanguage = async () => {
+    await AsyncStorage.getItem('Language', (error, language) => {
+      this.props.setLanguage(language)
+    })
   }
 
   alertNoInternet = () => {
