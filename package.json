@@ -5,8 +5,8 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "android": "cd ./android && ./gradlew app:assembleDebug && ./gradlew installDebug",
-    "ios": "react-native run-ios --simulator='iPhone X'",
+    "android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/ && cd ./android && ./gradlew app:assembleDebug && ./gradlew installDebug",
+    "ios": "react-native bundle --dev false --entry-file index.js --bundle-output ios/main.jsbundle --platform ios && react-native run-ios --simulator='iPhone X'",
     "aab": "cd ./android && ./gradlew bundleRelease && cd ..",
     "apk": "react-native run-android --variant=release",
     "clean-android": "cd ./android && ./gradlew clean && ./gradlew cleanBuildCache && cd .."

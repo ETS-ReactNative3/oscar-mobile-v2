@@ -4,7 +4,7 @@ import { Navigation }                           from 'react-native-navigation'
 import { MAIN_COLOR }                           from '../../../constants/colors'
 import { groupBy, map, debounce }               from 'lodash'
 import { saveCaseNote }                         from '../../../redux/actions/caseNotes'
-import { Button }                               from 'react-native-elements'
+import { Button, CheckBox }                     from 'react-native-elements'
 import { createTask, deleteTask }               from '../../../redux/actions/tasks'
 import _                                        from 'lodash'
 import i18n                                     from '../../../i18n'
@@ -12,42 +12,36 @@ import Icon                                     from 'react-native-vector-icons/
 import styles                                   from './styles'
 import DatePicker                               from 'react-native-datepicker'
 import ImagePicker                              from 'react-native-image-picker'
+import Collapsible                              from 'react-native-collapsible'
 import SectionedMultiSelect                     from 'react-native-sectioned-multi-select'
 import { DocumentPicker, DocumentPickerUtil }   from 'react-native-document-picker'
 import { MAX_SIZE, options }                    from '../../../constants/option'
 import {
   View,
   Text,
-  Alert,
-  Platform,
-  TextInput,
   ScrollView,
   KeyboardAvoidingView,
+  TextInput,
+  Platform,
+  Image,
+  TouchableWithoutFeedback,
+  Alert,
+  TouchableOpacity
 } from 'react-native'
-
-import Card             from './_card'
-import DomainGroups     from './_domainGroup'
-import ListAttachments  from './_attachments'
 
 class CaseNoteForm extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
       note: '',
       attendee: '',
-      attachments: [],
       meetingDate: '',
+      interactionType: 'default_type',
+      caseNoteDomainGroups: [],
+      attachmentsSize: 0,
       arisingTasks: [],
       onGoingTasks: [],
-      domainGroups: {},
-      collapsibles: {},
-      interactionType: 'default_type',
-      attachmentsSize: 0,
-      domainGroupsTypes: [],
-      onCompletedTasksIDs: [],
-      caseNoteDomainGroups: [],
-      selectedDomainGroups: [],
+      collapsibles: {}
     }
 
     Navigation.events().bindComponent(this)
@@ -55,7 +49,7 @@ class CaseNoteForm extends Component {
 
   navigationButtonPressed = () => {
     const { caseNote = {}, client, action, previousComponentId,custom } = this.props
-    const { attendee, meetingDate, interactionType, caseNoteDomainGroups, note, selectedDomainGroups, attachments, onCompletedTasksIDs } = this.state
+    const { attendee, meetingDate, interactionType, caseNoteDomainGroups } = this.state
 
     if (!meetingDate) {
       Alert.alert(
@@ -88,48 +82,24 @@ class CaseNoteForm extends Component {
       return
     }
 
-    if (selectedDomainGroups.length == 0 ) {
-      Alert.alert(
-        i18n.t('client.case_note_form.validation_title'),
-        i18n.t('client.case_note_form.validation_domain_type')
-      )
-
-      this.scrollView.scrollTo({ x: 0, animated: true })
-      return
-    }
-
     const params = {
       id: caseNote.id,
       clientId: client.id,
-      note,
       custom,
       attendee,
-      attachments,
       meetingDate,
       interactionType,
-      onCompletedTasksIDs,
-      selectedDomainGroups,
-      caseNoteDomainGroups,
+      caseNoteDomainGroups
     }
 
     this.props.saveCaseNote(params, client, action, previousComponentId, this.props.onSaveSuccess)
   }
 
   componentDidMount() {
-    const { 
-      client,
-      action, 
-      custom, 
-      domains, 
-      caseNote, 
-    }                         = this.props
-    const tasks               = [...client.tasks.overdue, ...client.tasks.today, ...client.tasks.upcoming]
-    const availableDomains    = domains.filter(domain => domain.custom_domain == custom)
-    const domainGroups        = availableDomains.length > 0 ? groupBy(availableDomains, 'domain_group_id') : {}
-
-    let caseNoteDomainGroups  = []
-    let caseNoteDomainIds     = {}
-
+    const { domains, action, custom, caseNote, client } = this.props
+    const tasks = [...client.tasks.overdue, ...client.tasks.today, ...client.tasks.upcoming]
+    let caseNoteDomainGroups = []
+    let caseNoteDomainIds = {}
     if (action === 'update') {
       caseNoteDomainGroups = caseNote.case_note_domain_group.map(cndg => ({
         ...cndg,
@@ -140,45 +110,18 @@ class CaseNoteForm extends Component {
       let notes = caseNote.case_note_domain_group.
                   filter(cndg => !!cndg.note).
                   map(case_note => case_note.note)
-
-      let selectedDomainGroups =
-        _.compact(
-          _.map(caseNote.case_note_domain_group, cndg =>
-            _.includes(caseNote.selected_domain_group_ids, cndg.domain_group_id.toString())
-              ? cndg.domain_group_id 
-              : ''
-          )
-        )
-
-      let cndg_completed_task_ids = 
-        _.map(
-          _.flatten(
-            _.map(
-              caseNote.case_note_domain_group, 
-              (cndg, index) => cndg.completed_tasks
-            )
-          ),
-
-          complete_task => complete_task.id
-        )
-
-      let onGoingTasks = 
-        _.filter(tasks, (task) => 
-          !_.includes(cndg_completed_task_ids, task.id)
-        )
-      
-
       this.setState({
         id: caseNote.id,
         note: _.uniq(notes).join(' '), 
         meetingDate: caseNote.meeting_date,
         attendee: caseNote.attendee,
         interactionType: caseNote.interaction_type,
-        onGoingTasks: onGoingTasks,
-        caseNoteDomainGroups,
-        selectedDomainGroups
+        onGoingTasks: tasks,
+        caseNoteDomainGroups
       })
     } else {
+      const availableDomains = domains.filter(domain => domain.custom_domain == custom)
+      const domainGroups = availableDomains.length > 0 ? groupBy(availableDomains, 'domain_group_id') : {}
       caseNoteDomainGroups = map(domainGroups, (domains, domainGroupId) => {
         const domainGroupIdentity = map(domains, 'identity').join(', ')
 
@@ -191,47 +134,29 @@ class CaseNoteForm extends Component {
           domain_group_identities: domainGroupIdentity,
         }
       })
-
-
       this.setState({ caseNoteDomainGroups, onGoingTasks: tasks })
     }
     caseNoteDomainGroups.forEach((caseNoteDomainGroup, index) => {
       const collapsed = index != 0
       caseNoteDomainIds = {...caseNoteDomainIds, [caseNoteDomainGroup.domain_group_id]: collapsed}
     })
-
-    domainGroupsTypes = map(domainGroups, (domains, domainGroupId) => {
-      const domainGroupIdentity = map(domains, 'identity').join(', ')
-
-      return {
-        id: parseInt(domainGroupId),
-        name: `Domain ${domainGroupId} (${domainGroupIdentity})`,
-      }
-    })
-
-    console.log("domainGroupsTypes ", domainGroupsTypes)
-
-    this.setState({collapsibles: caseNoteDomainIds, domainGroupsTypes, domainGroups})
+    this.setState({collapsibles: caseNoteDomainIds})
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps -> ', nextProps, this.props);
-  }
-
-  uploadAttachment = () => {
+  uploadAttachment = caseNote => {
     ImagePicker.showImagePicker(options, response => {
       if (response.error) {
         alert('ImagePicker Error: ', response.error)
       } else if (response.customButton) {
-        this.selectAllFile()
+        this.selectAllFile(caseNote)
       } else if (response.didCancel) {
       } else {
-        this.handleSelectedFile(response)
+        this.handleSelectedFile(response, caseNote)
       }
     })
   }
 
-  selectAllFile = () => {
+  selectAllFile = caseNote => {
     DocumentPicker.show(
       {
         filetype: [DocumentPickerUtil.allFiles()]
@@ -240,7 +165,7 @@ class CaseNoteForm extends Component {
         if (error === null && res.uri != null) {
           const type = res.fileName.substring(res.fileName.lastIndexOf('.') + 1)
           if ('jpg jpeg png doc docx xls xlsx pdf'.includes(type)) {
-            this.handleSelectedFile(res)
+            this.handleSelectedFile(res, caseNote)
           } else {
             Alert.alert('Invalid file type', 'Allow only : jpg jpeg png doc docx xls xlsx pdf')
           }
@@ -249,51 +174,52 @@ class CaseNoteForm extends Component {
     )
   }
 
-  handleSelectedFile = (response) => {
-    let { attachmentsSize, attachments, selectedDomainGroups, caseNoteDomainGroups } = this.state
-    const filePath = response.path != undefined ? `file://${response.path}` : response.uri
-    const fileSize = response.fileSize / 1024
-    const source = {
-      uri: response.uri,
-      path: filePath,
-      name: response.fileName,
-      type: response.type,
-      size: fileSize
-    }
-
-    attachmentsSize += fileSize
-    attachments = attachments.concat(source)
+  handleSelectedFile = (response, caseNote) => {
+    let { caseNoteDomainGroups, attachmentsSize } = this.state
+    const fileSize    = response.fileSize / 1024
+    attachmentsSize  += fileSize
 
     if (attachmentsSize > MAX_SIZE) {
       Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     } else {
+      const filePath = response.path != undefined ? `file://${response.path}` : response.uri
+
+      const source   = {
+        uri: response.uri,
+        path: filePath,
+        name: response.fileName,
+        type: response.type,
+        size: fileSize
+      }
+
       caseNoteDomainGroups = caseNoteDomainGroups.map(element => {
-        return _.includes(selectedDomainGroups, parseInt(element.domain_group_id)) ? { ...element, attachments } : element
+        return element.domain_group_id === caseNote.domain_group_id ? { ...element, attachments: element.attachments.concat(source) } : element
       })
-      
-      this.setState({ attachmentsSize, attachments, caseNoteDomainGroups })
+
+      this.setState({ attachmentsSize, caseNoteDomainGroups })
     }
   }
 
-  removeAttactment = (index) => {
-    let { caseNoteDomainGroups, attachments, selectedDomainGroups } = this.state
-    attachments = attachments.splice(index, 1)
+  removeAttactment = (caseNote, index) => {
+    let { caseNoteDomainGroups } = this.state
+    let attachments = caseNote.attachments
+    attachments     = attachments.filter((attachment, attIndex) => attIndex !== index )
 
-    caseNoteDomainGroups = caseNoteDomainGroups.map(cndg => {
-      return _.includes(selectedDomainGroups, parseInt(cndg.domain_group_id)) ? { ...cndg, attachments } : cndg
+    caseNoteDomainGroups = caseNoteDomainGroups.map(ad => {
+      return ad.domain_group_id === caseNote.domain_group_id ?
+        { ...ad, attachments } : ad
     })
 
     this.setState({ caseNoteDomainGroups })
   }
 
-  openTaskModal = debounce(domainGroupIds => {
-    console.log("domainGroupIds", domainGroupIds)
+  openTaskModal = debounce(domainGroupId => {
     const { client, domains, custom } = this.props
     Navigation.showModal({
       component: {
         name: 'oscar.taskForm',
         passProps: {
-          domains: domains.filter(domain => _.includes(domainGroupIds, parseInt(domain.domain_group_id)) && domain.custom_domain === custom),
+          domains: domains.filter(domain => domain.domain_group_id === parseInt(domainGroupId) && domain.custom_domain === custom),
           onCreateTask: (params) => this.props.createTask(params, client.id, (task) => this.handleTaskUpdate(task, 'create'))
         },
       }
@@ -318,7 +244,7 @@ class CaseNoteForm extends Component {
   }
 
   handleTaskCheck = (caseNote, taskId) => {
-    let { caseNoteDomainGroups, onCompletedTasksIDs  } = this.state
+    let { caseNoteDomainGroups } = this.state
     caseNoteDomainGroups = caseNoteDomainGroups.map(cndg => {
       if (cndg.domain_group_id === caseNote.domain_group_id) {
         let task_ids = cndg.task_ids
@@ -333,25 +259,30 @@ class CaseNoteForm extends Component {
       return cndg
     })
 
-
-    this.setState({ 
-      caseNoteDomainGroups, 
-      onCompletedTasksIDs: onCompletedTasksIDs.concat(taskId)
-     })
+    this.setState({ caseNoteDomainGroups })
   }
 
-  updateNote = (note) => {
-    let {caseNoteDomainGroups, selectedDomainGroups} = this.state
+  updateNote = (caseNote, note) => {
+    let { caseNoteDomainGroups } = this.state
 
-    cndgs = caseNoteDomainGroups.map((cndg) => {
-      if (_.includes(selectedDomainGroups, parseInt(cndg.domain_group_id)))
+    caseNoteDomainGroups = caseNoteDomainGroups.map((cndg) => {
+      if (cndg.domain_group_id === caseNote.domain_group_id)
         cndg = { ...cndg, note }
-      else 
-        cndg = { ...cndg, note: "" }
       return cndg
     })
 
-    this.setState({ caseNoteDomainGroups: cndgs, note })
+    this.setState({ caseNoteDomainGroups })
+  }
+
+  updateNoteNewVersion = (note) => {
+    let { caseNoteDomainGroups } = this.state
+
+    caseNoteDomainGroups = caseNoteDomainGroups.map((cndg) => {
+        cndg = { ...cndg, note }
+      return cndg
+    })
+
+    this.setState({ caseNoteDomainGroups, note })
   }
 
   interactionTypes = () => {
@@ -363,29 +294,134 @@ class CaseNoteForm extends Component {
     ]
   }
 
-  toggleExpanded = (domainGroupId, collapsed) => {
+  toggleExpanded(domainGroupId, collapsed) {
     const { collapsibles } = this.state
     this.setState({collapsibles: {...collapsibles, [domainGroupId]: !collapsed}})
   }
 
-  handleChangeDomainGroups = (selectedItems) => {
-    let {caseNoteDomainGroups, note, attachments, domainGroups} = this.state
+  renderDomainGroup = (caseNote, index) => {
+    const { collapsibles } = this.state
+    const domainGroupId = caseNote.domain_group_id
+    const collapsed = collapsibles[domainGroupId]
+    return (
+      <DomainGroupCard key={index} title={caseNote.domain_group_identities} toggleExpanded={() => this.toggleExpanded(domainGroupId, collapsed)} collapsed={collapsed}>
+        {/* <TextInput
+          autoCapitalize="sentences"
+          placeholder={i18n.t('client.case_note_form.enter_text')}
+          placeholderTextColor="#ccc"
+          multiline={true}
+          numberOfLines={5}
+          textAlignVertical="top"
+          style={styles.textarea}
+          value={caseNote.note}
+          onChangeText={note => this.updateNote(caseNote, note)}
+        /> */}
+        {
+          caseNote.attachments.length > 0 &&
+            <View style={{ marginTop: 15 }}>
+              <Text style={styles.label}>{i18n.t('client.assessment_form.attachments')}:</Text>
+              {
+                caseNote.attachments.map((attachment, index) => {
+                  const name = (attachment.name || attachment.url.split('/').pop()).substring(0, 20)
+                  return (
+                    <View style={styles.attachmentWrapper} key={index}>
+                      <Image
+                        style={{ width: 40, height: 40 }}
+                        source={{ uri: attachment.uri || attachment.thumb.url }}
+                      />
+                      <Text style={styles.listAttachments}>{index + 1}. { name }...</Text>
+                      {
+                        attachment.size &&
+                          <TouchableWithoutFeedback
+                            onPress={() => this.removeAttactment(caseNote, index)}>
+                            <View>
+                              <Icon color="red" name="delete" size={25} />
+                            </View>
+                          </TouchableWithoutFeedback>
+                      }
+                    </View>
+                  )
+                })
+              }
+            </View>
+        }
+        <View style={styles.buttonWrapper}>
+          <Button
+            raised
+            onPress={() => this.uploadAttachment(caseNote)}
+            backgroundColor="#000"
+            icon={{ name: 'cloud-upload' }}
+            title={i18n.t('button.upload')}
+          />
+        </View>
 
-    // useful when we made the change to note and then add more domain groups
-    cndgs = caseNoteDomainGroups.map((cndg) => {
-      if (_.includes(selectedItems, parseInt(cndg.domain_group_id)))
-        cndg = { ...cndg, note, attachments }
-      else 
-        cndg = { ...cndg, note: "", attachments }
-      return cndg
-    })
+        <View style={styles.buttonWrapper}>
+          <Button
+            raised
+            onPress={() => this.openTaskModal(caseNote.domain_group_id)}
+            backgroundColor="#088"
+            icon={{ name: 'add-circle' }}
+            title={i18n.t('button.add_task')}
+          />
+        </View>
+        <View style={{ marginTop: 10 }}>
+          {
+            caseNote.domains.map((domain, index) => {
+              const tasks = this.state.onGoingTasks.filter(task => task.domain.id === domain.id)
 
-    this.setState({ selectedDomainGroups: selectedItems, caseNoteDomainGroups: cndgs })
-  };
+              if (tasks.length === 0)
+                return
+
+              return (
+                <Card key={index} title={`${i18n.t('task.domain')} ${domain.name}`} style={{ marginLeft: 0, marginRight: 0 }}>
+                  <Text style={styles.label}>
+                    {i18n.t('client.case_note_form.on_going')}
+                  </Text>
+                  {
+                    tasks.map(task => (
+                      <CheckBox
+                        key={task.id}
+                        title={task.name}
+                        checked={caseNote.task_ids.includes(task.id)}
+                        iconType="material"
+                        checkedIcon="check-box"
+                        uncheckedIcon="check-box-outline-blank"
+                        checkedColor="#009999"
+                        uncheckedColor="#009999"
+                        textStyle={styles.checkBox}
+                        containerStyle={styles.checkBoxWrapper}
+                        onPress={() => this.handleTaskCheck(caseNote, task.id)}
+                      />
+                    ))
+                  }
+                </Card>
+              )
+            })
+          }
+        </View>
+        {
+          this.state.arisingTasks.length > 0 &&
+            <View style={{ marginTop: 15 }}>
+              <Text style={styles.label}>{i18n.t('client.assessment_form.task_arising')}:</Text>
+              {
+                this.state.arisingTasks.map((task, index) => (
+                  <View key={index} style={styles.attachmentWrapper}>
+                    <Text style={styles.listAttachments}>
+                      {index + 1}. {task.name}
+                    </Text>
+                    <TouchableWithoutFeedback onPress={() => this.deleteTask(task)}>
+                      <Icon color="red" name="delete" size={25}/>
+                    </TouchableWithoutFeedback>
+                  </View>
+                ))
+              }
+            </View>
+        }
+      </DomainGroupCard>
+    )
+  }
 
   render() {
-    const {selectedDomainGroups, domainGroupsTypes} = this.state
-
     return (
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : null}>
         <ScrollView showsVerticalScrollIndicator={false} ref={ref => this.scrollView = ref}>
@@ -434,9 +470,27 @@ class CaseNoteForm extends Component {
 
             <View style={styles.inputWrapper}>
               <View style={{flexDirection: 'row'}}>
+                <Text style={styles.label}>{i18n.t('client.case_note_form.note')}</Text>
+              </View>
+
+              <TextInput
+                autoCapitalize="sentences"
+                placeholder={i18n.t('client.case_note_form.enter_text')}
+                placeholderTextColor="#ccc"
+                multiline={true}
+                numberOfLines={5}
+                textAlignVertical="top"
+                style={styles.textarea}
+                value={this.state.note}
+                onChangeText={text => this.updateNoteNewVersion(text)}
+              />
+            </View>
+
+
+            <View style={styles.inputWrapper}>
+              <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.label, {color:'red'}]}>* </Text>
                 <Text style={styles.label}>{i18n.t('client.case_note_form.type')}</Text>
-                <Text style={{fontStyle: 'italic'}}> ({i18n.t('client.case_note_form.noted')})</Text>
               </View>
               <SectionedMultiSelect
                 items={this.interactionTypes()}
@@ -457,101 +511,56 @@ class CaseNoteForm extends Component {
                 onSelectedItemsChange={ interactionTypes => this.setState({ interactionType: interactionTypes[0] }) }
                 selectedItems={[this.state.interactionType]}
               />
+              <Text style={{fontStyle: 'italic'}}>{i18n.t('client.case_note_form.noted')}</Text>
             </View>
-            
-            <View style={styles.inputWrapper}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={[styles.label, {color:'red'}]}>* </Text>
-                <Text style={styles.label}>{i18n.t('client.case_note_form.please_select_all_domain_group')}</Text>
-              </View>
-              <SectionedMultiSelect
-                items={domainGroupsTypes}
-                selectText="Choose Domain Groups..."
-                uniqueKey="id"
-                modalWithSafeAreaView={true}
-                showDropDowns={true}
-                showCancelButton={true}
-                searchPlaceholderText="Search domain groups..."
-                onSelectedItemsChange={this.handleChangeDomainGroups}
-                selectedItems={this.state.selectedDomainGroups}
-                styles={{
-                  cancelButton: { width: 150 },
-                }}
-              />
-            </View>
-
-            {
-              selectedDomainGroups.length > 0 &&    
-              <>
-                <View style={styles.inputWrapper}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Text style={styles.label}>{i18n.t('client.case_note_form.note')}</Text>
-                  </View>
-
-                  <TextInput
-                    autoCapitalize="sentences"
-                    placeholder={i18n.t('client.case_note_form.enter_text')}
-                    placeholderTextColor="#ccc"
-                    multiline={true}
-                    numberOfLines={5}
-                    textAlignVertical="top"
-                    style={styles.textarea}
-                    value={this.state.note}
-                    onChangeText={text => this.updateNote(text)}
-                  />
-                </View>
-                
-                {
-                  this.props.action === 'create' &&
-                  <View style={styles.buttonWrapper}>
-                  <Button
-                    raised
-                    onPress={() => this.uploadAttachment()}
-                    backgroundColor="#000"
-                    icon={{ name: 'cloud-upload' }}
-                    title={i18n.t('client.case_note_form.attachment_button')}
-                  />
-                </View>
-                }
-
-                <View style={styles.buttonWrapper}>
-                  <Button
-                    raised
-                    onPress={() => this.openTaskModal(selectedDomainGroups)}
-                    backgroundColor="#088"
-                    icon={{ name: 'add-circle' }}
-                    title={i18n.t('button.add_task')}
-                  />
-                </View>
-              </>
-            }
-
-            <ListAttachments
-              attachments={this.state.attachments}
-              removeAttactment={this.removeAttactment}
-            />
           </Card>
-
-          <DomainGroups 
-            caseNoteDomainGroups={this.state.caseNoteDomainGroups}
-            selectedDomainGroups={this.state.selectedDomainGroups}
-            arisingTasks={this.state.arisingTasks}
-            collapsibles={this.state.collapsibles}
-            onGoingTasks={this.state.onGoingTasks}
-            toggleExpanded={this.toggleExpanded}
-            handleTaskCheck={this.handleTaskCheck}
-            deleteTask={this.deleteTask}
-          />
-
+          {
+            this.state.caseNoteDomainGroups.map(this.renderDomainGroup)
+          }
         </ScrollView>
       </KeyboardAvoidingView>
     )
   }
 }
 
-const mapState = (state, ownProps) => ({
-  domains: state.domains.data,
-  client: state.clients.data[ownProps.clientId]
+const DomainGroupCard = props => {
+  const iconName = props.collapsed ? 'arrow-drop-down' :  'arrow-drop-up'
+  return (
+    <View style={[styles.card, props.style]}>
+      <View style={[styles.header, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+        <View style={{width: '95%'}}>
+          <Text style={styles.headerTitle}>
+            { props.title }
+          </Text>
+        </View>
+        <TouchableOpacity onPress={props.toggleExpanded}>
+          <Icon name={iconName} size={30} style={{marginRight: 5, color: '#ffffff'}}/>
+        </TouchableOpacity>
+      </View>
+      <Collapsible collapsed={props.collapsed}>
+        <View style={styles.content}>
+          { props.children }
+        </View>
+      </Collapsible>
+    </View>
+  )
+}
+
+const Card = props => (
+  <View style={[styles.card, props.style]}>
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>
+        { props.title }
+      </Text>
+    </View>
+    <View style={styles.content}>
+      { props.children }
+    </View>
+  </View>
+)
+
+const mapState = state => ({
+  domains: state.domains.data
 })
 
 const mapDispatch = {

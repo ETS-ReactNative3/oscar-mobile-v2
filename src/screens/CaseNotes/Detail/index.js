@@ -13,9 +13,9 @@ import {
   ScrollView,
   Image
 } from 'react-native'
+
 class CaseNoteDetail extends Component {
   state = {
-    client: this.props.client,
     caseNote: this.props.caseNote
   }
 
@@ -25,13 +25,13 @@ class CaseNoteDetail extends Component {
 
   navigationButtonPressed = async () => {
     const icons = await appIcons()
-    const { caseNote, client} = this.state
+    const { caseNote } = this.state
 
     pushScreen(this.props.componentId, {
       screen: 'oscar.caseNoteForm',
       title: i18n.t('client.case_note_form.edit_title'),
       props: {
-        client,
+        clientId: this.props.client.id,
         caseNote,
         action: 'update',
         custom: caseNote.custom,
@@ -51,15 +51,21 @@ class CaseNoteDetail extends Component {
     const updatedCaseNote = client.case_notes.find(case_note => case_note.id === caseNote.id)
 
     this.refs.dropdown.alertWithType('success', 'Success', 'Client has been successfully updated.')
-    this.setState({ caseNote: updatedCaseNote, client })
+    this.setState({ caseNote: updatedCaseNote })
   }
 
-  renderNotes = case_note => (
-    <View style={styles.fieldDataWrapper}>
-      <Text style={styles.label}>{i18n.t('client.case_note_form.note')} : </Text>
-      <Text style={styles.textData}>{case_note.note}</Text>
-    </View>
-  )
+  renderNotes = caseNote => {
+    let notes = caseNote.case_note_domain_group.
+                  filter(cndg => !!cndg.note).
+                  map((case_note, index) => case_note.note)
+    
+    return (
+      <Text style={styles.meetingDate}>
+        <Text style={{fontWeight: "bold"}}>Note: </Text>
+        { _.uniq(notes).join(' ') }
+      </Text>
+    )
+  }
 
   renderGoals = case_note => {
     const { assessments } = this.props.client
@@ -149,6 +155,7 @@ class CaseNoteDetail extends Component {
             <Text style={styles.meetingDate}>
               {moment(caseNote.meeting_date).format('MMMM Do YYYY')}
             </Text>
+            { this.renderNotes(caseNote) }
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ paddingLeft: 20, paddingRight: 20 }}>
@@ -166,7 +173,6 @@ class CaseNoteDetail extends Component {
                     </View>
 
                     <View style={styles.contentWrapper}>
-                      { this.renderNotes(case_note) }
                       { this.renderGoals(case_note) }
                       { tasks.length > 0 && this.renderTasks(case_note) }
                       { attachments.length > 0 && this.renderAttachments(case_note) }

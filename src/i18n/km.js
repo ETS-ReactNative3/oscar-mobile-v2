@@ -131,7 +131,11 @@ export default {
       validation_title: 'ព័ត៌មាន',
       validation_meeting_date: 'សូមជ្រើសរើសកាលបរិច្ឆេទនៃកិច្ចប្រជុំ!',
       validation_attendee: 'សូមបញ្ចូលអ្នកចូលរួម!',
-      validation_type: 'សូមជ្រើសរើសប្រភេទ!'
+      validation_type: 'សូមជ្រើសរើសប្រភេទ!',
+      validation_domain_type: 'សូមជ្រើសរើសប្រភេទកត្តា!',
+
+      please_select_all_domain_group: "Please select all Domain Groups you supported the client with in this case note",
+      attachment_button: 'ATTACHMENTS'
     },
     care_form: {
       title: title => `ករណី ${title}`,

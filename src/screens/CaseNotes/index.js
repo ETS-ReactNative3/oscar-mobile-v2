@@ -43,7 +43,7 @@ class CaseNotes extends Component {
       title: i18n.t('client.case_note_form.create_title'),
       props: {
         custom: type === 'custom',
-        client: this.state.client,
+        clientId: this.props.client.id,
         action: 'create',
         previousComponentId: this.props.componentId,
         onSaveSuccess: this.onCreateSuccess

@@ -131,7 +131,11 @@ export default {
       validation_title: 'Message',
       validation_meeting_date: 'Please select meeting date!',
       validation_attendee: 'Please input attendee!',
-      validation_type: 'Please select type!'
+      validation_type: 'Please select type!',
+      validation_domain_type: 'Please select domain groups type!',
+
+      please_select_all_domain_group: "Please select all Domain Groups you supported the client with in this case note",
+      attachment_button: 'ATTACHMENTS'
     },
     care_form: {
       title: title => `${title} Care`,

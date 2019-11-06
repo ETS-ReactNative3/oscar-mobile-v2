@@ -21,12 +21,6 @@ project(':react-native-fast-image').projectDir = new File(rootProject.projectDir
 include ':react-native-restart'
 project(':react-native-restart').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-restart/android')
 
-include ':realm'
-project(':realm').projectDir = new File(rootProject.projectDir, '../node_modules/realm/android')
-
-// include ':react-native-i18n'
-// project(':react-native-i18n').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-i18n/android')
-
 include ':react-native-navigation'
 project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-navigation/lib/android/app/')
 
