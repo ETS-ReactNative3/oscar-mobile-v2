@@ -1,13 +1,12 @@
-import { StyleSheet } from 'react-native'
-
+import { StyleSheet, Dimensions  } from 'react-native'
 const programStreamStyles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#fff'
   },
   container: {
-    width: '100%' - 40,
-    backgroundColor: 'white',
+    width: Dimensions.get("window").width - 40,
+    backgroundColor: '#fff',
     margin: 20,
     elevation: 15,
     shadowOffset: { width: 0, height: 0 },
@@ -51,7 +50,7 @@ const programStreamStyles = StyleSheet.create({
   },
   buttonTitle: {
     textAlign: 'center',
-    color: 'white'
+    color: '#fff'
   },
   leftSideWrapper: {
     flex: 1,
@@ -69,7 +68,7 @@ const programStreamStyles = StyleSheet.create({
     paddingRight: 5
   },
   statusTitle: {
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 8
   },

@@ -227,21 +227,22 @@ export function createEnrollmentForm(field_properties, enrollment, client_id, en
     NetInfo.isConnected.fetch().then(isConnected => {
       loadingScreen()
       if (isConnected) {
-        dispatch(createClientEnrollmentOffline(field_properties, enrollment, client_id, enrollment_date, actions))
-        // dispatch(handleEnrollmentForm('create', field_properties, enrollment, null, client_id, enrollment_date))
-        //   .then(response => {
-        //     const clientUpdated = createEnrollment(response.data, enrollment, actions.client)
-        //     dispatch(requestUpdateclient(clientUpdated))
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     Navigation.popTo(actions.clientDetailComponentId)
-        //     actions.alertMessage()
-        //   })
-        //   .catch(error => {
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     alert(JSON.stringify(error))
-        //   })
+        // dispatch(createClientEnrollmentOffline(field_properties, enrollment, client_id, enrollment_date, actions))
+        dispatch(handleEnrollmentForm('create', field_properties, enrollment, null, client_id, enrollment_date))
+          .then(response => {
+            const clientUpdated = createEnrollment(response.data, enrollment, actions.client)
+            dispatch(requestUpdateclient(clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.clientDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert("Something Went Wrong")
+          })
       } else {
-        dispatch(createClientEnrollmentOffline(field_properties, enrollment, client_id, enrollment_date, actions))
+        Alert.alert('No internet connection')
+        // dispatch(createClientEnrollmentOffline(field_properties, enrollment, client_id, enrollment_date, actions))
       }
     })
   }
@@ -368,6 +369,7 @@ export function createTrackingForm(field_properties, enrollment, client_enrolled
         .then(response => {
           const clientUpdated = createTracking(response.data, enrollment, actions.programStream, actions.client)
           dispatch(requestUpdateclient(clientUpdated))
+
           Navigation.dismissOverlay('LOADING_SCREEN')
           Navigation.popTo(actions.listTrackingComponentId)
           actions.alertMessage()

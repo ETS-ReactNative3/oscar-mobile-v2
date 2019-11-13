@@ -28,7 +28,11 @@ class EnrollmentForm extends Component {
   constructor(props) {
     super(props)
     Navigation.events().bindComponent(this)
-    this.state = { enrollment_date: '', fieldProperties: {}, filesSize: 0 }
+    this.state = { 
+      enrollment_date: moment(Date.now()).format('YYYY-MM-DD'), 
+      fieldProperties: {}, 
+      filesSize: 0 
+    }
   }
 
   componentWillMount() {
@@ -89,10 +93,10 @@ class EnrollmentForm extends Component {
 
   datePickerType(label, data, formField = {}) {
     const required = formField.required || label == 'Enroll Date'
-    const value = data != undefined ? data : ''
-    const minDate = moment(this.state.enrollment_date, 'YYYY-MM-DD')
-      .add(1, 'days')
-      .format('YYYY-MM-DD')
+    const value = data != undefined ? moment(data).format('YYYY-MM-DD') : ''
+
+    const minDate = moment(this.state.enrollment_date).add(1, 'days').format('YYYY-MM-DD')
+  
     return (
       <View style={customFormStyles.fieldContainer}>
         <View style={{flexDirection: 'row'}}>
@@ -403,7 +407,7 @@ class EnrollmentForm extends Component {
                 {fieldType == 'text' && this.textType(label, fieldProperties[label], formField)}
                 {fieldType == 'number' && this.numberType(label, fieldProperties[label], formField)}
                 {fieldType == 'textarea' && this.textareaType(label, fieldProperties[label], formField)}
-                {fieldType == 'date' && this.datePickerType(label, fieldProperties[label], formField)}
+                {fieldType == 'date' && this.datePickerType(label, fieldProperties[label] || moment(Date.now()).format('YYYY-MM-DD'), formField)}
                 {fieldType == 'checkbox-group' && this.checkBoxType(label, formField, fieldProperties[label])}
                 {fieldType == 'radio-group' && this.radioType(label, formField, fieldProperties[label])}
                 {fieldType == 'select' && formField.multiple && this.checkBoxType(label, formField, fieldProperties[label])}
@@ -423,7 +427,11 @@ const mapDispatch = {
   createEnrollmentForm
 }
 
+const mapStateToProps = (state) => ({
+  programStreams: state.programStreams.data
+})
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatch
 )(EnrollmentForm)
