@@ -10,6 +10,7 @@ import Pin from '../screens/Pin'
 import WebView from '../screens/WebView'
 import Clients from '../screens/Clients'
 import EditClient from '../screens/Clients/Edit'
+import NewClient from '../screens/Clients/New'
 import Tasks from '../screens/Tasks'
 import Users from '../screens/Users'
 import Families from '../screens/Families'
@@ -55,6 +56,7 @@ export default () => {
   Navigation.registerComponentWithRedux('oscar.webView', () => WebView, Provider, store)
   Navigation.registerComponentWithRedux('oscar.clients', () => Clients, Provider, store)
   Navigation.registerComponentWithRedux('oscar.editClient', () => EditClient, Provider, store)
+  Navigation.registerComponentWithRedux('oscar.newClient', () => NewClient, Provider, store)
   Navigation.registerComponentWithRedux('oscar.tasks', () => Tasks, Provider, store)
   Navigation.registerComponentWithRedux('oscar.families', () => Families, Provider, store)
   Navigation.registerComponentWithRedux('oscar.users', () => Users, Provider, store)

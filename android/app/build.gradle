@@ -178,6 +178,7 @@ dependencies {
     implementation project(':react-native-navigation')
     // implementation project(':react-native-i18n')
     implementation project(':react-native-vector-icons')
+    implementation project(':react-native-linear-gradient')
 }
 
 // Run this once to be able to run the application with BUCK

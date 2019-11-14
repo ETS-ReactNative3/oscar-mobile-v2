@@ -7,7 +7,7 @@ import CryptoJS                             from 'crypto-js'
 import RNExitApp                            from 'react-native-exit-app'
 import KeyboardManager                      from 'react-native-keyboard-manager'
 import { LANGUAGE_TYPES }                   from '../../redux/types'
-import { startNgoScreen, startScreen }      from '../../navigation/config'
+import { startNgoScreen, startScreen, startTabScreen }      from '../../navigation/config'
 import { setDefaultHeader, verifyUser }     from '../../redux/actions/auth'
 import {
   View,
@@ -69,6 +69,8 @@ class SplashScreen extends Component {
 
   authenticateUser = () => {
     const { user, verifyUser } = this.props
+    startTabScreen()
+    return;
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
         if (user == null) {

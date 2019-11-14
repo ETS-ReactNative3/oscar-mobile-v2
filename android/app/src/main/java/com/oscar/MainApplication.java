@@ -57,7 +57,8 @@ public class MainApplication extends NavigationApplication {
             new ImagePickerPackage(),
             new BackgroundTimerPackage(),
             new AsyncStoragePackage(),
-            new RNFetchBlobPackage()
+            new RNFetchBlobPackage(),
+            new LinearGradientPackage()
         );
     }
 

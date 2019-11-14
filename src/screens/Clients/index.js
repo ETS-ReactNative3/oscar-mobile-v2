@@ -1,7 +1,9 @@
 import React, { Component }               from 'react'
 import { connect }                        from 'react-redux'
-import { SearchBar }                      from 'react-native-elements'
+import { SearchBar, Button }                      from 'react-native-elements'
 import { Navigation }                     from 'react-native-navigation'
+import Icon                               from 'react-native-vector-icons/Feather'
+import LinearGradient from 'react-native-linear-gradient'
 import { pickBy, isEmpty }                from 'lodash'
 import { fetchClients }                   from '../../redux/actions/clients'
 import { fetchProvinces }                 from '../../redux/actions/provinces'
@@ -24,10 +26,12 @@ import NoRecord                           from './NoRecord'
 import i18n                               from '../../i18n'
 import styles                             from './styles'
 import appIcon                            from '../../utils/Icon'
+import CreateNewClientButton              from '../../components/FloatButton'
 import {
   View,
   Text,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity
 }  from 'react-native'
 class Clients extends Component {
   constructor(props) {
@@ -50,21 +54,40 @@ class Clients extends Component {
     }
   }
 
+  async navigateToNewClient() {
+    const icons = await appIcon()
+    pushScreen(this.props.componentId, {
+      screen: 'oscar.newClient',
+      title: "New Client",
+      props: {
+        // clientId: client.id,
+        // setting: this.props.setting
+      },
+      rightButtons: [
+        {
+          id: 'EDIT_CLIENT',
+          icon: icons.edit,
+          color: '#fff'
+        }
+      ]
+    })
+  }
+
   componentDidMount() {
-    this.props.fetchClients()
-    this.props.fetchDistricts()
-    this.props.fetchProvinces()
-    this.props.fetchCommunes()
-    this.props.fetchVillages()
-    this.props.fetchSetting()
-    this.props.fetchBirthProvinces()
-    this.props.fetchProgramStreams()
-    this.props.fetchReferralSources()
-    this.props.fetchReferralSourceCategories()
-    this.props.fetchQuantitativeTypes()
-    this.props.fetchAgencies()
-    this.props.fetchDonors()
-    this.props.fetchUsers()
+    // this.props.fetchClients()
+    // this.props.fetchDistricts()
+    // this.props.fetchProvinces()
+    // this.props.fetchCommunes()
+    // this.props.fetchVillages()
+    // this.props.fetchSetting()
+    // this.props.fetchBirthProvinces()
+    // this.props.fetchProgramStreams()
+    // this.props.fetchReferralSources()
+    // this.props.fetchReferralSourceCategories()
+    // this.props.fetchQuantitativeTypes()
+    // this.props.fetchAgencies()
+    // this.props.fetchDonors()
+    // this.props.fetchUsers()
   }
 
   onClientPress = async client => {
@@ -151,6 +174,9 @@ class Clients extends Component {
     return (
       <Layout>
         <View style={styles.container}>
+          <CreateNewClientButton 
+            onPress={ (e) => this.navigateToNewClient() }
+          />
           {showSearch ? (
             <SearchBar
               containerStyle={styles.searchContainer}
@@ -182,6 +208,7 @@ class Clients extends Component {
     )
   }
 }
+
 
 const mapState = state => ({
   clients: state.clients.data,
