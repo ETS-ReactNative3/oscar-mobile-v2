@@ -7,8 +7,7 @@ import Step1 from './partials/getStarted'
 import Step2 from './partials/LivingDetails'
 import Step3 from './partials/OtherDetails'
 import Step4 from './partials/SpecificPointReferalData'
-
-const { width } = Dimensions.get('window')
+import SwiperPagination from './partials/swiperPagination'
 
 const styles = {
   wrapper: {
@@ -27,7 +26,6 @@ const styles = {
     position: 'absolute',
     height: 40,
     width: '100%',
-    backgroundColor: 'green',
     flexDirection: 'row',
     padding: 10,
     alignContent: 'center',
@@ -38,31 +36,43 @@ const styles = {
   }
 }
 
-const renderPagination = (index, total, context) => {
-  return (
-    <View style={styles.paginationStyle}>
-      <Text style={styles.paginationText}>Get Started</Text>
-
-      <Text style={styles.paginationText}>
-       {index + 1} / {total}
-      </Text>
-    </View>
-  )
-}
-
 export default class index extends Component {
+
+  handleGoToNextTab = () => {
+    this.refs.swiper.scrollBy(1, true)
+  }
+
+  handleGoToPrivousTab = () => {
+    this.refs.swiper.scrollBy(-1, true)
+  }
+
   render() {
     return (
       <Layout>
         <Swiper
+          ref="swiper"
           style={styles.wrapper}
-          renderPagination={renderPagination}
+          renderPagination={(index, total, context) => 
+            <SwiperPagination
+              index={index}
+              total={total}
+            />
+          }
           loop={false}
         >
-          <Step1 />
-          <Step2 />
-          <Step3 />
-          <Step4 />
+          <Step1 handleGoToNextTab={this.handleGoToNextTab}/>
+          <Step2 
+            handleGoToNextTab={this.handleGoToNextTab}
+            handleGoToPrivousTab={this.handleGoToPrivousTab}
+          />
+          <Step3 
+            handleGoToNextTab={this.handleGoToNextTab}
+            handleGoToPrivousTab={this.handleGoToPrivousTab}
+          />
+          <Step4 
+            handleGoToNextTab={this.handleGoToNextTab}
+            handleGoToPrivousTab={this.handleGoToPrivousTab}
+          />
         </Swiper>
       </Layout>
     )

@@ -19,6 +19,10 @@ import {
   AsyncStorage,
   ActivityIndicator,
 } from 'react-native'
+
+import appIcon                            from '../../utils/Icon'
+import { pushScreen }                     from '../../navigation/config'
+
 class SplashScreen extends Component {
   state = { noInternet: false }
 
@@ -67,10 +71,10 @@ class SplashScreen extends Component {
     })
   }
 
-  authenticateUser = () => {
+   authenticateUser = () => {
     const { user, verifyUser } = this.props
-    startTabScreen()
-    return;
+    // startTabScreen()
+    // return;
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
         if (user == null) {
