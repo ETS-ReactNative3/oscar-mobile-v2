@@ -1,44 +1,72 @@
 import React, { Component }             from 'react'
 import { 
-  Text, 
   View, 
-  Switch,
   ScrollView, 
   StyleSheet, 
   KeyboardAvoidingView, 
 } from 'react-native'
-
 import Layout                           from 'src/components/Layout'
 import { NextButton, PreviousButton }   from './controllButton'
-import { FormSelect, FormInput, Form, FormInputSwitch }  from 'src/components/Form' 
+import { 
+  Form,
+  FormInput, 
+  FormSelect, 
+  FormInputSwitch }                     from 'src/components/Form'
+import { fetchDonors }                  from 'src/redux/actions/donors'
+import { fetchAgencies }                from 'src/redux/actions/agencies'
+import { connect }                      from 'react-redux'
+import _                                from 'lodash'
 
-
-export default class OtherDetails extends Component {
+class OtherDetails extends Component {
   state={
     notes:'',
     firstID: '',
     secondID: '',
-    agenciesInvolved: [],
-    donor: [],
+    agencies: [],
+    donors: [],
     poorId: [],
     isLiveInOrphanage: false,
     isLiveInGovCare: false,
   }
+  componentDidMount() {
+    this.props.fetchAgencies()
+    this.props.fetchDonors()
+  }
 
   handleInputChange = (value, name) => {
     this.setState({ [name]: value })
+    console.log("handleInputChange", name , value)
   }
 
-  interactionTypes = () => {
-    return [
-      { id: 'Visit', name: 'Visit' },
-      { id: 'Non face to face', name: 'Non face to face' },
-      { id: '3rd Party', name: '3rd Party' },
-      { id: 'Other', name: 'Other' },
+  poorTypes = () => (
+    [
+      { id: 'No', name: 'No'},
+      { id: 'Level 1', name: 'Level 1' },
+      { id: 'Level 2', name: 'Level 2' }
     ]
+  )
+
+  agenciesTypes = () => {
+    const { agencies } = this.props
+      return _.map( agencies,agency => ({
+        id: agency.id,
+        name: agency.name
+      })
+    )
+  }
+
+  donorsTypes = () => {
+    const { donors } = this.props
+      return _.map(donors, donor => ({
+        id: donor.id,
+        name: donor.name
+      })
+    )
   }
 
   render() {
+    console.log( "handleInputChange", this.handleInputChange.value)
+    console.log( "value", this.value)
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Layout>
@@ -48,26 +76,25 @@ export default class OtherDetails extends Component {
             <Form>
               <FormSelect 
                 label="Other Agencies Involved"
-                items={this.interactionTypes()}
-                selectedItems={this.state.agenciesInvolved}
-                onSelectedItemsChange={ value => this.handleInputChange(value, "agenciesInvolved") }
+                items={this.agenciesTypes()}
+                selectedItems={this.state.agencies}
+                onSelectedItemsChange={ value => this.handleInputChange(value, "agencies") }
               />
 
               <FormSelect 
                 label="Donor"
-                items={this.interactionTypes()}
-                selectedItems={this.state.donor}
-                onSelectedItemsChange={ value => this.handleInputChange(value, "donor") }
+                items={this.donorsTypes()}
+                selectedItems={this.state.donors}
+                onSelectedItemsChange={ value => this.handleInputChange(value, "donors") }
               />
 
               <FormSelect 
                 label="Is the Client Rated for ID Poor?"
                 single={true}
-                items={this.interactionTypes()}
+                items={this.poorTypes()}
                 selectedItems={this.state.poorId}
                 onSelectedItemsChange={ value => this.handleInputChange(value, "poorId") }
               />
-
 
               <FormInputSwitch
                 title="Has the client lived in an orphanage?"
@@ -107,9 +134,8 @@ export default class OtherDetails extends Component {
                 <NextButton 
                   onPress={() => this.props.handleGoToNextTab()}
                 />
-
               </View>
-      
+              
             </Form>
           </ScrollView>
       
@@ -134,3 +160,14 @@ const styles = StyleSheet.create({
   },
 })
 
+const mapState = (state) => ({
+  agencies: state.agencies.data,
+  donors: state.donors.data
+})
+
+const mapDispatch = () => ({
+  fetchAgencies,
+  fetchDonors
+})
+
+export default connect(mapState, mapDispatch)(OtherDetails)
