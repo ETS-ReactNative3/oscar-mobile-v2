@@ -14,6 +14,7 @@ import SectionedMultiSelect                     from 'react-native-sectioned-mul
 
 const styles = StyleSheet.create({
   formInputContainer: {
+    marginBottom: 5,
   },
 
   formInput: {
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
 
   formSelectContainer: {
     marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 5,
   },
 
   formSelect: {
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
 
   formInputDateContainer: {
     marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 5,
   },
 
   formInputDateLabel: {
@@ -72,8 +73,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 5,
   },
+
+  formInputFileContainer: {
+    marginTop: 5,
+    marginBottom: 5
+  },
+
+  errorStyle: {
+    borderColor: 'red',
+  }
   
 })
 
@@ -93,6 +103,7 @@ export const FormInput = (props) => {
     keyboardType,
     error,
   } = props
+  let formInputStyles = error ? {...styles.formInput, ...styles.errorStyle } : styles.formInput
   return (
     <View style={styles.formInputContainer}>
       <Text style={styles.formInputLabel}>
@@ -100,7 +111,7 @@ export const FormInput = (props) => {
         {label}
       </Text>
       <TextInput 
-        style={styles.formInput}
+        style={formInputStyles}
         onChangeText={text => onChangeText(text)}
         value={value}
         placeholder={placeholder}
@@ -119,9 +130,11 @@ export const FormSelect = (props) => {
     selectedItems,
     label,
     single,
-    required
+    required,
+    error
   } = props
 
+  let SelectedToggleStyles = error ? { ...styles.formSelect, ...styles.errorStyle } : styles.formSelect 
   return (
     <View style={styles.formSelectContainer}>
       <Text style={styles.formInputLabel}>
@@ -131,21 +144,24 @@ export const FormSelect = (props) => {
       <SectionedMultiSelect
         items={items}
         uniqueKey="id"
+        subKey="children"
         modalWithSafeAreaView
         single={single}
         selectText="Select Option"
-        hideSearch={true}
+        hideSearch={false}
         confirmText="Confirm"
         showDropDowns={true}
         showCancelButton={true}
         styles={{
           cancelButton: { width: 150 },
           chipText: { maxWidth: 50, fontSize: 12 },
-          selectToggle: styles.formSelect
+          selectToggle: SelectedToggleStyles
         }}
         onSelectedItemsChange={ value => onSelectedItemsChange(value) }
         selectedItems={selectedItems}
       />
+
+      <Text style={styles.formInputError}>{error}</Text>
 
     </View>
   )
@@ -156,8 +172,11 @@ export const FormInputDate = (props) => {
     date,
     label,
     required,
-    onDateChange
+    onDateChange,
+    error
   } = props
+  
+  let formInputDatePicker = error ? { ...styles.formInputDatePicker, ...styles.errorStyle } : styles.formInputDatePicker
   
   return (
     <View style={styles.formInputDateContainer}>
@@ -187,11 +206,12 @@ export const FormInputDate = (props) => {
         placeholder="Selected Date"
         format="YYYY-MM-DD"
         customStyles={{
-          dateInput: styles.formInputDatePicker,
+          dateInput: formInputDatePicker,
         }}
         onDateChange={date => onDateChange(date)}
       />
 
+      <Text style={styles.formInputError}>{error}</Text>
     </View>
   )
 }
@@ -203,7 +223,7 @@ export const FormInputFile = (props) => {
   } = props
   
   return (
-    <View style={styles.formInputDateContainer}>
+    <View style={styles.formInputFileContainer}>
       <Button
         onPress={() => onPress()}
         buttonStyle={{

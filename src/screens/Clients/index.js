@@ -75,19 +75,19 @@ class Clients extends Component {
 
   componentDidMount() {
     this.props.fetchClients()
-    this.props.fetchDistricts()
-    this.props.fetchProvinces()
-    this.props.fetchCommunes()
-    this.props.fetchVillages()
-    this.props.fetchSetting()
-    this.props.fetchBirthProvinces()
-    this.props.fetchProgramStreams()
-    this.props.fetchReferralSources()
-    this.props.fetchReferralSourceCategories()
-    this.props.fetchQuantitativeTypes()
-    this.props.fetchAgencies()
-    this.props.fetchDonors()
-    this.props.fetchUsers()
+    // this.props.fetchDistricts()
+    // this.props.fetchProvinces()
+    // this.props.fetchCommunes()
+    // this.props.fetchVillages()
+    // this.props.fetchSetting()
+    // this.props.fetchBirthProvinces()
+    // this.props.fetchProgramStreams()
+    // this.props.fetchReferralSources()
+    // this.props.fetchReferralSourceCategories()
+    // this.props.fetchQuantitativeTypes()
+    // this.props.fetchAgencies()
+    // this.props.fetchDonors()
+    // this.props.fetchUsers()
   }
 
   onClientPress = async client => {

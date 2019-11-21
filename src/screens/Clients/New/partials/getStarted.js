@@ -1,13 +1,13 @@
 import React, { Component }                     from 'react'
 import ImagePicker                              from 'react-native-image-picker'
+import { connect }                              from 'react-redux'
+import _                                        from 'lodash'
 import { 
-  Text, 
   View, 
-  TextInput,
   StyleSheet, 
   ScrollView,
   KeyboardAvoidingView,
-  TouchableHighlightBase
+  TouchableHighlightBase,
 } from 'react-native'
 
 import { 
@@ -20,8 +20,11 @@ import Layout                                   from 'src/components/Layout'
 import { MAX_SIZE, options }                    from 'src/constants/option'
 import {NextButton}                             from './controllButton'
 import Header                                   from './header'
+import { fetchClients }                         from 'src/redux/actions/clients'
+import { fetchBirthProvinces }                         from 'src/redux/actions/birthProvinces'
+import { fetchReferralSourceCategories }                         from 'src/redux/actions/referralSourceCategories'
 
-export default class getStarted extends Component {
+class getStarted extends Component {
   state = {
     referralReceivedBy: [],
     firstFollowUpBy: [],
@@ -37,27 +40,67 @@ export default class getStarted extends Component {
     dateOfBirth: '',
     birthProvince: [],
     referralSourceCategory: [],
-    referralSource: [],
     nameOfReferee: '',
     refereePhoneNumber: '',
-    photos: []
+    photos: [],
+
+    errors: {},
   }
 
-  ReferalReceivedByNames = () => {
-    return (
-      [
-        { id: 'Admin 1', name: 'Admin 1' },
-        { id: 'Admin 2', name: 'Admin 2' },
-      ]
-    )
+  componentDidMount() {
+    this.props.fetchClients()
+    this.props.fetchBirthProvinces()
+    this.props.fetchReferralSourceCategories()
   }
 
   handleInputChange = (text, name) => {
-    this.setState({ [name]: text })
+    this.setState({ [name]: text, errors: {[name]: ""} })
   }
 
   handleSubmit = () => {
-    console.log("The state is ", this.state)
+    let {
+      referralReceivedBy,
+      firstFollowUpBy,
+      caseWorkerStaff,
+      initalReferalDate,
+      firstFollowUpDate,
+      gender,
+      referralSourceCategory,
+      nameOfReferee,
+    } = this.state
+    
+    let errors = {}
+    
+    if(_.isEmpty(referralReceivedBy))
+      errors.referralReceivedBy = "Can't be blank"
+
+    if(_.isEmpty(firstFollowUpBy))
+      errors.firstFollowUpBy = "Can't be blank"
+
+    if(_.isEmpty(caseWorkerStaff))
+      errors.caseWorkerStaff = "Can't be blank"
+
+    if(_.isEmpty(initalReferalDate))
+      errors.initalReferalDate = "Can't be blank"
+
+    if(_.isEmpty(firstFollowUpDate))
+      errors.firstFollowUpDate = "Can't be blank"
+
+    if(_.isEmpty(gender))
+      errors.gender = "Can't be blank"
+
+    if(_.isEmpty(referralSourceCategory))
+      errors.referralSourceCategory = "Can't be blank"
+
+    if(_.isEmpty(nameOfReferee))
+      errors.nameOfReferee = "Can't be blank"
+    
+    if(_.every(_.values(errors)))
+      this.props.handleGoToNextTab()
+    
+    console.log("The errors is ", errors);
+    
+    this.setState({ errors })
   }
 
   handleSelectChange = (value, name) => {
@@ -98,6 +141,31 @@ export default class getStarted extends Component {
     )
   }
 
+  genderTypes = () => ([
+    {id: 'male', name: 'Male'}, 
+    {id: 'female', name: 'Female'}, 
+    {id: 'other', name: 'Other'}, 
+    {id: 'unknown', name: 'Unknown'}
+  ])
+
+  birthProvincesTypes = () => {
+    let { birthProvinces } = this.props
+
+    return _.map(birthProvinces, (bp, index) => {
+      return ({
+        id: index,
+        name: bp.country,
+        children: _.map(bp.provinces, p => ({id: p.id, name: p.name}))
+      })
+    })
+  }
+
+  referralSourceCategoriesTypes = () => {
+    let { referralSourceCategories } = this.props
+
+    return _.map(referralSourceCategories, category => ({id: category.id, name: category.name}))
+  }
+
   handleSelectedFile = (response) => {
     let { photos } = this.state
     const filePath = response.path != undefined ? `file://${response.path}` : response.uri
@@ -118,8 +186,20 @@ export default class getStarted extends Component {
     this.setState({ photos })
   }
 
+  userTypes = () => {
+    let { users } = this.props
+    return (
+      _.map(
+        _.values(users), 
+        user => ({
+          id: user.id, 
+          name: `${user.first_name} ${user.last_name}`
+        })
+      )
+    )
+  }
+
   render() {
-    const {handleGoToNextTab} = this.props
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <Layout>
@@ -135,28 +215,31 @@ export default class getStarted extends Component {
 
               <FormSelect 
                 label="Referral Received By"
-                items={this.ReferalReceivedByNames()}
+                items={this.userTypes()}
                 selectedItems={this.state.referralReceivedBy}
                 onSelectedItemsChange={ ReferalReceivedByName => this.handleSelectChange(ReferalReceivedByName, "referralReceivedBy") }
                 required={true}
                 single={true}
+                error={this.state.errors.referralReceivedBy}
               />
 
               <FormSelect 
                 label="First Follow-Up By"
                 single={true}
-                items={this.ReferalReceivedByNames()}
+                items={this.userTypes()}
                 selectedItems={this.state.firstFollowUpBy}
                 onSelectedItemsChange={ followUpName => this.handleSelectChange(followUpName, "firstFollowUpBy") }
                 required={true}
+                error={this.state.errors.firstFollowUpBy}
               />
 
               <FormSelect 
                 label="Case Worker / Staff"
-                items={this.ReferalReceivedByNames()}
+                items={this.userTypes()}
                 selectedItems={this.state.caseWorkerStaff}
                 onSelectedItemsChange={ caseWorker => this.handleSelectChange(caseWorker, "caseWorkerStaff") }
                 required={true}
+                error={this.state.errors.caseWorkerStaff}
               />
 
               <FormInputDate
@@ -164,6 +247,7 @@ export default class getStarted extends Component {
                 date={this.state.initalReferalDate}
                 onDateChange={date => this.setState({initalReferalDate: date})}
                 required={true}
+                error={this.state.errors.initalReferalDate}
               />
 
               <FormInputDate
@@ -171,6 +255,7 @@ export default class getStarted extends Component {
                 date={this.state.firstFollowUpDate}
                 onDateChange={date => this.setState({firstFollowUpDate: date})}
                 required={true}
+                error={this.state.errors.firstFollowUpDate}
               />
 
               <Header 
@@ -207,11 +292,12 @@ export default class getStarted extends Component {
 
               <FormSelect 
                 label="Gender"
-                items={this.ReferalReceivedByNames()}
+                items={this.genderTypes()}
                 selectedItems={this.state.gender}
                 onSelectedItemsChange={ g => this.handleSelectChange(g, "gender") }
                 required={true}
                 single={true}
+                error={this.state.errors.gender}
               />
 
               <FormInputDate
@@ -222,7 +308,7 @@ export default class getStarted extends Component {
 
               <FormSelect 
                 label="Birth Province"
-                items={this.ReferalReceivedByNames()}
+                items={this.birthProvincesTypes()}
                 selectedItems={this.state.birthProvince}
                 onSelectedItemsChange={ province => this.handleSelectChange(province, "birthProvince") }
                 single={true}
@@ -230,27 +316,21 @@ export default class getStarted extends Component {
 
               <FormSelect 
                 label="Referral Source Category"
-                items={this.ReferalReceivedByNames()}
+                items={this.referralSourceCategoriesTypes()}
                 selectedItems={this.state.referralSourceCategory}
                 onSelectedItemsChange={ category => this.handleSelectChange(category, "referralSourceCategory") }
                 required={true}
                 single={true}
+                error={this.state.errors.referralSourceCategory}
               />
 
-              <FormSelect 
-                label="Referral Source"
-                items={this.ReferalReceivedByNames()}
-                selectedItems={this.state.referralSource}
-                onSelectedItemsChange={ source => this.handleSelectChange(source, "referralSource") }
-                single={true}
-              />
-              
               <FormInput 
                 onChangeText={text => this.handleInputChange(text, "nameOfReferee")}
                 value={this.state.nameOfReferee}
                 label="Name of Referee"
                 placeholder="Name of Referee"
                 required={true}
+                error={this.state.errors.nameOfReferee}
               />
               
               <FormInput 
@@ -268,7 +348,7 @@ export default class getStarted extends Component {
 
               <View style={styles.controlButtonContainer}>
                 <NextButton 
-                  onPress={() => this.props.handleGoToNextTab()}
+                  onPress={() => this.handleSubmit()}
                 />
               </View>
             </Form>
@@ -295,3 +375,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 })
+
+const mapState = (state) => ({
+  users: state.users.data,
+  birthProvinces: state.birthProvinces.data,
+  referralSourceCategories: state.referralSourceCategories.data
+})
+
+const mapDispatch = () => ({
+  fetchClients,
+  fetchBirthProvinces,
+  fetchReferralSourceCategories,
+})
+
+export default connect(mapState, mapDispatch)(getStarted);

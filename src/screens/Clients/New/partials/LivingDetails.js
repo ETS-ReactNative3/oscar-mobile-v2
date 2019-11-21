@@ -1,6 +1,7 @@
 import React, { Component }              from 'react'
+import { connect }                       from 'react-redux'
+import _                                 from 'lodash'
 import { 
-  Text, 
   View, 
   ScrollView, 
   StyleSheet,
@@ -16,8 +17,14 @@ import {
   FormSelect, 
 } from 'src/components/Form'
 
+import { fetchProvinces }                             from 'src/redux/actions/provinces'
+import { fetchDistricts }                             from 'src/redux/actions/districts'
+import { fetchCommunes }                              from 'src/redux/actions/communes'
+import { fetchVillages }                              from 'src/redux/actions/villages'
+import { fetchFamilies }                              from 'src/redux/actions/families'
 
-export default class LivingDetails extends Component {
+
+class LivingDetails extends Component {
   state = {
     primaryCarerName: '',
     primaryCarePhoneNumber: '',
@@ -35,6 +42,14 @@ export default class LivingDetails extends Component {
     mainSchoolContact: ''
   }
 
+  componentDidMount() {
+    this.props.fetchProvinces()
+    this.props.fetchDistricts()
+    this.props.fetchCommunes()
+    this.props.fetchVillages()
+    this.props.fetchFamilies()
+  }
+
   handleInputChange = (text, name) => {
     this.setState({ [name]: text })
   }
@@ -47,6 +62,78 @@ export default class LivingDetails extends Component {
       ]
     )
   }
+
+  mapFilter = (id, objs) => {
+    return _.compact(
+      _.map(objs, obj => {
+        if(id == obj[id])
+          return {
+            id: obj.id,
+            name: obj.name
+          }
+        else
+          null
+      })
+    )
+  }
+
+  currentProvinceTypes = (province_id) => {
+    let { provinces } = this.props
+    return _.map(provinces, pro => ({id: pro.id, name: pro.name}))
+  }
+
+  districtTypes = () => {
+    let province_id = this.state.currentProvince[0] || ''
+    let { districts } = this.props
+
+    return this.mapFilter(province_id, districts)
+  }
+
+  communeTypes = () => {
+    let district_id = this.state.addressDistrictKhan || ''
+    let { communes } = this.props
+
+    return this.mapFilter(district_id, communes)
+  }
+
+  villageTypes = () => {
+    let commune_id = this.state.addressCommuneSangkat || ''
+    let { villages } = this.props
+
+    return this.mapFilter(commune_id, villages)
+  }
+
+  familyTypes = () => {
+    let { families } = this.props
+    return _.map(families, family => ({ id: family.id, name: family.name}))
+  }
+
+  schoolGradeTypes = () => ([
+    {id: 'Kindergarten 1', name: 'Kindergarten 1'},
+    {id: 'Kindergarten 2', name: 'Kindergarten 2'},
+    {id: 'Kindergarten 3', name: 'Kindergarten 3'},
+    {id: 'Kindergarten 4', name: 'Kindergarten 4'},
+    {id: '1', name: '1'},
+    {id: '2', name: '2'},
+    {id: '3', name: '3'},
+    {id: '4', name: '4'},
+    {id: '5', name: '5'},
+    {id: '6', name: '6'},
+    {id: '7', name: '7'},
+    {id: '8', name: '8'},
+    {id: '9', name: '9'},
+    {id: '10', name: '10'},
+    {id: '11', name: '11'},
+    {id: '12', name: '12'},
+    {id: 'Year 1', name: 'Year 1'},
+    {id: 'Year 2', name: 'Year 2'},
+    {id: 'Year 3', name: 'Year 3'},
+    {id: 'Year 4', name: 'Year 4'},
+    {id: 'Year 5', name: 'Year 5'},
+    {id: 'Year 6', name: 'Year 6'},
+    {id: 'Year 7', name: 'Year 7'},
+    {id: 'Year 8', name: 'Year 8'},
+  ])
 
   render() {
     return (
@@ -78,7 +165,7 @@ export default class LivingDetails extends Component {
 
               <FormSelect 
                 label="Current Province"
-                items={this.ReferalReceivedByNames()}
+                items={this.currentProvinceTypes()}
                 selectedItems={this.state.currentProvince}
                 onSelectedItemsChange={ province => this.handleInputChange(province, "currentProvince") }
                 single={true}
@@ -86,7 +173,7 @@ export default class LivingDetails extends Component {
 
               <FormSelect 
                 label="Address - District/Khan"
-                items={this.ReferalReceivedByNames()}
+                items={this.districtTypes()}
                 selectedItems={this.state.addressDistrictKhan}
                 onSelectedItemsChange={ district => this.handleInputChange(district, "addressDistrictKhan") }
                 single={true}
@@ -94,7 +181,7 @@ export default class LivingDetails extends Component {
 
               <FormSelect 
                 label="Address - Commune/Sangkat"
-                items={this.ReferalReceivedByNames()}
+                items={this.communeTypes()}
                 selectedItems={this.state.addressCommuneSangkat}
                 onSelectedItemsChange={ commune => this.handleInputChange(commune, "addressCommuneSangkat") }
                 single={true}
@@ -102,7 +189,7 @@ export default class LivingDetails extends Component {
 
               <FormSelect 
                 label="Address - Village"
-                items={this.ReferalReceivedByNames()}
+                items={this.villageTypes()}
                 selectedItems={this.state.addressVillage}
                 onSelectedItemsChange={ village => this.handleInputChange(village, "addressVillage") }
                 single={true}
@@ -131,7 +218,7 @@ export default class LivingDetails extends Component {
 
               <FormSelect 
                 label="Family"
-                items={this.ReferalReceivedByNames()}
+                items={this.familyTypes()}
                 selectedItems={this.state.family}
                 onSelectedItemsChange={ familyName => this.handleInputChange(familyName, "family") }
                 single={true}
@@ -150,7 +237,7 @@ export default class LivingDetails extends Component {
 
               <FormSelect 
                 label="School Grade"
-                items={this.ReferalReceivedByNames()}
+                items={this.schoolGradeTypes()}
                 selectedItems={this.state.schoolGrade}
                 onSelectedItemsChange={ grade => this.handleInputChange(grade, "School Grade") }
                 single={true}
@@ -210,3 +297,21 @@ const styles = StyleSheet.create({
   },
 })
 
+
+const mapState = (state) => ({
+  provinces: state.provinces.data,
+  districts: state.districts.data,
+  communes: state.communes.data,
+  villages: state.villages.data,
+  families: state.families.data
+})
+
+const mapDispatch = () => ({
+  fetchProvinces,
+  fetchDistricts,
+  fetchCommunes,
+  fetchVillages,
+  fetchFamilies
+})
+
+export default connect(mapState, mapDispatch)(LivingDetails)
