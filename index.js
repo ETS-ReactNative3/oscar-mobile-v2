@@ -1,4 +1,4 @@
 import { YellowBox } from "react-native"
 import "./src/navigation"
 
-YellowBox.ignoreWarnings(["Remote debugger"])
+YellowBox.ignoreWarnings(["Remote debugger", "NetInfo"])

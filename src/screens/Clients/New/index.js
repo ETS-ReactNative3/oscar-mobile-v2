@@ -37,7 +37,6 @@ const styles = {
 }
 
 export default class index extends Component {
-
   handleGoToNextTab = () => {
     this.refs.swiper.scrollBy(1, true)
   }
