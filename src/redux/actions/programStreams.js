@@ -253,21 +253,22 @@ export function updateEnrollmentForm(type, field_properties, enrollment, client_
     NetInfo.isConnected.fetch().then(isConnected => {
       loadingScreen()
       if (isConnected) {
-        dispatch(editClientEnrollmentOffline(field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date, actions))
-        // dispatch(handleEnrollmentForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date))
-        //   .then(response => {
-        //     const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
-        //     dispatch(requestUpdateclient(clientUpdated))
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     Navigation.popTo(actions.enrollmentDetailComponentId)
-        //     actions.alertMessage()
-        //   })
-        //   .catch(err => {
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     alert(JSON.stringify(err))
-        //   })
+        // dispatch(editClientEnrollmentOffline(field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date, actions))
+        dispatch(handleEnrollmentForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date))
+          .then(response => {
+            const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
+            dispatch(requestUpdateclient(clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(actions.enrollmentDetailComponentId)
+            actions.alertMessage()
+          })
+          .catch(err => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert(JSON.stringify(err))
+          })
       } else {
-        dispatch(editClientEnrollmentOffline(field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date, actions))
+        Alert.alert('No internet connection')
+        // dispatch(editClientEnrollmentOffline(field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date, actions))
       }
     })
   }
