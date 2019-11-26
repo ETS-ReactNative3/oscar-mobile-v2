@@ -305,20 +305,32 @@ class TrackingForm extends Component {
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this.uploader(label, formField, data)} />
         </View>
         {map(data, (attachment, index) => {
-          if (attachment.name != undefined) {
-            const name = attachment.name.substring(0, 16)
-            return (
-              <View key={index} style={customFormStyles.attachmentWrapper}>
-                <Image style={{ width: 40, height: 40 }} source={{ uri: attachment.uri }} />
-                <Text style={customFormStyles.listAttachments}>{name}...</Text>
+          let { url, uri} = attachment
+          let name, imagePath
+          
+          if (url) {
+            name = url.substring(url.lastIndexOf('/') + 1)
+            imagePath = url
+          }
+
+          if(uri) {
+            name = attachment.name.substring(0, 16)
+            imagePath = uri
+          }
+
+          return (
+            <View key={index} style={customFormStyles.attachmentWrapper}>
+              <Image style={{ width: 40, height: 40 }} source={{ uri: imagePath }} />
+              <Text style={customFormStyles.listAttachments}>{name}...</Text>
+              {uri && 
                 <TouchableWithoutFeedback onPress={() => this.removeAttactment(data, index, label)}>
                   <View style={customFormStyles.deleteAttactmentWrapper}>
                     <Icon color="#fff" name="delete" size={25} />
                   </View>
                 </TouchableWithoutFeedback>
-              </View>
-            )
-          }
+              }
+            </View>
+          )
         })}
       </View>
     )

@@ -421,12 +421,14 @@ class EditForm extends Component {
           <Text style={[customFormStyles.label, customFormStyles.labelMargin, {flex: 1}]}>{label}</Text>
           <Icon name="add-circle" size={22} color="#fff" onPress={() => this._uploader(label, formField, data)} />
         </View>
+
         {map(data, (attachment, index) => {
-          if (attachment.name != undefined) {
-            const name = attachment.name.substring(0, 16)
+          if (attachment.url) {
+            let { url } = attachment
+            const name = url.substring(url.lastIndexOf('/') + 1)
             return (
               <View key={index} style={customFormStyles.attachmentWrapper}>
-                <Image style={{ width: 40, height: 40 }} source={{ uri: attachment.uri }} />
+                <Image style={{ width: 40, height: 40 }} source={{ uri: attachment.url }} />
                 <Text style={customFormStyles.listAttachments}>{name}...</Text>
                 <TouchableWithoutFeedback onPress={() => this._removeAttactment(data, index, label)}>
                   <View style={customFormStyles.deleteAttactmentWrapper}>
