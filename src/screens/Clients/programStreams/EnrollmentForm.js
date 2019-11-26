@@ -1,4 +1,5 @@
 import React, { Component }                               from 'react'
+import _                                                  from 'lodash'
 import i18n                                               from '../../../i18n'
 import Icon                                               from 'react-native-vector-icons/MaterialIcons'
 import moment                                             from 'moment'
@@ -322,7 +323,7 @@ class EnrollmentForm extends Component {
     let filesSize = 0
     const updatedAttachment = []
 
-    forEach(data, (file, index) => {
+    _.forEach(data, (file, index) => {
       if (index != attachment) updatedAttachment.push(file)
       else filesSize -= file.size
     })
