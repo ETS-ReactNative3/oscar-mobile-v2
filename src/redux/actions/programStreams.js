@@ -279,26 +279,27 @@ export function deleteEnrollmentForm(enrollment, client_enrolled_programs_id, cl
     NetInfo.isConnected.fetch().then(isConnected => {
       loadingScreen()
       if (isConnected) {
-        dispatch(deleteAdditionalFormOffline(enrollment, client_enrolled_programs_id, client_id, actions))
-        // let enrolledProgramPath = template(endpoint.editEnrollmentProgramPath)
-        // enrolledProgramPath = enrolledProgramPath({ client_id: client_id, program_id: client_enrolled_programs_id })
+        // dispatch(deleteAdditionalFormOffline(enrollment, client_enrolled_programs_id, client_id, actions))
+        let enrolledProgramPath = template(endpoint.editEnrollmentProgramPath)
+        enrolledProgramPath = enrolledProgramPath({ client_id: client_id, program_id: client_enrolled_programs_id })
 
-        // axios
-        //   .delete(enrolledProgramPath)
-        //   .then(response => {
-        //     const clientDeletedEnrollment = updateDeleteEnrollment(enrollment, actions.programStream, actions.client, actions.clickForm)
-        //     dispatch(requestUpdateclient(clientDeletedEnrollment.clientUpdated))
-        //     const popToComponentId = clientDeletedEnrollment.enrollmentIsEmpty ? actions.clientDetailComponentId : actions.programStreamDetailComponentId
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     Navigation.popTo(popToComponentId)
-        //     actions.alertEnrollmentMessage()
-        //   })
-        //   .catch(error => {
-        //     Navigation.dismissOverlay('LOADING_SCREEN')
-        //     alert('Error delete Enrollment => ' + JSON.stringify(error))
-        //   })
+        axios
+          .delete(enrolledProgramPath)
+          .then(response => {
+            const clientDeletedEnrollment = updateDeleteEnrollment(enrollment, actions.programStream, actions.client, actions.clickForm)
+            dispatch(requestUpdateclient(clientDeletedEnrollment.clientUpdated))
+            const popToComponentId = clientDeletedEnrollment.enrollmentIsEmpty ? actions.clientDetailComponentId : actions.programStreamDetailComponentId
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            Navigation.popTo(popToComponentId)
+            actions.alertEnrollmentMessage()
+          })
+          .catch(error => {
+            Navigation.dismissOverlay('LOADING_SCREEN')
+            alert('Error delete Enrollment => ' + JSON.stringify(error))
+          })
       } else {
-        dispatch(deleteAdditionalFormOffline(enrollment, client_enrolled_programs_id, client_id, actions))
+        Alert.alert('No internet connection')
+        // dispatch(deleteAdditionalFormOffline(enrollment, client_enrolled_programs_id, client_id, actions))
       }
     })
   }
