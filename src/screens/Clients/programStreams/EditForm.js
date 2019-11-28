@@ -14,10 +14,13 @@ import { CheckBox, Divider }                                    from 'react-nati
 import { options, MAX_SIZE }                                    from '../../../constants/option'
 import { DocumentPicker, DocumentPickerUtil }                   from 'react-native-document-picker'
 import { formTypes, disabledUpload, validateProgramStreamForm } from '../../../utils/validation'
+import endpoint                                                 from '../../../constants/endpoint'
+
 import {
   updateLeaveProgramForm,
   updateEnrollmentForm,
-  updateTrackingForm
+  updateTrackingForm,
+  removeFormBuilderAttachment
 } from '../../../redux/actions/programStreams'
 
 import {
@@ -313,9 +316,9 @@ class EditForm extends Component {
   handleSelectedFile(response, label, formField, data) {
     let { field_properties, filesSize } = this.state
     const fileSize = response.fileSize / 1024
-
-    filesSize = formField.multiple != undefined && formField.multiple ? filesSize + fileSize : fileSize
-
+    
+    filesSize = formField.multiple ? (filesSize || 0) + fileSize : fileSize
+    
     if (filesSize <= MAX_SIZE) {
       const filePath = response.path != undefined ? `file://${response.path}` : response.uri
       const source = {
@@ -323,33 +326,46 @@ class EditForm extends Component {
         uri: response.uri,
         name: response.fileName,
         type: response.type,
-        size: fileSize / 1024
+        size: fileSize / 1024,
+        url: response.uri
       }
 
-      if (formField.multiple != undefined && formField.multiple) {
-        field_properties[label] = [...field_properties[label], source]
-      } else {
-        let updateLocalfile = []
+      // NOTES: The code command below is the old version.
+      // It can be remove in the future if there is no problem with the new version code.
 
-        const isLocalExited = filter(field_properties[label], attachment => {
-          return attachment.uri != undefined
-        })
+      /*
 
-        map(field_properties[label], attachment => {
-          if (attachment.uri != undefined) {
-            updateLocalfile = [...updateLocalfile, source]
-          } else {
-            updateLocalfile = [...updateLocalfile, attachment]
-          }
-          return attachment
-        })
-        field_properties[label] = isLocalExited.length == 0 ? [...updateLocalfile, source] : updateLocalfile
-      }
-      this.setState({ filesSize, field_properties })
+        if (formField.multiple != undefined && formField.multiple) {
+          field_properties[label] = [...field_properties[label], source]
+        } else {
+          let updateLocalfile = []
+
+          const isLocalExited = filter(field_properties[label], attachment => {
+            return attachment.uri != undefined
+          })
+
+          map(field_properties[label], attachment => {
+            if (attachment.uri != undefined) {
+              updateLocalfile = [...updateLocalfile, source]
+            } else {
+              updateLocalfile = [...updateLocalfile, attachment]
+            }
+            return attachment
+          })
+          field_properties[label] = isLocalExited.length == 0 ? [...updateLocalfile, source] : updateLocalfile
+        } 
+
+      */
+
+      field_properties[label] = field_properties[label].concat(source)
+
+      this.setState({ 
+        filesSize,  
+        field_properties
+      })
     } else {
       Alert.alert('Upload file is reach limit', 'We allow only 30MB upload per request.')
     }
-    this.setState({ error: null })
   }
 
   selectAllFile(label, formField, data) {
@@ -391,7 +407,7 @@ class EditForm extends Component {
     }
   }
 
-  _removeAttactment(data, attachmentIndex, label) {
+  _removeAttactment(data, attachmentIndex, label, attachment) {
     let { field_properties } = this.state
     let filesSize = 0
     const updatedAttachment = []
@@ -402,11 +418,21 @@ class EditForm extends Component {
     })
 
     field_properties[label] = updatedAttachment
+    console.log("The this.props is ", this.props)
+
+    if(attachment.url) {
+      let { url } = attachment
+      let id = url.substring(url.lastIndexOf('file/') + 0).split("/")[1]
+      this.props.removeFormBuilderAttachment(id, label, attachmentIndex, this.props.client, this.props.programStream, this.props.enrollment)
+    }
+
     this.setState({field_properties, filesSize})
   }
 
-  _fileUploader(label, formField, data) {
+  _fileUploader(label, formField) {
     const required = formField.required
+    let data = this.state.field_properties[label]
+
     return (
       <View style={[customFormStyles.fieldContainer, { marginTop: 10 }]}>
         <View
@@ -424,13 +450,23 @@ class EditForm extends Component {
 
         {map(data, (attachment, index) => {
           if (attachment.url) {
-            let { url } = attachment
-            const name = url.substring(url.lastIndexOf('/') + 1)
+            let { url, uri} = attachment
+            let name, imagePath
+
+            if(uri) {
+              name = attachment.name.substring(0, 16)
+              imagePath = uri
+            } else if (url) {
+              name = url.substring(url.lastIndexOf('/') + 1)
+              imagePath = endpoint.baseURL(this.props.ngo.name) + url
+            }
+
+            console.log("Image path is ", imagePath, this.props)
             return (
               <View key={index} style={customFormStyles.attachmentWrapper}>
-                <Image style={{ width: 40, height: 40 }} source={{ uri: attachment.url }} />
+                <Image style={{ width: 40, height: 40 }} source={{ uri: imagePath }} />
                 <Text style={customFormStyles.listAttachments}>{name}...</Text>
-                <TouchableWithoutFeedback onPress={() => this._removeAttactment(data, index, label)}>
+                <TouchableWithoutFeedback onPress={() => this._removeAttactment(data, index, label, attachment)}>
                   <View style={customFormStyles.deleteAttactmentWrapper}>
                     <Icon color="#fff" name="delete" size={25} />
                   </View>
@@ -468,7 +504,7 @@ class EditForm extends Component {
           {fieldType == 'select' && !formField.multiple && this.selectType(label, formField, field_properties[label])}
           {fieldType == 'paragraph' && this.renderParagraph(label)}
           {fieldType == 'separateLine' && <Divider style={{ backgroundColor: '#ccc', marginTop: 20 }} />}
-          {fieldType == 'file' && this._fileUploader(label, formField, field_properties[label])}
+          {fieldType == 'file' && this._fileUploader(label, formField)}
         </View>
       )
     })
@@ -478,6 +514,7 @@ class EditForm extends Component {
     const { field_properties } = this.state
     const { type } = this.props
     const programType = type == 'Exit' ? 'exit_date' : 'enrollment_date'
+
     return (
       <ScrollView ref="editEnrollmentForm" style={{ backgroundColor: '#fff' }}>
         <View style={customFormStyles.aboutClientContainer}>
@@ -492,10 +529,15 @@ class EditForm extends Component {
 const mapDispatch = {
   updateLeaveProgramForm,
   updateEnrollmentForm,
-  updateTrackingForm
+  updateTrackingForm,
+  removeFormBuilderAttachment
 }
 
+const mapStateToProps = state => ({
+  ngo: state.ngo.data
+})
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatch
 )(EditForm)

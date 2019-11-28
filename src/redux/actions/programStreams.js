@@ -10,13 +10,13 @@ import {
   editClientEnrollmentOffline,
   deleteAdditionalFormOffline
 } from '../actions/offline/clientEnrollments'
-import {
+import _, {
   map,
   find,
   filter,
   forEach,
   template,
-  isUndefined
+  isUndefined,
 } from 'lodash'
 
 requestProgramStreams = () => ({
@@ -257,6 +257,7 @@ export function updateEnrollmentForm(type, field_properties, enrollment, client_
         dispatch(handleEnrollmentForm('update', field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date))
           .then(response => {
             const clientUpdated = updateEnrollment(response.data, actions.programStream, actions.client, actions.type, actions.clickForm)
+            console.log("the client updated is ", clientUpdated)
             dispatch(requestUpdateclient(clientUpdated))
             Navigation.dismissOverlay('LOADING_SCREEN')
             Navigation.popTo(actions.enrollmentDetailComponentId)
@@ -270,6 +271,45 @@ export function updateEnrollmentForm(type, field_properties, enrollment, client_
         Alert.alert('No internet connection')
         // dispatch(editClientEnrollmentOffline(field_properties, enrollment, client_enrolled_programs_id, client_id, enrollment_date, actions))
       }
+    })
+  }
+}
+
+export function removeFormBuilderAttachment(file_id, file_name, file_index, client, program_stream, enrollment) {
+  return dispatch => {
+    NetInfo.isConnected.fetch()
+    .then(isConnected => {
+      loadingScreen()
+
+      if(isConnected) {
+        let url = template(endpoint.removeFormBuilderAttachmentPath)
+            url = url({ file_id, file_index, file_name})
+      
+        axios.delete(url)
+          .then(res => {
+            let clientUpdated = client
+
+            forEach(client.program_streams, (ps, index) => {
+              if(program_stream.id == ps.id) {
+                forEach(ps.enrollments, (e, i) => {
+                  if(e.id == enrollment.id) {
+                    clientUpdated["program_streams"][index]["enrollments"][i]["properties"][file_name].splice(file_index, 1)
+                  }
+                }) 
+              }
+            })
+
+            dispatch(requestUpdateclient(clientUpdated))
+            Navigation.dismissOverlay('LOADING_SCREEN')
+          })
+
+      } else {
+        Alert.alert('No internet connection')
+      }
+    })
+    .catch(error => {
+      Alert.alert('Something went wrong')
+      Navigation.dismissOverlay('LOADING_SCREEN')
     })
   }
 }
