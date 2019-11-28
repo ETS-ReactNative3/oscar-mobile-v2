@@ -458,7 +458,7 @@ class EditForm extends Component {
               imagePath = uri
             } else if (url) {
               name = url.substring(url.lastIndexOf('/') + 1)
-              imagePath = endpoint.baseURL(this.props.ngo.name) + url
+              imagePath = url
             }
 
             console.log("Image path is ", imagePath, this.props)
