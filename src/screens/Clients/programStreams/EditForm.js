@@ -420,7 +420,7 @@ class EditForm extends Component {
     field_properties[label] = updatedAttachment
     console.log("The this.props is ", this.props)
 
-    if(attachment.url) {
+    if(!attachment.uri) { // if the image is not from local machine
       let { url } = attachment
       let id = url.substring(url.lastIndexOf('file/') + 0).split("/")[1]
       this.props.removeFormBuilderAttachment(id, label, attachmentIndex, this.props.client, this.props.programStream, this.props.enrollment)
@@ -458,7 +458,7 @@ class EditForm extends Component {
               imagePath = uri
             } else if (url) {
               name = url.substring(url.lastIndexOf('/') + 1)
-              imagePath = endpoint.baseURL(this.props.ngo.name) + url
+              imagePath = url
             }
 
             console.log("Image path is ", imagePath, this.props)
