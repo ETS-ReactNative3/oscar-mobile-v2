@@ -12,7 +12,7 @@ import { customFormStyles }                       from '../../../styles'
 import { CheckBox, Divider }                      from 'react-native-elements'
 import { options, MAX_SIZE }                      from '../../../constants/option'
 import { DocumentPicker, DocumentPickerUtil }     from 'react-native-document-picker'
-import { createTrackingForm, updateTrackingForm } from '../../../redux/actions/programStreams'
+import { createTrackingForm, updateTrackingForm, removeFormBuilderAttachment } from '../../../redux/actions/programStreams'
 import {
   formTypes,
   disabledUpload,
@@ -307,28 +307,24 @@ class TrackingForm extends Component {
         {map(data, (attachment, index) => {
           let { url, uri} = attachment
           let name, imagePath
-          
-          if (url) {
-            name = url.substring(url.lastIndexOf('/') + 1)
-            imagePath = url
-          }
 
           if(uri) {
             name = attachment.name.substring(0, 16)
             imagePath = uri
+          } else if (url) {
+            name = url.substring(url.lastIndexOf('/') + 1)
+            imagePath = url
           }
 
           return (
             <View key={index} style={customFormStyles.attachmentWrapper}>
               <Image style={{ width: 40, height: 40 }} source={{ uri: imagePath }} />
               <Text style={customFormStyles.listAttachments}>{name}...</Text>
-              {uri && 
-                <TouchableWithoutFeedback onPress={() => this.removeAttactment(data, index, label)}>
-                  <View style={customFormStyles.deleteAttactmentWrapper}>
-                    <Icon color="#fff" name="delete" size={25} />
-                  </View>
-                </TouchableWithoutFeedback>
-              }
+              <TouchableWithoutFeedback onPress={() => this.removeAttactment(data, index, label, attachment)}>
+                <View style={customFormStyles.deleteAttactmentWrapper}>
+                  <Icon color="#fff" name="delete" size={25} />
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           )
         })}
@@ -336,15 +332,22 @@ class TrackingForm extends Component {
     )
   }
 
-  removeAttactment(data, attachment, label) {
+  removeAttactment(data, attachmentIndex, label, attachment ) {
     let { field_properties } = this.state
     let filesSize = 0
     const updatedAttachment = []
     forEach(data, (file, index) => {
-      if (index != attachment) updatedAttachment.push(file)
+      if (index != attachmentIndex) updatedAttachment.push(file)
       else filesSize -= file.size
     })
     field_properties[label] = updatedAttachment
+
+    if(!attachment.uri) { // if the image is not from local machine
+      let { url } = attachment
+      let id = url.substring(url.lastIndexOf('file/') + 0).split("/")[1]
+      this.props.removeFormBuilderAttachment(id, label, attachmentIndex, this.props.client, this.props.programStream, this.props.enrollment)
+    }
+
     this.setState({field_properties, filesSize})
   }
 
@@ -399,7 +402,8 @@ class TrackingForm extends Component {
         uri: response.uri,
         name: response.fileName,
         type: response.type,
-        size: fileSize / 1024
+        size: fileSize / 1024,
+        url: response.uri
       }
 
       field_properties[label] = formField.multiple != undefined && formField.multiple ? field_properties[label].concat(source) : [source]
@@ -456,10 +460,15 @@ class TrackingForm extends Component {
 
 const mapDispatch = {
   createTrackingForm,
-  updateTrackingForm
+  updateTrackingForm,
+  removeFormBuilderAttachment
 }
 
+const mapStateToProps = state => ({
+  ngo: state.ngo.data
+})
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatch
 )(TrackingForm)
