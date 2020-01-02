@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: '#fff',
+    flex: 1,
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
   },

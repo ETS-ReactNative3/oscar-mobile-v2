@@ -207,10 +207,12 @@ class ListTrackingReport extends Component {
           {trackings.map((tracking, index) => {
             const createdAt = moment(tracking.created_at).format('DD MMMM, YYYY')
             return (
-              <View key={index}>
-                <Card style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20 }} title={createdAt} rightButton={this.renderActions(tracking)}>
+              <View key={index} style={{flex: 1}}>
+                <Card style={{ paddingTop: 30, paddingLeft: 20, paddingRight: 20, flex: 1 }} title={createdAt} rightButton={this.renderActions(tracking)}>
                   <View key={tracking.id.toString()}>
-                    <ScrollView ref="caseNoteCard">{this.renderFormField(tracking)}</ScrollView>
+                    <ScrollView ref="caseNoteCard">
+                      {this.renderFormField(tracking)}
+                    </ScrollView>
                   </View>
                 </Card>
               </View>
