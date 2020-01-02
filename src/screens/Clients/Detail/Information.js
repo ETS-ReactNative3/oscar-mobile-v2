@@ -5,7 +5,7 @@ import call                         from 'react-native-phone-call'
 import moment                       from 'moment'
 import Field                        from '../../../components/Field'
 import FastImage                    from 'react-native-fast-image'
-import { map, upperCase, find }     from 'lodash'
+import _, { map, upperCase, find }     from 'lodash'
 import {
   View,
   Text,
@@ -65,7 +65,24 @@ export default class ClientInformation extends Component {
           <Field name={i18n.t('client.form.what3words')} value={client.what3words} />
           <Field name={i18n.t('client.form.birth_province')} value={client.birth_province == undefined ? '' : client.birth_province.name} />
           <Field name={i18n.t('client.form.name_of_referee')} value={client.name_of_referee} />
-          <Field name={i18n.t('client.form.time_in_care')} value={client.time_in_care} />
+          <Field name={i18n.t('client.form.time_in_ngo')} value={client.time_in_ngo} />
+          <Field name={i18n.t('client.form.time_in_cps')}>
+            {_.map(client.time_in_cps, (duration, programStreamName) => {
+              const durationDate = _.orderBy(_.keys(duration), v => v, "desc")
+              return (
+                <Text key={`${programStreamName}`}>
+                  {programStreamName}: 
+                  {_.join(
+                    _.map(durationDate, name => {
+                      if(duration[name] != 0)
+                        return `${duration[name]} ${name}`
+                    })
+                    ," ")
+                  }
+                </Text>
+              )
+            })}
+          </Field>
           <Field
             name={i18n.t('client.form.follow_up_by')}
             value={client.followed_up_by == undefined ? '' : client.followed_up_by.first_name + ' ' + client.followed_up_by.last_name}
