@@ -28,7 +28,7 @@ export default {
     tasks: 'Tasks',
     enrolled_program_streams: 'Enrolled Program Streams',
     program_stream: 'Program Streams',
-    additional_form: 'Additional Form',
+    additional_form: "Client's Active Form",
     add_form: 'Add Form',
     about_client: 'About Client',
     select_date: 'Select Date',
